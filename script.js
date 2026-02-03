@@ -8,35 +8,40 @@ window.onscroll = () =>{
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  Promise.all([
-    fetch("https://logohub.info/jobVacancy").then(res => res.json()),
-    fetch("https://logohub.info/technologyAndSoftwareServices").then(res => res.json()),
-    fetch("https://logohub.info/educationAndInstituteService").then(res => res.json()),
-    fetch("https://logohub.info/entertainmentAndInformationService").then(res => res.json()),
-    fetch("https://logohub.info/healthCareAndMedicalServices").then(res => res.json()),
-    fetch("https://logohub.info/financeAndBankingServices").then(res => res.json()),
-    fetch("https://logohub.info/retailAndE_Commerce").then(res => res.json()),
-    fetch("https://logohub.info/hotelsTransportFoodandTourism").then(res => res.json()),
-    fetch("https://logohub.info/manufacturingIndustries").then(res => res.json()),
-    fetch("https://logohub.info/other").then(res => res.json())
-  ])
-  .then(([jobVacancy, technologyAndSoftwareServices, educationAndInstituteService, entertainmentAndInformationService, healthCareAndMedicalServices, financeAndBankingServices, retailAndE_Commerce, hotelsTransportFoodandTourism, manufacturingIndustries, other]) => {
-    generateGrid({ jobVacancy, technologyAndSoftwareServices, educationAndInstituteService, entertainmentAndInformationService, healthCareAndMedicalServices, financeAndBankingServices, retailAndE_Commerce, hotelsTransportFoodandTourism, manufacturingIndustries, other});
-  })
-  .catch(error => {
-    console.error("Error fetching data:", error);
+  const technologyAndSoftwareServices = [10, 11, 12, 13, 14, 15];
+  const educationAndInstituteService = [20, 21, 22, 23, 24, 15];
+  const hotelsTransportFoodandTourism = [30, 31, 32, 33, 34, 15];
+  const energyandUtilityServices = [40, 41, 42, 43, 44, 45];
+  const retailAndE_Commerce = [50, 51, 52, 53, 54, 55];
+  const entertainmentAndInformationService = [60, 61, 62, 63, 64];
+  const healthCareAndMedicalServices = [70, 71, 72, 73, 74, 75];
+  const financeAndBankingServices = [80, 81, 82, 83, 84, 85];
+  const manufacturingIndustries = [90, 91, 92, 93, 94, 95];
+  const other = [100, 101, 102, 103, 104, 105];
+
+  generateGrid({
+    technologyAndSoftwareServices,
+    educationAndInstituteService,
+    hotelsTransportFoodandTourism,
+    energyandUtilityServices,
+    retailAndE_Commerce,
+    entertainmentAndInformationService,
+    healthCareAndMedicalServices,
+    financeAndBankingServices,
+    manufacturingIndustries,
+    other
   });
 });
   
 const colorMap = {
-  jobVacancy: '#ff0000',
   technologyAndSoftwareServices: '#0000FF', 
   educationAndInstituteService:'#ffd700',
+  hotelsTransportFoodandTourism: '#00ff00',
+  energyandUtilityServices: '#ff0000',
+  retailAndE_Commerce: '#00bfff',
   entertainmentAndInformationService: '#ff00ff',
   healthCareAndMedicalServices: '#008080',
   financeAndBankingServices: '#ff8000',
-  retailAndE_Commerce: '#00bfff',
-  hotelsTransportFoodandTourism: '#00ff00',
   manufacturingIndustries: '#000000',
   other: '#FFFFFF',
 };
@@ -61,14 +66,14 @@ function generateGrid(data) {
   
         let borderColor = 'rgba(0, 0, 0, 0.2)';
   
-        if (data.jobVacancy.includes(boxId)) borderColor = colorMap.jobVacancy;
-        else if (data.technologyAndSoftwareServices.includes(boxId)) borderColor = colorMap.technologyAndSoftwareServices;
+        if (data.technologyAndSoftwareServices.includes(boxId)) borderColor = colorMap.technologyAndSoftwareServices;
         else if (data.educationAndInstituteService.includes(boxId)) borderColor = colorMap.educationAndInstituteService;
+        else if (data.hotelsTransportFoodandTourism.includes(boxId)) borderColor = colorMap.hotelsTransportFoodandTourism;
+        else if (data.energyandUtilityServices.includes(boxId)) borderColor = colorMap.energyandUtilityServices;
+        else if (data.retailAndE_Commerce.includes(boxId)) borderColor = colorMap.retailAndE_Commerce;
         else if (data.entertainmentAndInformationService.includes(boxId)) borderColor = colorMap.entertainmentAndInformationService;
         else if (data.healthCareAndMedicalServices.includes(boxId)) borderColor = colorMap.healthCareAndMedicalServices;
         else if (data.financeAndBankingServices.includes(boxId)) borderColor = colorMap.financeAndBankingServices;
-        else if (data.retailAndE_Commerce.includes(boxId)) borderColor = colorMap.retailAndE_Commerce;
-        else if (data.hotelsTransportFoodandTourism.includes(boxId)) borderColor = colorMap.hotelsTransportFoodandTourism;
         else if (data.manufacturingIndustries.includes(boxId)) borderColor = colorMap.manufacturingIndustries;
         else if (data.other.includes(boxId)) borderColor = colorMap.other;
 
