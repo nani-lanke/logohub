@@ -1,11 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Responsive Email Request Form</title>
+<style>
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+body {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+.container {
+    background: #fff;
+    border-radius: 15px;
+    padding: 40px;
+    max-width: 450px;
+    width: 100%;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    animation: fadeIn 1s ease-in;
+}
+.container h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #333;
+}
+input, select, textarea, button {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    transition: 0.3s;
+}
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: #2575fc;
+    box-shadow: 0 0 5px rgba(37,117,252,0.5);
+}
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+button {
+    background: #2575fc;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 15px;
+    transition: 0.3s;
+}
+button:hover {
+    background: #6a11cb;
+}
+.error-message {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+.modal-content {
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 320px;
+    width: 90%;
+}
+.modal-content p {
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: #333;
+}
+.modal-content button {
+    width: 45%;
+    margin: 5px;
+}
+@media (max-width: 768px) {
+    .container {
+        padding: 30px;
+    }
+}
+@media (max-width: 480px) {
+    .container {
+        padding: 25px;
+    }
+    button {
+        font-size: 14px;
+        padding: 10px;
+    }
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px);}
+    to { opacity: 1; transform: translateY(0);}
+}
+</style>
 </head>
 <body>
-    <h1>Hello</h1>
+<div class="container">
+    <h2>Send Email Request</h2>
+    <form id="emailForm">
+        <input type="text" name="name" placeholder="Comapny NAme" required>
+        <input type="number" name="number" id="numberInput" placeholder="Your Number" required>
+        <textarea name="message" placeholder="Your Message" required></textarea>
+        <select name="option" id="optionSelect" required>
+            <option value="">Select an option</option>
+            <option value="Option A">Option A</option>
+            <option value="Option B">Option B</option>
+            <option value="Option C">Option C</option>
+        </select>
+        <div class="error-message" id="errorMsg"></div>
+        <button type="submit">Send Email</button>
+    </form>
+</div>
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <p>The number is reversed. Do you want to send a request?</p>
+        <button id="cancelBtn">Cancel</button>
+        <button id="sendBtn">Send Request</button>
+    </div>
+</div>
+<script>
+const list1 = [1, 2, 3];
+const list2 = [8, 9, 10];
+const form = document.getElementById('emailForm');
+const numberInput = document.getElementById('numberInput');
+const errorMsg = document.getElementById('errorMsg');
+const modal = document.getElementById('modal');
+const cancelBtn = document.getElementById('cancelBtn');
+const sendBtn = document.getElementById('sendBtn');
+let sendRequestFlag = false;
+numberInput.addEventListener('blur', () => {
+    const number = parseInt(numberInput.value);
+    errorMsg.textContent = '';
+    if (list1.includes(number)) {
+        errorMsg.textContent = 'Number already selected!';
+    }
+});
+cancelBtn.addEventListener('click', () => {
+    modal.style.display = 'none';
+});
+sendBtn.addEventListener('click', () => {
+    sendRequestFlag = true;
+    modal.style.display = 'none';
+    sendEmail();
+});
+function sendEmail() {
+    const name = form.name.value;
+    const number = form.number.value;
+    const message = form.message.value;
+    const option = form.option.value;
+
+    const toEmail = "your-email@example.com";
+    let subject = number;
+
+    if(list2.includes(parseInt(number)) && sendRequestFlag) {
+        subject += " (one more request)";
+    }
+
+    const body = encodeURIComponent(`Name: ${name}\nOption: ${option}\nMessage: ${message}`);
+    window.location.href = `mailto:${toEmail}?subject=${encodeURIComponent(subject)}&body=${body}`;
+
+    const num = parseInt(number);
+    if (!list1.includes(num) && !list2.includes(num)) {
+        list2.push(num);
+        console.log(`Added ${num} to list2`, list2);
+    }
+}
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const number = parseInt(numberInput.value);
+
+    if(list1.includes(number)) {
+        alert('Cannot send. Number already selected!');
+        return;
+    }
+    if(list2.includes(number) || (!list1.includes(number) && !list2.includes(number))) {
+        modal.style.display = 'flex';
+        sendRequestFlag = false;
+        return;
+    }
+    sendRequestFlag = true;
+    sendEmail();
+});
+</script>
 </body>
 </html>
