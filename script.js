@@ -8,7 +8,7 @@ window.onscroll = () =>{
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  const technologyAndSoftwareServices = [10, 11, 12, 13, 14, 15];
+  const technologyAndSoftwareServices = [1, 2, 3, 13, 14, 15];
   const educationAndInstituteService = [20, 21, 22, 23, 24, 15];
   const hotelsTransportFoodandTourism = [30, 31, 32, 33, 34, 15];
   const energyandUtilityServices = [40, 41, 42, 43, 44, 45];
@@ -123,4 +123,5 @@ function loadImages() {
   }
 }
   
+
 
