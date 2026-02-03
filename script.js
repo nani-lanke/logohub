@@ -211,7 +211,7 @@ function loadImages() {
   ];
 
   for (let i = 1; i <= 600; i++) {
-    const imageUrl = `/screenone/box${i}.png`;
+    const imageUrl = `screenone/box${i}.png`;
     const container = document.getElementById(`box${i}`);
     const text = document.getElementById(`text${i}`);
 
@@ -238,6 +238,7 @@ function loadImages() {
   }
 }
   
+
 
 
 
