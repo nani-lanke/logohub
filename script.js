@@ -97,7 +97,7 @@ function generateGrid(data) {
 function loadImages() {
   for (let i = 1; i <= 600; i++) {
     (function (currentIndex) {
-      const imageUrl = `/screenone/box${currentIndex}.png`;
+      const imageUrl = `screenone/box${currentIndex}.png`;
       const container = document.getElementById(`box${currentIndex}`);
       const text = document.getElementById(`text${currentIndex}`);
       const image = new Image();
@@ -123,3 +123,4 @@ function loadImages() {
   }
 }
   
+
