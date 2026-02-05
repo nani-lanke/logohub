@@ -1,207 +1,272 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Responsive Email Request Form</title>
-<style>
-*{
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-body {
-    background: linear-gradient(135deg, #6a11cb, #2575fc);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-.container {
-    background: #fff;
-    border-radius: 15px;
-    padding: 40px;
-    max-width: 450px;
-    width: 100%;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    animation: fadeIn 1s ease-in;
-}
-.container h2 {
-    text-align: center;
-    margin-bottom: 25px;
-    color: #333;
-}
-input, select, textarea, button {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 15px;
-    transition: 0.3s;
-}
-input:focus, textarea:focus, select:focus {
-    outline: none;
-    border-color: #2575fc;
-    box-shadow: 0 0 5px rgba(37,117,252,0.5);
-}
-textarea {
-    resize: vertical;
-    min-height: 80px;
-}
-button {
-    background: #2575fc;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    margin-top: 15px;
-    transition: 0.3s;
-}
-button:hover {
-    background: #6a11cb;
-}
-.error-message {
-    color: red;
-    font-weight: bold;
-    text-align: center;
-}
-.modal {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.6);
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
-}
-.modal-content {
-    background: #fff;
-    padding: 25px;
-    border-radius: 12px;
-    text-align: center;
-    max-width: 320px;
-    width: 90%;
-}
-.modal-content p {
-    margin-bottom: 20px;
-    font-size: 16px;
-    color: #333;
-}
-.modal-content button {
-    width: 45%;
-    margin: 5px;
-}
-@media (max-width: 768px) {
-    .container {
-        padding: 30px;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Request</title>
+  <style>
+    *{
+      box-sizing:border-box;
+      margin:0;                           padding:0;
+      font-family:"Segoe UI", Arial, sans-serif;
     }
-}
-@media (max-width: 480px) {
-    .container {
-        padding: 25px;
+    body{
+      min-height:100vh;                    padding:20px;
+      display:flex;                        justify-content:center;
+      background:linear-gradient(#e7f5fe, #dbf0fe, #cfebfd, #c3e7fd, #b7e2fc, #abddfc, #9fd8fb);
     }
-    button {
-        font-size: 14px;
-        padding: 10px;
+    .container{
+      width:100%;                          max-width:1350px;
+      background:#fff;
+      border-radius:14px;                  padding:35px;
+      box-shadow:0 12px 30px rgba(0,0,0,0.12);
+      position:relative;
+      background:linear-gradient(135deg,#eef1f6,#dfe5ee);
     }
-}
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px);}
-    to { opacity: 1; transform: translateY(0);}
-}
-</style>
+    .close-btn{
+      position:absolute;
+      top:12px;                           right:18px;
+      font-size:22px;                     font-weight:bold;
+      color:#333;                       cursor:pointer;
+
+    }
+    h2{text-align:center;                 margin-bottom:20px;}
+    p{
+      color:#444;
+      margin-bottom:14px;                 line-height:1.6;
+    }
+    .table-wrapper{
+      overflow-x:auto;                    margin:25px 0;
+    }
+    table{
+      width:100%;                         min-width:500px;
+      border-collapse:collapse;
+    }
+    th,td{
+      border:1px solid #bbb;
+      padding:11px;
+      text-align:center;
+    }
+    th{color:#fff;                      background:#2f3b52;}
+    form{margin-top:25px;}
+    input,textarea,select{
+      width:100%;
+      padding:11px;                       margin-top:12px;
+      border-radius:6px;                  border:2px solid #222;
+      font-size:14px;
+    }
+    textarea{
+      resize:vertical;                    min-height:85px;
+    }
+    button{
+      width:100%;
+      margin-top:18px;                    padding:11px;
+      border:none;                        border-radius:6px;
+      background:#2f3b52;
+      color:#fff;                       cursor:pointer;
+    }
+    button:hover{background:#1f2a3d;}
+    .error-message{
+      text-align:center;                  margin-top:10px;
+      color:red;
+      font-weight:600;
+    }
+    .legend{
+      margin:22px 0;
+      display:flex;                     flex-wrap:wrap;
+      gap:14px;
+    }
+    .legend span{
+      gap:6px;
+      display:flex;                     align-items:center;
+    }
+    .color{
+      width:16px;                      height:16px;
+      border-radius:4px;
+    }
+    .screen-wrapper{margin-top:35px;}
+    .screens{
+      display:grid;                   gap:5px;
+      grid-template-columns:repeat(auto-fit,minmax(32px,1fr));
+    }
+    .box{
+      padding:6px 0;
+      font-size:10px;
+      text-align:center;
+      border-radius:6px;
+      cursor:pointer;
+      background:rgba(255,255,255,0.28);
+      backdrop-filter:blur(8px);
+      border:1px solid rgba(255,255,255,0.35);
+      box-shadow:0 3px 8px rgba(0,0,0,0.08);
+    }
+    .booked{ background:rgba(255,77,77,0.65); color:#fff; }
+    .special{ background:rgba(77,166,255,0.65); color:#fff; }
+    .free{ background:rgba(255,255,255,0.30); }
+    .modal{
+      display:none;                           position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.6);
+      justify-content:center;                 align-items:center;
+    }
+    .modal-content{
+      background:#fff;
+      padding:25px;
+      border-radius:10px;
+      width:90%;
+      max-width:320px;
+      text-align:center;
+    }
+    .modal-content button{
+      width:45%;
+      margin:5px;
+    }
+  </style>
 </head>
 <body>
-<div class="container">
+  <div class="container">
+    <div class="close-btn" ><a href="index.html" style="text-decoration:none;">X</a></div>
     <h2>Send Email Request</h2>
-    <form id="emailForm">
-        <input type="text" name="name" placeholder="Comapny NAme" required>
-        <input type="number" name="number" id="numberInput" placeholder="Your Number" required>
-        <textarea name="message" placeholder="Your Message" required></textarea>
-        <select name="option" id="optionSelect" required>
-            <option value="">Select an option</option>
-            <option value="Option A">Option A</option>
-            <option value="Option B">Option B</option>
-            <option value="Option C">Option C</option>
-        </select>
-        <div class="error-message" id="errorMsg"></div>
-        <button type="submit">Send Email</button>
-    </form>
-</div>
-<div class="modal" id="modal">
-    <div class="modal-content">
-        <p>The number is reversed. Do you want to send a request?</p>
-        <button id="cancelBtn">Cancel</button>
-        <button id="sendBtn">Send Request</button>
+    <p>Select a box number and submit your request. Colors show box availability.</p>
+    <div class="table-wrapper">
+      <table>
+        <tr>
+          <th>Box Type</th>
+          <th>Square Box</th>
+          <th>Horizontal Box</th>
+          <th>Vertical Box</th>
+          <th>Mini Box</th>
+        </tr>
+        <tr>
+          <td>Standard</td>
+          <td>$4</td>
+          <td>$3</td>
+          <td>$2</td>
+          <td>$1</td>
+        </tr>
+      </table>
     </div>
-</div>
-<script>
-const list1 = [1, 2, 3];
-const list2 = [8, 9, 10];
-const form = document.getElementById('emailForm');
-const numberInput = document.getElementById('numberInput');
-const errorMsg = document.getElementById('errorMsg');
-const modal = document.getElementById('modal');
-const cancelBtn = document.getElementById('cancelBtn');
-const sendBtn = document.getElementById('sendBtn');
-let sendRequestFlag = false;
-numberInput.addEventListener('blur', () => {
-    const number = parseInt(numberInput.value);
-    errorMsg.textContent = '';
-    if (list1.includes(number)) {
-        errorMsg.textContent = 'Number already selected!';
-    }
-});
-cancelBtn.addEventListener('click', () => {
-    modal.style.display = 'none';
-});
-sendBtn.addEventListener('click', () => {
-    sendRequestFlag = true;
-    modal.style.display = 'none';
-    sendEmail();
-});
-function sendEmail() {
-    const name = form.name.value;
-    const number = form.number.value;
-    const message = form.message.value;
-    const option = form.option.value;
+    <form id="emailForm">
+      <input type="text" name="name" placeholder="Company Name" required>
+      <input type="number" id="numberInput" name="number" placeholder="Box Number" required>
+      <textarea name="message" placeholder="Message" required></textarea>
+      <select name="option" required>
+        <option value="">Select Option</option>
+        <option style="color:#0000FF;">Technology and Software Services</option>
+        <option style="color:#ffd700;">Education and Institute Service</option>
+        <option style="color:#00ff00;">Hotels, Transport, Food and Tourism Service</option>
+        <option style="color:#ff0000;">Energy and Utility Services</option>
+        <option style="color:#00bfff;">Retail and E-Commerce</option>
+        <option style="color:#ff00ff;">Entertainment and Information Service</option>
+        <option style="color:#008080;">HealthCare and Medical Services</option>
+        <option style="color:#ff8000;">Finance and Banking Services</option>
+        <option style="color:#000000;">Manufacturing Industries (Devices, Products)</option>
+        <option style="color:#FFFFFF; background:#000000;">Other's</option>
+      </select>
+      <div class="error-message" id="errorMsg"></div>
+      <button type="submit">Submit Request</button>
+    </form>
+    <div class="legend">
+      <span><div class="color booked"></div>Booked</span>
+      <span><div class="color special"></div>Reserved</span>
+      <span><div class="color free"></div>Free</span>
+    </div>
+    <div class="screen-wrapper" id="screensContainer"></div>
+  </div>
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <p>Someone already reserved this number. Send another request?</p>
+      <button id="cancelBtn">Cancel</button>
+      <button id="sendBtn">Send</button>
+    </div>
+  </div>
+  <script>
+    const list1=[1,2,3];   // booked
+    const list2=[8,9,10];  // reserved
 
-    const toEmail = "your-email@example.com";
-    let subject = number;
+    const form=document.getElementById("emailForm");
+    const numberInput=document.getElementById("numberInput");
+    const errorMsg=document.getElementById("errorMsg");
+    const modal=document.getElementById("modal");
+    const cancelBtn=document.getElementById("cancelBtn");
+    const sendBtn=document.getElementById("sendBtn");
 
-    if(list2.includes(parseInt(number)) && sendRequestFlag) {
-        subject += " (one more request)";
-    }
+    let allowAnother=false;
 
-    const body = encodeURIComponent(`Name: ${name}\nOption: ${option}\nMessage: ${message}`);
-    window.location.href = `mailto:${toEmail}?subject=${encodeURIComponent(subject)}&body=${body}`;
+    const container=document.getElementById("screensContainer");
+    const grid=document.createElement("div");
+    grid.className="screens";
 
-    const num = parseInt(number);
-    if (!list1.includes(num) && !list2.includes(num)) {
-        list2.push(num);
-        console.log(`Added ${num} to list2`, list2);
-    }
-}
-form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const number = parseInt(numberInput.value);
+    for(let i=1;i<=600;i++){
 
-    if(list1.includes(number)) {
-        alert('Cannot send. Number already selected!');
-        return;
+      const box=document.createElement("div");
+      box.className="box";
+      box.textContent=i;
+
+      if(list1.includes(i)) box.classList.add("booked");
+      else if(list2.includes(i)) box.classList.add("special");
+      else box.classList.add("free");
+
+      box.onclick=()=>{ numberInput.value=i; };
+
+      grid.appendChild(box);
     }
-    if(list2.includes(number) || (!list1.includes(number) && !list2.includes(number))) {
-        modal.style.display = 'flex';
-        sendRequestFlag = false;
-        return;
-    }
-    sendRequestFlag = true;
-    sendEmail();
-});
-</script>
+    container.appendChild(grid);
+    numberInput.addEventListener("blur",()=>{
+      const num=parseInt(numberInput.value);
+      errorMsg.textContent="";
+
+      if(list1.includes(num)){
+        errorMsg.textContent="This number is already booked.";
+      }
+    });
+    function sendEmail(isAnother=false){
+
+    const name=form.name.value;
+    const number=form.number.value;
+    const message=form.message.value;
+    const option=form.option.value;
+
+    let subject=`Request box No : ${number}`;
+    if(isAnother) subject+=" Another request";
+
+    const body=encodeURIComponent(
+    `Hi Team,
+
+    We plan to book a display box. The selected box number is ${number}.
+
+    My Details:
+    Company Name  : ${name}
+    Option        : ${option}
+    Message       : ${message}
+    Message: We would like to display our promotional content in this box for marketing purposes. 
+    Please confirm availability and share the next steps for payment and approval.
+    
+    Thank you.`
+    );
+    window.location.href=`mailto:your-email@example.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+  }
+  cancelBtn.onclick=()=>{
+    modal.style.display="none";
+  };
+  sendBtn.onclick=()=>{
+    modal.style.display="none";
+    sendEmail(true);
+  };
+  form.addEventListener("submit",(e)=>{
+  e.preventDefault();
+  const num=parseInt(numberInput.value);
+  if(list1.includes(num)){
+    errorMsg.textContent="This number is already booked.";
+    return;
+  }
+  if(list2.includes(num)){
+    modal.style.display="flex";
+    return;
+  }
+  sendEmail(false);
+  });
+
+  </script>
 </body>
 </html>
