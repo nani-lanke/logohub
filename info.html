@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Email Request</title>
+  <link rel="icon" type="imag/x-icon" href="icons/company.png">
   <style>
     *{
       box-sizing:border-box;
@@ -100,9 +101,22 @@
       border:1px solid rgba(255,255,255,0.35);
       box-shadow:0 3px 8px rgba(0,0,0,0.08);
     }
-    .booked{ background:rgba(255,77,77,0.65); color:#fff; }
-    .special{ background:rgba(77,166,255,0.65); color:#fff; }
-    .free{ background:rgba(255,255,255,0.30); }
+    .booked{ 
+      background:rgba(255,77,77,0.65); color:#fff; 
+      border: 0.5px solid rgba(0,0,0,0.3);
+    }
+    .special{ 
+      background:rgba(77,166,255,0.65); color:#fff; 
+      border: 0.5px solid rgba(0,0,0,0.3);
+    }
+    .free{
+      background: rgba(255, 140, 0, 0.65);color: #fff;
+      border: 0.5px solid rgba(0,0,0,0.3);
+    }
+    .available {
+      background: rgba(255,255,255,0.30);
+      border: 0.5px solid rgba(0,0,0,0.3);
+    }
     .modal{
       display:none;                           position:fixed;
       inset:0;
@@ -123,11 +137,18 @@
     }
   </style>
 </head>
+
 <body>
   <div class="container">
-    <div class="close-btn" ><a href="index.html" style="text-decoration:none;">X</a></div>
+    <div class="close-btn" ><a href="/" style="text-decoration:none;">X</a></div>
     <h2>Send Email Request</h2>
-    <p>Select a box number and submit your request. Colors show box availability.</p>
+    <p>This page allows companies to reserve numbered display boxes. Each number represents a fixed placement position.
+      Boxes shown below indicate availability status and help select suitable placement based on visibility and pricing.
+    </p>
+    <p>
+      Red boxes are already occupied. Blue boxes indicate premium highlighted positions. Yellow boxes require support approval.
+      Orange glass boxes are currently available for reservation.
+    </p>
     <div class="table-wrapper">
       <table>
         <tr>
@@ -138,30 +159,30 @@
           <th>Mini Box</th>
         </tr>
         <tr>
-          <td>Standard</td>
-          <td>$4</td>
-          <td>$3</td>
-          <td>$2</td>
-          <td>$1</td>
+          <td>Price per year</td>
+          <td>&#8377;999</td>
+          <td>&#8377;599</td>
+          <td>&#8377;499</td>
+          <td>&#8377;365</td>
         </tr>
       </table>
     </div>
     <form id="emailForm">
       <input type="text" name="name" placeholder="Company Name" required>
       <input type="number" id="numberInput" name="number" placeholder="Box Number" required>
-      <textarea name="message" placeholder="Message" required></textarea>
+      <textarea name="message" placeholder="Link(example : https://www.logohub.info)" required></textarea>
       <select name="option" required>
-        <option value="">Select Option</option>
-        <option style="color:#0000FF;">Technology and Software Services</option>
-        <option style="color:#ffd700;">Education and Institute Service</option>
-        <option style="color:#00ff00;">Hotels, Transport, Food and Tourism Service</option>
-        <option style="color:#ff0000;">Energy and Utility Services</option>
-        <option style="color:#00bfff;">Retail and E-Commerce</option>
-        <option style="color:#ff00ff;">Entertainment and Information Service</option>
-        <option style="color:#008080;">HealthCare and Medical Services</option>
-        <option style="color:#ff8000;">Finance and Banking Services</option>
-        <option style="color:#000000;">Manufacturing Industries (Devices, Products)</option>
-        <option style="color:#FFFFFF; background:#000000;">Other's</option>
+        <option value="">Color Indication</option>
+        <option style="color:#0000FF; font-weight:bold;">Technology and Software Services</option>
+        <option style="color:#ffd700; font-weight:bold;">Education and Institute Service</option>
+        <option style="color:#00ff00; font-weight:bold;">Hotels, Transport, Food and Tourism Service</option>
+        <option style="color:#ff0000; font-weight:bold;">Energy and Utility Services</option>
+        <option style="color:#00bfff; font-weight:bold;">Retail and E-Commerce</option>
+        <option style="color:#ff00ff; font-weight:bold;">Entertainment and Information Service</option>
+        <option style="color:#008080; font-weight:bold;">HealthCare and Medical Services</option>
+        <option style="color:#ff8000; font-weight:bold;">Finance and Banking Services</option>
+        <option style="color:#000000; font-weight:bold;">Manufacturing Industries (Devices, Products)</option>
+        <option style="color:#FFFFFF; background:#000000; font-weight:bold;">Other's</option>
       </select>
       <div class="error-message" id="errorMsg"></div>
       <button type="submit">Submit Request</button>
@@ -170,6 +191,7 @@
       <span><div class="color booked"></div>Booked</span>
       <span><div class="color special"></div>Reserved</span>
       <span><div class="color free"></div>Free</span>
+      <span><div class="color available"></div>Available</span>
     </div>
     <div class="screen-wrapper" id="screensContainer"></div>
   </div>
@@ -180,9 +202,20 @@
       <button id="sendBtn">Send</button>
     </div>
   </div>
+
   <script>
-    const list1=[1,2,3];   // booked
-    const list2=[8,9,10];  // reserved
+    const bookedList=[76];   // booked
+
+    const reservedList=[
+      77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90,
+      121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135,
+      151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165
+    ];  // reserved
+
+    const freeBoxes=[
+      482,484,485,486,487,489,491,494,497,499,500,501,502,504,506,509,512,514,515,516,517,519,521,524,527,529,530,531,532,534,536,539,542,544,545,546,547,549,551,
+      554,557,559,560,561,562,564,566,569,572,574,575,576,577,579,581,584,587,589,590,591,592,594,596,599
+    ];  //free 
 
     const form=document.getElementById("emailForm");
     const numberInput=document.getElementById("numberInput");
@@ -203,9 +236,10 @@
       box.className="box";
       box.textContent=i;
 
-      if(list1.includes(i)) box.classList.add("booked");
-      else if(list2.includes(i)) box.classList.add("special");
-      else box.classList.add("free");
+      if(bookedList.includes(i)) box.classList.add("booked");
+      else if(reservedList.includes(i)) box.classList.add("special");
+      else if(freeBoxes.includes(i)) box.classList.add("free");
+      else box.classList.add("available");
 
       box.onclick=()=>{ numberInput.value=i; };
 
@@ -216,7 +250,7 @@
       const num=parseInt(numberInput.value);
       errorMsg.textContent="";
 
-      if(list1.includes(num)){
+      if(bookedList.includes(num)){
         errorMsg.textContent="This number is already booked.";
       }
     });
@@ -233,18 +267,19 @@
     const body=encodeURIComponent(
     `Hi Team,
 
-    We plan to book a display box. The selected box number is ${number}.
+We plan to book a display box. The selected box number is ${number}.
 
-    My Details:
+My Details:
     Company Name  : ${name}
     Option        : ${option}
     Message       : ${message}
-    Message: We would like to display our promotional content in this box for marketing purposes. 
-    Please confirm availability and share the next steps for payment and approval.
+
+Message: We would like to display our promotional content in this box for marketing purposes. 
+Please confirm availability and share the next steps for payment and approval.
     
-    Thank you.`
+Thank you.`
     );
-    window.location.href=`mailto:your-email@example.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+    window.location.href=`mailto:logohub2025@gmail.com?subject=${encodeURIComponent(subject)}&body=${body}`;
   }
   cancelBtn.onclick=()=>{
     modal.style.display="none";
@@ -256,17 +291,16 @@
   form.addEventListener("submit",(e)=>{
   e.preventDefault();
   const num=parseInt(numberInput.value);
-  if(list1.includes(num)){
+  if(bookedList.includes(num)){
     errorMsg.textContent="This number is already booked.";
     return;
   }
-  if(list2.includes(num)){
+  if(reservedList.includes(num)){
     modal.style.display="flex";
     return;
   }
   sendEmail(false);
   });
-
   </script>
 </body>
 </html>
