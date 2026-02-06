@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const hotelsTransportFoodandTourism = [];
   const energyandUtilityServices = [];
   const retailAndE_Commerce = [];
-  const entertainmentAndInformationService = [];
+  const entertainmentAndInformationService = [76];
   const healthCareAndMedicalServices = [];
   const financeAndBankingServices = [];
   const manufacturingIndustries = [];
@@ -192,3 +192,4 @@ function loadImages() {
   }
 }
   
+
