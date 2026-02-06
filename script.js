@@ -8,16 +8,16 @@ window.onscroll = () =>{
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  const technologyAndSoftwareServices = [1, 2, 3, 13, 14, 15];
-  const educationAndInstituteService = [20, 21, 22, 23, 24, 15];
-  const hotelsTransportFoodandTourism = [30, 31, 32, 33, 34, 15];
-  const energyandUtilityServices = [40, 41, 42, 43, 44, 45];
-  const retailAndE_Commerce = [50, 51, 52, 53, 54, 55];
-  const entertainmentAndInformationService = [60, 61, 62, 63, 64];
-  const healthCareAndMedicalServices = [70, 71, 72, 73, 74, 75];
-  const financeAndBankingServices = [80, 81, 82, 83, 84, 85];
-  const manufacturingIndustries = [90, 91, 92, 93, 94, 95];
-  const other = [100, 101, 102, 103, 104, 105];
+  const technologyAndSoftwareServices = [];
+  const educationAndInstituteService = [];
+  const hotelsTransportFoodandTourism = [];
+  const energyandUtilityServices = [];
+  const retailAndE_Commerce = [];
+  const entertainmentAndInformationService = [];
+  const healthCareAndMedicalServices = [];
+  const financeAndBankingServices = [];
+  const manufacturingIndustries = [];
+  const other = [];
 
   generateGrid({
     technologyAndSoftwareServices,
@@ -32,6 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
     other
   });
 });
+
   
 const colorMap = {
   technologyAndSoftwareServices: '#0000FF', 
@@ -94,68 +95,21 @@ function generateGrid(data) {
   loadImages();
 }
   
-function generateGrid(data) {
-  const totalScreen = document.getElementById('totalscreen');
-  for (let i = 1; i <= 1; i++) {
-    const screen = document.createElement('div');
-    screen.className = 'screens';
-    screen.id = `screen${i}`;
-  
-    for (let j = 1; j <= 40; j++) {
-      const set = document.createElement('div');
-      set.className = 'set';
-      set.id = `set${j}`;
-  
-      for (let k = 1; k <= 15; k++) {
-        const boxId = 600 * (i - 1) + (j - 1) * 15 + k;
-        const box = document.createElement('div');
-        box.className = `select${k}`;
-        box.id = `box${boxId}`;
-  
-        let borderColor = 'rgba(0, 0, 0, 0.2)';
-  
-        if (data.technologyAndSoftwareServices.includes(boxId)) borderColor = colorMap.technologyAndSoftwareServices;
-        else if (data.educationAndInstituteService.includes(boxId)) borderColor = colorMap.educationAndInstituteService;
-        else if (data.hotelsTransportFoodandTourism.includes(boxId)) borderColor = colorMap.hotelsTransportFoodandTourism;
-        else if (data.energyandUtilityServices.includes(boxId)) borderColor = colorMap.energyandUtilityServices;
-        else if (data.retailAndE_Commerce.includes(boxId)) borderColor = colorMap.retailAndE_Commerce;
-        else if (data.entertainmentAndInformationService.includes(boxId)) borderColor = colorMap.entertainmentAndInformationService;
-        else if (data.healthCareAndMedicalServices.includes(boxId)) borderColor = colorMap.healthCareAndMedicalServices;
-        else if (data.financeAndBankingServices.includes(boxId)) borderColor = colorMap.financeAndBankingServices;
-        else if (data.manufacturingIndustries.includes(boxId)) borderColor = colorMap.manufacturingIndustries;
-        else if (data.other.includes(boxId)) borderColor = colorMap.other;
-
-        box.style.border = `2.4px solid ${borderColor}`;
-  
-        const number = document.createElement('span');
-        number.className = 'number';
-        number.id = `text${boxId}`;
-        number.textContent = (j - 1) * 15 + k;
-  
-        box.appendChild(number);
-        set.appendChild(box);
-      }
-      screen.appendChild(set);
-    }
-    totalScreen.appendChild(screen);
-  }
-  loadImages();
-}
-  
 function loadImages() {
-  const links = [
+ const links = [
     null, //0
-    "https://www.google.com/", //1
-    "https://www.google.com/", //2
-    "https://www.google.com/", //3
-                 null,null,null,null,null,null,null, //4-10
+    null,null,null,null,null,null,null,null,null,null, //4-10
     null,null,null,null,null,null,null,null,null,null, //11-20
     null,null,null,null,null,null,null,null,null,null, //21-30
     null,null,null,null,null,null,null,null,null,null, //31-40
     null,null,null,null,null,null,null,null,null,null, //41-50
     null,null,null,null,null,null,null,null,null,null, //51-60
     null,null,null,null,null,null,null,null,null,null, //61-70
-    null,null,null,null,null,null,null,null,null,null, //71-80
+
+    null,null,null,null,null,
+    "https://www.logohub.info/",//76
+    null,null,null,null, //71-80
+
     null,null,null,null,null,null,null,null,null,null, //81-90
     null,null,null,null,null,null,null,null,null,null, //91-100
     null,null,null,null,null,null,null,null,null,null, //101-110
@@ -211,7 +165,7 @@ function loadImages() {
   ];
 
   for (let i = 1; i <= 600; i++) {
-    const imageUrl = `screenone/box${i}.png`;
+    const imageUrl = `/screenone/box${i}.png`;
     const container = document.getElementById(`box${i}`);
     const text = document.getElementById(`text${i}`);
 
@@ -238,7 +192,3 @@ function loadImages() {
   }
 }
   
-
-
-
-
