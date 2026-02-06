@@ -118,12 +118,16 @@ header li{
     transition:transform 0.2s;/* image increase command*/
     cursor:pointer;/* image increase command*/
     background-position:center;
+    backdrop-filter:blur(8px);
+    box-shadow:0 3px 8px rgba(0,0,0,0.08);
 }
 .select2{
 	width:23.2px;						height:23.2px;
     background-color:var(--mini-color);
     background-size:cover;				transition:transform 0.2s;		
     cursor:pointer;						background-position:center;
+	backdrop-filter:blur(8px);
+    box-shadow:0 3px 8px rgba(0,0,0,0.08);
 }
 .select3{
 	width:51.7px;						height:51.7px;
@@ -131,30 +135,40 @@ header li{
     background-color:var(--squre-color);
     background-size:cover;				transition:transform 0.2s;        
     cursor:pointer;						background-position:center;
+	backdrop-filter:blur(8px);
+    box-shadow:0 3px 8px rgba(0,0,0,0.08);
 }  
 .select4{
 	width:23.2px;						height:23.2px;
     background-color:var(--mini-color);
     background-size:cover;				transition:transform 0.2s;			
     cursor:pointer;						background-position:center;
+	backdrop-filter:blur(8px);
+    box-shadow:0 3px 8px rgba(0,0,0,0.08);
 }
 .select5{
 	width:23.2px;						height:23.2px;
     background-color:var(--mini-color);
     background-size:cover;				transition:transform 0.2s;
 	cursor:pointer;						background-position:center;
+	backdrop-filter:blur(8px);
+    box-shadow:0 3px 8px rgba(0,0,0,0.08);
 }
 .select6{
 	width:23.2px;						height:23.2px;
     background-color:var(--mini-color);
     background-size:cover;				transition:transform 0.2s;
     cursor:pointer;						background-position:center;
+	backdrop-filter:blur(8px);
+    box-shadow:0 3px 8px rgba(0,0,0,0.08);
 }
 .select7{
 	width:23.2px;						height:23.2px;
     background-color:var(--mini-color);
     background-size:cover;				transition:transform 0.2s;
     cursor:pointer;						background-position:center;
+	backdrop-filter:blur(8px);
+    box-shadow:0 3px 8px rgba(0,0,0,0.08);
 }
 .select8{
 	width:51.7px;						height:51.7px;
@@ -162,12 +176,16 @@ header li{
     background-color:var(--squre-color);
     background-size:cover;				transition: transform 0.2s;
     cursor:pointer;						background-position:center;
+	backdrop-filter:blur(8px);
+    box-shadow:0 3px 8px rgba(0,0,0,0.08);
 }
 .select9{
 	width:23.2px;						height:23.2px;
     background-color:var(--mini-color);
     background-size:cover;				transition:transform 0.2s;
     cursor:pointer;						background-position:center;
+	backdrop-filter:blur(8px);
+    box-shadow:0 3px 8px rgba(0,0,0,0.08);
 }
 .select10{
 	width:51.7px;						height:51.7px;
@@ -175,12 +193,16 @@ header li{
     background-color:var(--squre-color);
     background-size:cover;				transition:transform 0.2s;
     cursor:pointer;						background-position:center;
+	backdrop-filter:blur(8px);
+    box-shadow:0 3px 8px rgba(0,0,0,0.08);
 }
 .select11{
 	width:23.2px;						height:23.2px;
     background-color:var(--mini-color);
     background-size:cover;				transition:transform 0.2s;
     cursor:pointer;						background-position:center;
+	backdrop-filter:blur(8px);
+    box-shadow:0 3px 8px rgba(0,0,0,0.08);
 }  
 .select12{
 	width:23.2px;						height:51.7px;
@@ -188,6 +210,8 @@ header li{
     background-color:var(--vertical-color);
 	background-size:cover;				transition: transform 0.2s;
     cursor: pointer; 					background-position:center;
+	backdrop-filter:blur(8px);
+    box-shadow:0 3px 8px rgba(0,0,0,0.08);
 }
 .select13{
 	width:51.7px;						height:23.2px;
@@ -195,12 +219,16 @@ header li{
     background-color:var(--rectangle-color);
     background-size:cover;    			transition:transform 0.2s;
     cursor:pointer; 					background-position:center;
+	backdrop-filter:blur(8px);
+    box-shadow:0 3px 8px rgba(0,0,0,0.08);
 }
 .select14{
 	width:23.2px;						height:23.2px;
     background-color:var(--mini-color);
     background-size:cover;				transition:transform 0.2s;
     cursor:pointer;						background-position:center;
+	backdrop-filter:blur(8px);
+    box-shadow:0 3px 8px rgba(0,0,0,0.08);
 }
 .select15{
 	width:51.7px;						height:23.2px;
@@ -208,6 +236,8 @@ header li{
     background-color:var(--rectangle-color);
     background-size:cover;				transition:transform 0.2s;
     cursor:pointer;						background-position:center;
+	backdrop-filter:blur(8px);
+    box-shadow:0 3px 8px rgba(0,0,0,0.08);
 }
 .select1:hover {transform: scale(1.5);}
 .select2:hover {transform: scale(2.0);}
