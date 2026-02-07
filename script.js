@@ -10,10 +10,10 @@ window.onscroll = () =>{
 document.addEventListener("DOMContentLoaded", function () {
   const technologyAndSoftwareServices = [];
   const educationAndInstituteService = [];
-  const hotelsTransportFoodandTourism = [];
+  const hotelsTransportFoodandTourism = [121];
   const energyandUtilityServices = [];
   const retailAndE_Commerce = [];
-  const entertainmentAndInformationService = [76];
+  const entertainmentAndInformationService = [76,151,153,158];
   const healthCareAndMedicalServices = [];
   const financeAndBankingServices = [];
   const manufacturingIndustries = [];
@@ -196,5 +196,6 @@ function loadImages() {
   }
 }
   
+
 
 
