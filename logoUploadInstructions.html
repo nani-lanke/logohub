@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Dimensions Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="imag/x-icon" href="icons/company.png">
+    <style>
+        body {
+            margin:0px 0px;					padding:20px 20px;
+			background:linear-gradient(#b7e2fc, #abddfc, #9fd8fb);
+        }
+		h2{
+			margin:10px 0px;				padding:0px 0px;
+		}
+        .image_section {
+        	margin:10px 0px;				padding:20px 20px;
+            border-radius:8px; 				background-color:#FFFFFF;
+            box-shadow:2px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .explanation {
+            margin:0px 0px;					padding:0px 0px;
+            border-radius:8px;
+        }
+         h3{
+         	margin:0px 0px;					padding:0px 0px;
+         	font-size:20px;					font-weight:700;
+         	color:#000000;
+        }
+        p{
+			margin:0px 0px;					padding:10px 0px;
+			font-size:16px;					font-weight:500;
+			text-align:justify;				line-height:1.5;
+		    color:#000000;
+        }
+        .image-container {
+            margin:0px 0px;					padding:5px 0px;
+            display:flex; 					justify-content:space-between;
+            flex-wrap:wrap;					gap:20px;
+        }
+        .image-box {
+            width:calc(33.33% - 20px);
+            display:grid;					place-items:center;
+            border-radius:8px;              
+         	position:relative;				overflow: hidden;
+        }
+        .image.accepted {
+            width:200px;					height:200px;
+            aspect-ratio: 1 / 1; /* Ensures the image is square */
+            object-fit:cover; /* Ensures the image covers the space properly */
+            border:5px solid green; /* Green border for accepted images */
+        }
+        .image.not-accepted {
+            width:200px;					height:200px;
+            object-fit:cover;
+            border:5px solid red; /* Red border for non-accepted images */
+        }
+        .close {
+		    height:30px;   					width:30px;
+		   	right:10px; 					top:10px;    
+            display:flex;  					align-items:center;    
+            justify-content:center;    		flex-direction:row;
+		    font-size:22px;    				font-weight:700;
+		    text-align:center;  			text-decoration:none;
+		    border-radius:50%;				border:0;		    
+		    color:#000000;				background-color:transparent;
+		    position:absolute;  			z-index:100;   
+		}
+		.close:hover {
+		    opacity:0.9;
+            color:#FFFFFF; 				background-color:#007EE3;
+		}
+        a {color:#0066cc;					text-decoration:none;}
+        a:hover {text-decoration:none;}
+        @media screen and (max-width: 768px) {
+        	.image-box {width:calc(50% - 20px);}
+         }
+        @media screen and (max-width: 480px) {
+            .image-box {width: 100%;}
+        }  
+    </style>
+</head>
+<body>
+	<h2>Logo Pixel Size Recommendations for Upload</h2>
+	<a href="sendrequest.html" class="close" id="close-blue">X</a>
+    <div class="image_section" style="background-color:#eeeeee;">
+        <div class="explanation">
+            <h3>Square Logo Pixel Size:</h3>
+            <p>This applies in the context of uploading a logo for a square-type box; the logo has to be square-shaped to upload. 
+            So the width is identical to height; otherwise, it will have to be placed inside the box as if the box is holding a 
+            stretched version of the logo. For your information, the logo in the first image below is well-suited to a square box, 
+            while the logos in the second and third images are not well-suited due to differences in width. If you try uploading a 
+            logo that does not have the correct width or height, you'll get an error.</p>
+        </div>
+        <div class="image-container">
+            <!-- Correct Square Image (Width = Height) -->
+            <div class="image-box">
+                <img src="icons/squre1.png" alt="Square Image" class="image accepted">
+                <p style="text-align:center;">Square Logo Pixel Size - Correct Size<br>(Width = Height)</p>
+            </div>
+            <!-- Incorrect Rectangle Image (Not Square) -->
+            <div class="image-box">
+                <img src="icons/squre2.png" alt="Rectangle Image" class="image not-accepted rectangle">
+                <p  style="text-align:center;">Square Logo Pixel Size - Incorrect <br>(Width ≠ Height)</p>
+            </div>
+            <!-- Incorrect Vertical Image (Not Square) -->
+            <div class="image-box">
+                <img src="icons/squre3.png" alt="Vertical Image" class="image not-accepted vertical">
+                <p  style="text-align:center;">Square Logo Pixel Size - Incorrect <br>(Width ≠ Height)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rectangle Image Section -->
+    <div class="image_section" style="background-color:#f8dda6;">
+        <div class="explanation">
+            <h3>Rectangle Logo Pixel Size:</h3>
+            <p>If you are using a rectangle-type box, make sure your logo is also rectangular in shape. Specifically, the width of the logo 
+            should be larger than its height to ensure that it fits snugly inside the box. The first image below shows the appropriate size 
+            for a rectangle-type box, and logos with these dimensions will be accepted for processing. However, if the logos do not adhere 
+            to this width-to-height ratio or if the logo's width is more than twice its height, as viewed in the second and third images, it 
+            will invalidate the type of box and an error message will be displayed.</p>        
+        </div>
+        <div class="image-container">
+            <!-- Correct Rectangle Image (Wider than Tall) -->
+            <div class="image-box">
+                <img src="icons/squre2.png" alt="Rectangle Image" class="image accepted rectangle">
+                <p style="text-align:center;">Rectangle Logo Pixel Size - Correct Size <br>(1.2*Height>width<2*Height)</p>
+            </div>
+            <!-- Incorrect Square Image (Width = Height) -->
+            <div class="image-box">
+                <img src="icons/squre3.png" alt="Square Image" class="image not-accepted">
+                <p style="text-align:center;">Rectangle Logo Pixel Size - Incorrect<br> (Height > Width)</p>
+            </div>
+            <!-- Incorrect Vertical Image (Not Square) -->
+            <div class="image-box">
+                <img src="icons/squre1.png" alt="Vertical Image" class="image not-accepted vertical">
+                <p style="text-align:center;">Rectangle Logo Pixel Size - Incorrect <br>(Width = Height)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vertical Image Section -->
+    <div class="image_section" style="background-color:#bdd8c7;">
+        <div class="explanation">
+            <h3>Vertical Logo Pixel Size</h3>
+            <p>When uploading a logo for a vertical-type box, the logo must be taller than it is wide, meaning that the height has to be larger 
+            than the width. This ensures that your logo will be properly displayed within the vertical box. The first image below shows what the 
+            ideal dimensions of a logo should be for this type of box. Any logo whose dimensions are not in this ratio, like a logo that is too 
+            wide or square, will not be accepted, as depicted in the second and third images. If an incorrect proportion is used when uploading 
+            logos, there will be an error message.</p>
+        </div>
+        <div class="image-container">
+            <!-- Correct Vertical Image (Taller than Wide) -->
+            <div class="image-box">
+                <img src="icons/squre3.png" class="image accepted vertical">
+                <p style="text-align:center;">Vertical Logo Pixel Size - Correct Size <br> (1.2*width>Height<2*Width)</p>
+            </div>
+            <!-- Incorrect Square Image (Width = Height) -->
+            <div class="image-box">
+                <img src="icons/squre1.png" alt="Square Image" class="image not-accepted">
+                <p style="text-align:center;">Square Logo Pixel Size - Incorrect <br>(Width = Height)</p>
+            </div>
+            <!-- Incorrect Rectangle Image (Wider than Tall) -->
+            <div class="image-box">
+                <img src="icons/squre2.png" class="image not-accepted rectangle">
+                <p style="text-align:center;">Rectangle Logo Pixel Size - Incorrect <br>(Width >Height)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mini Shape Image Section -->
+    <div class="image_section" style="background-color: #bdecb5">
+        <div class="explanation">
+            <h3>Mini Logo Pixel Size</h3>
+            <p>For mini-type boxes, your logo must also be square-shaped, meaning that its width and height must be the same. This keeps the logo 
+            properly aligned and centered within the small space. The first image below shows an example of a correctly sized logo for a mini box. 
+            Logos with varied dimensions, such as the ones in the second and third images, are not allowed for mini-type boxes and uploading logos 
+            with such dimensions will throw an error message.</p>
+        </div>
+        <div class="image-container">
+            <!-- Correct Square Image (Width = Height) -->
+            <div class="image-box">
+                <img src="icons/squre1.png" alt="Square Image" class="image accepted">
+                <p style="text-align:center;">Mini Logo Pixel Size - Correct Size<br>(Width = Height)</p>
+            </div>
+            <!-- Incorrect Rectangle Image (Not Square) -->
+            <div class="image-box">
+                <img src="icons/squre2.png" alt="Rectangle Image" class="image not-accepted rectangle">
+                <p  style="text-align:center;">Mini Logo Pixel Size - Incorrect <br>(Width ≠ Height)</p>
+            </div>
+            <!-- Incorrect Vertical Image (Not Square) -->
+            <div class="image-box">
+                <img src="icons/squre3.png" alt="Vertical Image" class="image not-accepted vertical">
+                <p  style="text-align:center;">Mini Logo Pixel Size - Incorrect <br>(Height > Width)</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
