@@ -73,6 +73,11 @@
       color:red;
       font-weight:600;
     }
+     .checkboxClass{
+      width:60%; 					               height:25px;
+      margin:20px 0px 0px;
+      display:flex; 				          
+    }
     .legend{
       margin:22px 0;
       display:flex;                     flex-wrap:wrap;
@@ -165,10 +170,10 @@
         </tr>
         <tr>
           <td>Price per year</td>
-          <td>&#8377;999</td>
-          <td>&#8377;599</td>
-          <td>&#8377;499</td>
           <td>&#8377;365</td>
+          <td>&#8377;299</td>
+          <td>&#8377;249</td>
+          <td>&#8377;199</td>
         </tr>
       </table>
     </div>
@@ -189,6 +194,14 @@
         <option style="color:#000000; font-weight:bold;">Manufacturing Industries (Devices, Products)</option>
         <option style="color:#FFFFFF; background:#000000; font-weight:bold;">Other's</option>
       </select>
+      <div class="checkboxClass" >
+				<div style="width:10%;">
+				  	<input type="checkbox" style="margin:0px 0px; width:100%;" required>
+				</div>
+				<div style="width:90%;">
+					<a href="termsandconditions.html" class="links" style="width:100%;">Terms and Conditions</a>
+			</div>
+			</div>	
       <div class="error-message" id="errorMsg"></div>
       <button type="submit">Submit Request</button>
     </form>
@@ -306,6 +319,7 @@ Thank you.`
   </script>
 </body>
 </html>
+
 
 
 
