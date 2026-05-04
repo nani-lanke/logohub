@@ -1,201 +1,425 @@
-let menu =document.querySelector("#header-icon");
-let navbar=document.querySelector(".header-bar");
-menu.addEventListener("click", function () {
-  navbar.classList.toggle("active");
-});
-window.onscroll = () =>{
-  navbar.classList.remove("active")
+/* ════════════════════════════════════════════════════════════
+   LOGOHUB  —  script.js
+
+   HOW IT WORKS:
+   1. companies[]    – one object per company; single source of truth
+   2. generateGrid() – builds 40 sets × 15 slots = 600 boxes in the DOM
+   3. loadImages()   – for each company, loads its icon; on success,
+                       shows the logo and wires a click → openModal()
+   4. openModal()    – fills the popup with company info + action icons
+   5. Action icons   – only rendered when the matching link is non-empty
+
+   KEY BUG FIX: modal CSS selector was missing '#' on '#companyModal'
+   causing the overlay to never become visible on .active toggle.
+   ════════════════════════════════════════════════════════════ */
+
+// ─── Hamburger menu toggle ────────────────────────────────────
+const menuBtn = document.querySelector('#header-icon');
+const navbar  = document.querySelector('.header-bar');
+if (menuBtn) {
+  menuBtn.addEventListener('click', () => navbar.classList.toggle('active'));
 }
-
-document.addEventListener("DOMContentLoaded", function () {
-  const technologyAndSoftwareServices = [];
-  const educationAndInstituteService = [];
-  const hotelsTransportFoodandTourism = [121];
-  const energyandUtilityServices = [];
-  const retailAndE_Commerce = [];
-  const entertainmentAndInformationService = [76,151,153,158];
-  const healthCareAndMedicalServices = [];
-  const financeAndBankingServices = [];
-  const manufacturingIndustries = [];
-  const other = [];
-
-  generateGrid({
-    technologyAndSoftwareServices,
-    educationAndInstituteService,
-    hotelsTransportFoodandTourism,
-    energyandUtilityServices,
-    retailAndE_Commerce,
-    entertainmentAndInformationService,
-    healthCareAndMedicalServices,
-    financeAndBankingServices,
-    manufacturingIndustries,
-    other
-  });
+window.addEventListener('scroll', () => {
+  if (navbar) navbar.classList.remove('active');
 });
 
-  
+// ════════════════════════════════════════════════════════════
+//  COLOR MAP  — category key → border hex colour
+// ════════════════════════════════════════════════════════════
 const colorMap = {
-  technologyAndSoftwareServices: '#0000FF', 
-  educationAndInstituteService:'#ffd700',
-  hotelsTransportFoodandTourism: '#00ff00',
-  energyandUtilityServices: '#ff0000',
-  retailAndE_Commerce: '#00bfff',
-  entertainmentAndInformationService: '#ff00ff',
-  healthCareAndMedicalServices: '#008080',
-  financeAndBankingServices: '#ff8000',
-  manufacturingIndustries: '#000000',
-  other: '#FFFFFF',
+  technologyAndSoftwareServices     : '#4d79ff',
+  educationAndInstituteService      : '#ffd700',
+  hotelsTransportFoodandTourism     : '#00cc66',
+  energyandUtilityServices          : '#ff4444',
+  retailAndE_Commerce               : '#00cfff',
+  entertainmentAndInformationService: '#ff44ff',
+  healthCareAndMedicalServices      : '#00b3b3',
+  financeAndBankingServices         : '#ff9933',
+  manufacturingIndustries           : '#aaaaaa',
+  other                             : '#777777',
 };
-  
-function generateGrid(data) {
-  const totalScreen = document.getElementById('totalscreen');
-  for (let i = 1; i <= 1; i++) {
-    const screen = document.createElement('div');
-    screen.className = 'screens';
-    screen.id = `screen${i}`;
-  
-    for (let j = 1; j <= 40; j++) {
-      const set = document.createElement('div');
-      set.className = 'set';
-      set.id = `set${j}`;
-  
-      for (let k = 1; k <= 15; k++) {
-        const boxId = 600 * (i - 1) + (j - 1) * 15 + k;
-        const box = document.createElement('div');
-        box.className = `select${k}`;
-        box.id = `box${boxId}`;
-  
-        let borderColor = 'rgba(0, 0, 0, 0.2)';
-  
-        if (data.technologyAndSoftwareServices.includes(boxId)) borderColor = colorMap.technologyAndSoftwareServices;
-        else if (data.educationAndInstituteService.includes(boxId)) borderColor = colorMap.educationAndInstituteService;
-        else if (data.hotelsTransportFoodandTourism.includes(boxId)) borderColor = colorMap.hotelsTransportFoodandTourism;
-        else if (data.energyandUtilityServices.includes(boxId)) borderColor = colorMap.energyandUtilityServices;
-        else if (data.retailAndE_Commerce.includes(boxId)) borderColor = colorMap.retailAndE_Commerce;
-        else if (data.entertainmentAndInformationService.includes(boxId)) borderColor = colorMap.entertainmentAndInformationService;
-        else if (data.healthCareAndMedicalServices.includes(boxId)) borderColor = colorMap.healthCareAndMedicalServices;
-        else if (data.financeAndBankingServices.includes(boxId)) borderColor = colorMap.financeAndBankingServices;
-        else if (data.manufacturingIndustries.includes(boxId)) borderColor = colorMap.manufacturingIndustries;
-        else if (data.other.includes(boxId)) borderColor = colorMap.other;
 
-        box.style.border = `2.4px solid ${borderColor}`;
-  
-        const number = document.createElement('span');
-        number.className = 'number';
-        number.id = `text${boxId}`;
-        number.textContent = (j - 1) * 15 + k;
-  
-        box.appendChild(number);
-        set.appendChild(box);
-      }
-      screen.appendChild(set);
-    }
-    totalScreen.appendChild(screen);
-  }
-  loadImages();
+// ════════════════════════════════════════════════════════════
+//  COMPANY DATA — SINGLE SOURCE OF TRUTH
+//
+//  To add a company:
+//    1. Add one object to this array.
+//    2. Place the logo at /screenone/box{N}.png  (N = box number).
+//    The grid, border colour and popup are fully automatic.
+//
+//  Fields:
+//    box         – grid slot (1–600)
+//    name        – company name shown in popup
+//    shortName   – short code shown above the name
+//    icon        – path to the logo image
+//    category    – key from colorMap (sets the border colour)
+//    serviceType – label shown under the name in the popup
+//    links       – leave any value "" to hide that button in popup
+// ════════════════════════════════════════════════════════════
+const companies = [
+  {
+    box        : 76,
+    name       : 'LogoHub',
+    shortName  : 'LH',
+    icon       : '/screenone/box38.png',
+    category   : 'entertainmentAndInformationService',
+    serviceType: 'Information & Directory Service',
+    links: {
+      website  : 'https://www.logohub.info/',
+      youtube  : '',
+      instagram: '',
+      whatsapp : '',
+      location : '',
+    },
+  },
+  {
+    box        : 121,
+    name       : 'Andhra Ruchulu',
+    shortName  : 'AR',
+    icon       : '/screenone/box61.png',
+    category   : 'hotelsTransportFoodandTourism',
+    serviceType: 'Food & Cooking Channel',
+    links: {
+      website  : '',
+      youtube  : 'https://www.youtube.com/@Andhraruchulu537',
+      instagram: '',
+      whatsapp : '',
+      location : '',
+    },
+  },
+  {
+    box        : 151,
+    name       : 'Kutti Kathaigal',
+    shortName  : 'KK',
+    icon       : '/screenone/box76.png',
+    category   : 'entertainmentAndInformationService',
+    serviceType: 'Entertainment & Stories',
+    links: {
+      website  : '',
+      youtube  : 'https://www.youtube.com/@KuttiKathaigal2026',
+      instagram: '',
+      whatsapp : '',
+      location : '',
+    },
+  },
+  {
+    box        : 153,
+    name       : 'Meow Meow Melody TV',
+    shortName  : 'MMM',
+    icon       : '/screenone/box77.png',
+    category   : 'entertainmentAndInformationService',
+    serviceType: 'Kids Entertainment',
+    links: {
+      website  : '',
+      youtube  : 'https://www.youtube.com/@MeowMeowMelodyTV/shorts',
+      instagram: '',
+      whatsapp : '',
+      location : '',
+    },
+  },
+  {
+    box        : 158,
+    name       : 'Sinu Cartoons',
+    shortName  : 'SC',
+    icon       : '/screenone/box79.png',
+    category   : 'entertainmentAndInformationService',
+    serviceType: 'Cartoon Entertainment',
+    links: {
+      website  : '',
+      youtube  : 'https://www.youtube.com/@sinucartoons',
+      instagram: '',
+      whatsapp : '',
+      location : '',
+    },
+  },
+  // ── ADD MORE COMPANIES HERE ──────────────────────────────
+  // {
+  //   box        : 10,
+  //   name       : 'My Company',
+  //   shortName  : 'MC',
+  //   icon       : '/screenone/box10.png',
+  //   category   : 'technologyAndSoftwareServices',
+  //   serviceType: 'Software & IT Services',
+  //   links: {
+  //     website  : 'https://www.mycompany.com',
+  //     youtube  : '',
+  //     instagram: 'https://instagram.com/mycompany',
+  //     whatsapp : 'https://wa.me/919876543210',
+  //     location : 'https://maps.google.com/?q=My+Company',
+  //   },
+  // },
+];
+
+// ── Fast lookup: box number → company object ─────────────────
+const companyByBox = Object.fromEntries(companies.map(c => [c.box, c]));
+
+// ── Resolve border colour for any box ───────────────────────
+function getBorderColor(boxId) {
+  const company = companyByBox[boxId];
+  if (company) return colorMap[company.category] || 'rgba(255,255,255,0.08)';
+  return 'rgba(255,255,255,0.08)';
 }
-  
+
+// ════════════════════════════════════════════════════════════
+//  GRID GENERATOR  — 40 sets × 15 slots = 600 boxes
+// ════════════════════════════════════════════════════════════
+function generateGrid() {
+  const totalScreen = document.getElementById('totalscreen');
+  if (!totalScreen) return;
+
+  const screen = document.createElement('div');
+  screen.className = 'screens';
+  screen.id = 'screen1';
+
+  for (let setIndex = 1; setIndex <= 40; setIndex++) {
+    const set = document.createElement('div');
+    set.className = 'set';
+    set.id = `set${setIndex}`;
+
+    for (let slotIndex = 1; slotIndex <= 15; slotIndex++) {
+      const boxId = (setIndex - 1) * 15 + slotIndex;
+
+      const box = document.createElement('div');
+      box.className = `select${slotIndex}`;
+      box.id = `box${boxId}`;
+      box.style.border = `2px solid ${getBorderColor(boxId)}`;
+
+      const label = document.createElement('span');
+      label.className = 'number';
+      label.id = `text${boxId}`;
+      label.textContent = boxId;
+
+      box.appendChild(label);
+      set.appendChild(box);
+    }
+    screen.appendChild(set);
+  }
+  totalScreen.appendChild(screen);
+}
+
+// ════════════════════════════════════════════════════════════
+//  IMAGE LOADER
+//  Only iterates over companies[]. On image load success,
+//  applies background and wires the click → openModal().
+// ════════════════════════════════════════════════════════════
 function loadImages() {
- const links = [
-    null, //0
-    null,null,null,null,null,null,null,null,null,null, //4-10
-    null,null,null,null,null,null,null,null,null,null, //11-20
-    null,null,null,null,null,null,null,null,null,null, //21-30
-    null,null,null,null,null,null,null,null,null,null, //31-40
-    null,null,null,null,null,null,null,null,null,null, //41-50
-    null,null,null,null,null,null,null,null,null,null, //51-60
-    null,null,null,null,null,null,null,null,null,null, //61-70
-    null,null,null,null,null,//71-75
-    "https://www.logohub.info/",//76
-    null,null,null,null, //77-80
-    null,null,null,null,null,null,null,null,null,null, //81-90
-    null,null,null,null,null,null,null,null,null,null, //91-100
-    null,null,null,null,null,null,null,null,null,null, //101-110
-    null,null,null,null,null,null,null,null,null,null, //111-120
-    "https://www.youtube.com/@Andhraruchulu537",//121
-    null,null,null,null,null,null,null,null,null, //122-130
-    null,null,null,null,null,null,null,null,null,null, //131-140
-    null,null,null,null,null,null,null,null,null,null, //141-150
-    "https://www.youtube.com/@KuttiKathaigal2026",//151
-    null,//152
-    "https://www.youtube.com/@MeowMeowMelodyTV/shorts",//153
-    null,null,null,null,//154-157
-    "https://www.youtube.com/@sinucartoons",//158
-    null,null, //159-160
-    null,null,null,null,null,null,null,null,null,null, //161-170
-    null,null,null,null,null,null,null,null,null,null, //171-180
-    null,null,null,null,null,null,null,null,null,null, //181-190
-    null,null,null,null,null,null,null,null,null,null, //191-200
-    null,null,null,null,null,null,null,null,null,null, //201-210
-    null,null,null,null,null,null,null,null,null,null, //211-220
-    null,null,null,null,null,null,null,null,null,null, //221-230
-    null,null,null,null,null,null,null,null,null,null, //231-240
-    null,null,null,null,null,null,null,null,null,null, //241-250
-    null,null,null,null,null,null,null,null,null,null, //251-260
-    null,null,null,null,null,null,null,null,null,null, //261-270
-    null,null,null,null,null,null,null,null,null,null, //271-280
-    null,null,null,null,null,null,null,null,null,null, //281-290
-    null,null,null,null,null,null,null,null,null,null, //291-300
-    null,null,null,null,null,null,null,null,null,null, //301-310
-    null,null,null,null,null,null,null,null,null,null, //311-320
-    null,null,null,null,null,null,null,null,null,null, //321-330
-    null,null,null,null,null,null,null,null,null,null, //331-340
-    null,null,null,null,null,null,null,null,null,null, //341-350
-    null,null,null,null,null,null,null,null,null,null, //351-360
-    null,null,null,null,null,null,null,null,null,null, //361-370
-    null,null,null,null,null,null,null,null,null,null, //371-380
-    null,null,null,null,null,null,null,null,null,null, //381-390
-    null,null,null,null,null,null,null,null,null,null, //391-400
-    null,null,null,null,null,null,null,null,null,null, //401-410
-    null,null,null,null,null,null,null,null,null,null, //411-420
-    null,null,null,null,null,null,null,null,null,null, //421-430
-    null,null,null,null,null,null,null,null,null,null, //431-440
-    null,null,null,null,null,null,null,null,null,null, //441-450
-    null,null,null,null,null,null,null,null,null,null, //451-460
-    null,null,null,null,null,null,null,null,null,null, //461-470
-    null,null,null,null,null,null,null,null,null,null, //471-480
-    null,null,null,null,null,null,null,null,null,null, //481-490
-    null,null,null,null,null,null,null,null,null,null, //491-500
-    null,null,null,null,null,null,null,null,null,null, //501-510
-    null,null,null,null,null,null,null,null,null,null, //511-520
-    null,null,null,null,null,null,null,null,null,null, //521-530
-    null,null,null,null,null,null,null,null,null,null, //531-540
-    null,null,null,null,null,null,null,null,null,null, //541-550
-    null,null,null,null,null,null,null,null,null,null, //551-560
-    null,null,null,null,null,null,null,null,null,null, //561-570
-    null,null,null,null,null,null,null,null,null,null, //571-580
-    null,null,null,null,null,null,null,null,null,null, //581-590
-    null,null,null,null,null,null,null,null,null,null, //591-600
+  companies.forEach(company => {
+    const container = document.getElementById(`box${company.box}`);
+    const label     = document.getElementById(`text${company.box}`);
+    if (!container) return;
+
+    const img = new Image();
+    img.src = company.icon;
+
+    img.onload = () => {
+      container.style.backgroundImage    = `url(${company.icon})`;
+      container.style.backgroundColor    = '#ffffff';
+      container.style.backgroundSize     = 'cover';
+      container.style.backgroundPosition = 'center';
+      container.style.cursor             = 'pointer';
+      if (label) label.style.display = 'none';
+
+      // Wire click to open popup modal
+      container.addEventListener('click', () => openModal(company));
+    };
+
+    img.onerror = () => {
+      // Image missing — stays as a numbered placeholder
+      container.style.cursor = 'default';
+    };
+  });
+}
+
+// ════════════════════════════════════════════════════════════
+//  POPUP MODAL — injected into <body> once at startup
+// ════════════════════════════════════════════════════════════
+function injectModal() {
+  const wrap = document.createElement('div');
+  wrap.id = 'companyModal';
+  wrap.innerHTML = `
+    <div class="m-overlay" id="mOverlay" role="dialog" aria-modal="true" aria-labelledby="mName">
+      <div class="m-card" id="mCard">
+        <button class="m-close" id="mClose" aria-label="Close">&#x2715;</button>
+        <div class="m-logo-wrap">
+          <img class="m-logo" id="mLogo" src="" alt="Company logo">
+          <span class="m-badge" id="mBadge"></span>
+        </div>
+        <div class="m-info">
+          <p  class="m-short"   id="mShort"></p>
+          <h2 class="m-name"    id="mName"></h2>
+          <p  class="m-service" id="mService"></p>
+        </div>
+        <div class="m-actions" id="mActions"></div>
+      </div>
+    </div>`;
+  document.body.appendChild(wrap);
+
+  document.getElementById('mOverlay').addEventListener('click', e => {
+    if (e.target.id === 'mOverlay') closeModal();
+  });
+  document.getElementById('mClose').addEventListener('click', closeModal);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+}
+
+function openModal(company) {
+  document.getElementById('mLogo').src             = company.icon;
+  document.getElementById('mLogo').alt             = company.name;
+  document.getElementById('mShort').textContent    = company.shortName;
+  document.getElementById('mName').textContent     = company.name;
+  document.getElementById('mService').textContent  = company.serviceType;
+  document.getElementById('mBadge').style.background = colorMap[company.category] || '#aaa';
+
+  const actions = document.getElementById('mActions');
+  actions.innerHTML = '';
+
+  const actionDefs = [
+    { key: 'website',   label: 'Website',   svg: svgGlobe()     },
+    { key: 'youtube',   label: 'YouTube',   svg: svgYouTube()   },
+    { key: 'instagram', label: 'Instagram', svg: svgInstagram() },
+    { key: 'whatsapp',  label: 'WhatsApp',  svg: svgWhatsApp()  },
+    { key: 'location',  label: 'Location',  svg: svgLocation()  },
   ];
 
-  for (let i = 1; i <= 600; i++) {
-    const imageUrl = `/screenone/box${i}.png`;
-    const container = document.getElementById(`box${i}`);
-    const text = document.getElementById(`text${i}`);
+  actionDefs.forEach(({ key, label, svg }) => {
+    const url = company.links && company.links[key];
+    if (!url) return;
+    const a = document.createElement('a');
+    a.href      = url;
+    a.target    = '_blank';
+    a.rel       = 'noopener noreferrer';
+    a.className = 'm-action-btn';
+    a.setAttribute('aria-label', label);
+    a.innerHTML = svg + `<span>${label}</span>`;
+    actions.appendChild(a);
+  });
 
-    if (!container) continue;
-
-    const image = new Image();
-    image.src = imageUrl;
-
-    image.onload = function () {
-      container.style.backgroundImage = `url(${imageUrl})`;
-      container.style.backgroundColor = "#FFFFFF";
-      if (text) text.style.display = "none";
-
-      // rotate links safely
-      const linkIndex = i % links.length;
-
-      container.addEventListener("click", function () {
-        const link = links[linkIndex];
-        if (link) {
-          window.open(link, "_blank");
-        }
-      });
-    };
-  }
+  document.getElementById('mOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
 }
-  
 
+function closeModal() {
+  document.getElementById('mOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
 
+// ════════════════════════════════════════════════════════════
+//  SVG ICONS
+// ════════════════════════════════════════════════════════════
+const svgAttrs = `viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"`;
 
+function svgGlobe() {
+  return `<svg ${svgAttrs}><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`;
+}
+function svgYouTube() {
+  return `<svg viewBox="0 0 24 24" fill="currentColor">
+    <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29.94 29.94 0 0 0 1 12a29.94 29.94 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29.94 29.94 0 0 0 23 12a29.94 29.94 0 0 0-.46-5.58z"/>
+    <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="white"/></svg>`;
+}
+function svgInstagram() {
+  return `<svg ${svgAttrs}><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>`;
+}
+function svgWhatsApp() {
+  return `<svg viewBox="0 0 24 24" fill="currentColor">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+    <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.855L.057 23.117a.75.75 0 0 0 .916.919l5.404-1.461A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.726 9.726 0 0 1-4.964-1.357l-.356-.21-3.688.997 1.006-3.598-.232-.371A9.725 9.725 0 0 1 2.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/></svg>`;
+}
+function svgLocation() {
+  return `<svg ${svgAttrs}><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`;
+}
+
+// ════════════════════════════════════════════════════════════
+//  MODAL STYLES — injected into <head> once
+//  BUG FIX: every selector prefixed with '#companyModal'
+//  (original missing '#' made pointer-events:none permanent)
+// ════════════════════════════════════════════════════════════
+function injectModalStyles() {
+  const style = document.createElement('style');
+  style.textContent = `
+    #companyModal .m-overlay {
+      position: fixed; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,5,20,0.75);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      z-index: 9999; opacity: 0; pointer-events: none;
+      transition: opacity 0.22s ease;
+    }
+    #companyModal .m-overlay.active { opacity: 1; pointer-events: all; }
+
+    #companyModal .m-card {
+      position: relative; width: 90%; max-width: 400px;
+      max-height: 90vh; overflow-y: auto;
+      background: #131b2e;
+      border: 1px solid rgba(192,193,255,0.15);
+      border-radius: 24px; padding: 36px 28px 28px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.60), 0 4px 16px rgba(0,0,0,0.30);
+      transform: scale(0.86) translateY(28px); opacity: 0;
+      transition: transform 0.32s cubic-bezier(0.34,1.56,0.64,1), opacity 0.22s ease;
+    }
+    #companyModal .m-overlay.active .m-card { transform: scale(1) translateY(0); opacity: 1; }
+
+    #companyModal .m-close {
+      position: absolute; top: 14px; right: 14px;
+      width: 32px; height: 32px; border-radius: 50%; border: none;
+      background: rgba(255,255,255,0.08); color: #c0c1ff;
+      font-size: 15px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.16s, transform 0.16s;
+    }
+    #companyModal .m-close:hover { background: #c0c1ff; color: #131b2e; transform: rotate(90deg); }
+
+    #companyModal .m-logo-wrap {
+      display: flex; justify-content: center; align-items: center;
+      margin-bottom: 18px; position: relative;
+    }
+    #companyModal .m-logo {
+      width: 96px; height: 96px; object-fit: contain; border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.40);
+      background: #0b1326; padding: 6px;
+    }
+    #companyModal .m-badge {
+      position: absolute; bottom: -4px; right: calc(50% - 60px);
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 3px solid #131b2e; box-shadow: 0 1px 6px rgba(0,0,0,0.40);
+    }
+
+    #companyModal .m-info { text-align: center; margin-bottom: 24px; }
+    #companyModal .m-short {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: rgba(192,193,255,0.55); margin: 0 0 4px;
+    }
+    #companyModal .m-name { font-size: 22px; font-weight: 800; color: #dae2fd; margin: 0 0 6px; line-height: 1.2; }
+    #companyModal .m-service { font-size: 13px; font-weight: 500; color: #8890aa; margin: 0; }
+
+    #companyModal .m-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    #companyModal .m-action-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      padding: 12px 14px 10px; min-width: 68px;
+      border-radius: 14px; background: rgba(255,255,255,0.06);
+      text-decoration: none; color: #c0c1ff;
+      border: 1px solid rgba(192,193,255,0.12);
+      transition: background 0.18s, transform 0.16s, box-shadow 0.18s;
+    }
+    #companyModal .m-action-btn:hover {
+      background: #c0c1ff; color: #0b1326;
+      transform: translateY(-3px); box-shadow: 0 8px 24px rgba(192,193,255,0.20);
+    }
+    #companyModal .m-action-btn svg  { width: 24px; height: 24px; }
+    #companyModal .m-action-btn span { font-size: 10px; font-weight: 700; letter-spacing: 0.04em; }
+    #companyModal .m-card::-webkit-scrollbar { width: 4px; }
+    #companyModal .m-card::-webkit-scrollbar-thumb { background: rgba(192,193,255,0.20); border-radius: 4px; }
+  `;
+  document.head.appendChild(style);
+}
+
+// ════════════════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  injectModalStyles();
+  injectModal();
+  generateGrid();
+  loadImages();
+});
