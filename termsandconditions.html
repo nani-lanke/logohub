@@ -1,261 +1,495 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Terms and Conditions</title>
-    <link rel="icon" type="imag/x-icon" href="icons/company.png">
-    <style>
-        body{
-        	width:100%;
-        	margin:0px 0px;					padding:0px 0px;
-			background:linear-gradient(#f3faff, #e7f5fe, #dbf0fe, #cfebfd, #c3e7fd, #b7e2fc, #abddfc, #9fd8fb);
-        }
-        .container{
-            width:70%; 						position:relative;
-            margin:20px auto;				padding:20px 40px;
-            background-color:#fff;		border-radius:8px;
-            box-shadow:2px 2px 10px rgba(0, 0, 0, 0.1);
-            line-height:1.6;
-        }
-        h1{
-        	margin:20px auto 0px auto;		padding:0px  0px;
-        	color:#000000; 				font-size:24px;
-        }
-        h2{
-        	margin:0px auto 0px auto;		padding:0px  0px;
-        	color:#000000; 				font-size:18px;
-        }
-        ul{
-        	margin:0px 0px;					padding:0px 0px 0px 15px;
-            list-style-type:disc;
-        }
-        p{
-        	margin:0px auto 0px auto;		padding:0px  0px;
-			font-size:16px;					font-weight:500;
-			text-align:justify;				color:#000000;
-		}
-        li{
-        	margin:0px auto 0px auto;		padding:0px  0px;
-			font-size:16px;					font-weight:500;
-			text-align:justify;				
-		}
-        .footer{
-            text-align:center;				font-size:14px;
-            color:#888;					margin-top:30px;
-            margin-bottom:20px;				padding-bottom:10px;
-        }
-        .close{
-		    height:30px;   					width:30px;
-		   	right:10px; 					top:10px;    
-            display:flex;  					align-items:center;    
-            justify-content:center;    		flex-direction:row;
-		    font-size:22px;    				font-weight:700;
-		    text-align:center;  			text-decoration:none;
-		    border-radius:50%;				border:0;		    
-		    color:#000000;				background-color:transparent;
-		    position:absolute;  			z-index:100;   
-		}
-		.close:hover{
-		    opacity:0.9;
-            color:#FFFFFF; 				background-color:#007EE3;
-		}
-        a {color:#0066cc;					text-decoration:none;}
-        a:hover {text-decoration:none;}
-        @media ((max-width:699px)and (min-width:210px)){
-	       	.container{
-	            width:100%; 					position:relative;
-	            margin:0px 0px;					padding:0px 0px;
-	            background-color:#fff;			border-radius:0px;
-	            box-shadow:none;
-	        }
-	        h1{
-	        	margin:0px auto 0px auto;		padding:25px  25px 0px;
-	        	color:#000000; 					font-size:24px;
-	        }
-	        h2{
-	        	margin:0px auto 0px auto;		padding:0px  25px;
-	        	color:#000000; 					font-size:18px;
-	        }
-	        ul{
-	        	margin:0px 0px;					padding:0px 15px 0px 45px;
-	            list-style-type:disc;
-	        }
-	        p{
-	        	margin:0px auto 0px auto;		padding:0px  25px;
-				font-size:16px;					font-weight:500;
-				text-align:justify;				color:#000000;
-			}
-	        li{
-	        	margin:0px auto 0px auto;		padding:0px  15px 0px 0px;
-				font-size:16px;					font-weight:500;
-				text-align:justify;				
-			}
-	        .footer{
-	            text-align:center;				font-size:14px;
-	            color:#888;						
-	            margin-top:30px;				margin-bottom:0px;
-	            padding-bottom:30px;
-	        }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms and Conditions — LogoHub</title>
+  <link rel="icon" type="image/x-icon" href="icons/company.png">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+    /* ── Design tokens ─────────────────────────────────────── */
+    :root {
+      --bg         : #0b1326;
+      --surface    : #131b2e;
+      --surface-mid: #171f33;
+      --surface-hi : #222a3d;
+      --border     : rgba(192, 193, 255, 0.12);
+      --text       : #dae2fd;
+      --text-dim   : #8890aa;
+      --accent     : #c0c1ff;
+      --accent-dark: #4d79ff;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Nunito', 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      padding: 0 0 56px;
+    }
+
+    /* ── Sticky header ──────────────────────────────────────── */
+    .page-header {
+      position: sticky; top: 0; z-index: 50; width: 100%;
+      background: rgba(11, 19, 38, 0.85);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.40);
+      padding: 13px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .site-title {
+      font-size: 20px; font-weight: 900;
+      color: var(--accent); text-decoration: none; letter-spacing: -0.5px;
+    }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 18px; border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: var(--accent); font-size: 14px; font-weight: 700;
+      text-decoration: none;
+      transition: background 0.18s;
+    }
+    .back-btn:hover { background: rgba(192, 193, 255, 0.12); }
+
+    /* ── Page title ─────────────────────────────────────────── */
+    .page-title {
+      text-align: center;
+      padding: 44px 24px 8px;
+    }
+    .page-title h1 {
+      font-size: clamp(24px, 4vw, 36px); font-weight: 900;
+      color: var(--accent); margin-bottom: 10px; letter-spacing: -0.5px;
+    }
+    .page-title p {
+      font-size: 15px; font-weight: 600; color: var(--text-dim);
+      max-width: 560px; margin: 0 auto; line-height: 1.7;
+    }
+
+    /* ── Main container ─────────────────────────────────────── */
+    .container {
+      max-width: 820px;
+      margin: 32px auto 0;
+      padding: 0 20px;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+
+    /* ── Section card ───────────────────────────────────────── */
+    .section-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 32px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.28);
+      transition: border-color 0.2s;
+    }
+    .section-card:hover { border-color: rgba(192, 193, 255, 0.26); }
+
+    /* Accent top bar for major sections */
+    .card-tc  { border-top: 3px solid var(--accent-dark); }
+    .card-pp  { border-top: 3px solid #00cc66; }
+    .card-ch  { border-top: 3px solid #ff9933; }
+
+    /* ── Headings ────────────────────────────────────────────── */
+    .section-label {
+      font-size: 10px; font-weight: 900;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      margin-bottom: 20px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-label::after {
+      content: ""; flex: 1; height: 1px; background: var(--border);
+    }
+    .card-tc  .section-label { color: var(--accent-dark); }
+    .card-pp  .section-label { color: #00cc66; }
+    .card-ch  .section-label { color: #ff9933; }
+
+    h2 {
+      font-size: 16px; font-weight: 900;
+      color: var(--accent);
+      margin: 20px 0 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    h2:first-of-type { margin-top: 0; }
+
+    /* ── Body text ───────────────────────────────────────────── */
+    p {
+      font-size: 15px; font-weight: 600;
+      color: var(--text-dim); line-height: 1.8;
+      text-align: justify;
+      margin-bottom: 12px;
+    }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── Numbered sub-items ──────────────────────────────────── */
+    .item {
+      display: flex; gap: 14px;
+      margin-bottom: 14px;
+    }
+    .item:last-child { margin-bottom: 0; }
+    .item-num {
+      flex-shrink: 0; width: 26px; height: 26px;
+      background: var(--surface-hi);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px; font-weight: 900; color: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 2px;
+    }
+    .item-body { flex: 1; }
+    .item-body strong {
+      display: block; font-size: 14px; font-weight: 800;
+      color: var(--text); margin-bottom: 4px;
+    }
+    .item-body p { margin-bottom: 0; }
+
+    /* ── Bullet list ─────────────────────────────────────────── */
+    .bullet-list {
+      list-style: none; padding: 0; margin: 8px 0 0;
+    }
+    .bullet-list li {
+      display: flex; gap: 10px;
+      font-size: 14px; font-weight: 600;
+      color: var(--text-dim); line-height: 1.7;
+      margin-bottom: 6px; text-align: justify;
+    }
+    .bullet-list li::before {
+      content: "•"; color: var(--accent); font-size: 16px;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .bullet-list li:last-child { margin-bottom: 0; }
+
+    /* ── Footer note ─────────────────────────────────────────── */
+    .footer-note {
+      text-align: center;
+      padding: 28px 24px;
+      font-size: 13px; font-weight: 600;
+      color: var(--text-dim);
+      border-top: 1px solid var(--border);
+      margin-top: 8px;
+    }
+
+    /* ── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .container { padding: 0 12px; }
+      .section-card { padding: 22px 18px; }
+      p, .bullet-list li, .item-body p { font-size: 14px; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-    	<a href="sendrequest.html" class="close" id="close-blue">X</a>
-        <h1>Terms and Conditions</h1>
-	        <p>Welcome to Company Links. If you use or access our services, you undertake to agree and be bound by the below Terms and 
-	        Conditions ("Terms"). You should not use our services if you don't agree to the Terms.</p>
-	        
-        <h2>1. Acceptance of Terms</h2>
-	        <ul><li>Use of our site or services will imply acceptance of these Terms and Conditions and of our Privacy Policy</li></ul>
-	        <ul><li>By utilizing this service, you undertake to ensure that no content accessed or shared through your account is not 
-	        suitable or belongs to the 18+ or adult content category. In case it is found that your account is accessing, sharing, or 
-	        promoting content that is against this policy, your account will be liable for removal without notice.
-	        <br>Please make sure that you use the service according to the guidelines and that all content is suitable for a general 
-	        audience. Accounts that fail to comply with these terms will be closed to preserve the integrity of the platform.</li></ul>
-	        
-        <h2>2. Account Creation</h2>
-	        <ul><li>Some features may require you to sign up for an account. You consent to entering accurate and complete information 
-	        at the time of registration and maintaining your account details updated.</li></ul>
 
-		<h2>3. User Obligations</h2>
-        <p>As a subscriber to our services, you have an obligation to make sure your actions are legal under our terms and the relevant 
-        laws. The following is a more detailed clarification of your obligation:</p>
-        <ul style="list-style-type:none;"><li><strong>1. Lawful Use of Services:</strong> You agree to use our services solely for legal 
-        and ethical purposes. This means you must not use the platform to engage in any activity that violates local, state, or 
-        international laws. For example, you must not use our service to distribute illegal content, engage in cybercrime, or perform any 
-        actions that could harm individuals or the community.</li></ul>
-		<ul style="list-style-type:none;"><li><Strong>2. Non-Disruption of Website or Service Functionality:</Strong> You agree not to 
-		engage in any behavior that could negatively affect the functionality of our website or services. This includes, but is not 
-		limited to:
-			<ul style="padding-right:0px;"><li style="padding-right:0px;" >Tying to hack, overload, or disrupt the server or infrastructure 
-			supporting the platform.</li></ul>
-			<ul style="padding-right:0px;"><li style="padding-right:0px;">Interfering with normal website operation or using tools which 
-			may cause errors, crashes, or data loss.</li></ul>
-			<ul style="padding-right:0px;"><li style="padding-right:0px;">Embedding malware, viruses, or malicious software that may harm 
-			or disable the platform or other users' systems.</li></ul>
-		</li></ul>
-		<ul style="list-style-type:none;"><li><strong>3. No Fraudulent or Damaging Activities:</strong> You agree not to use our services 
-		for fraudulent, harmful, or malicious activities. This includes:
-			<ul style="padding-right:0px;"><li style="padding-right:0px;">Impersonation or giving false or misleading information.</li></ul>
-			<ul style="padding-right:0px;"><li style="padding-right:0px;">Identity theft, scams, or any activity designed to defraud or 
-			deceive.</li></ul>
-			<ul style="padding-right:0px;"><li style="padding-right:0px;">Distribution of damaging content (e.g., hate content, 
-			misinformation, or abusive content).</li></ul>
-			<ul style="padding-right:0px;"><li style="padding-right:0px;">Committing harassment, bullying, or anything that could end up 
-			harming or distressing others on the service.</li></ul>
-		</li></ul>
-		<p>By becoming a part of these responsibilities, you assist in keeping our site safe, usable, and within the law for all users. 
-		If we deem you to be breaching these responsibilities, we reserve the right to suspend or close your account to safeguard the 
-		integrity of the service.</p>
-		
-        <h2>4. Payments</h2>
-        <p>By accessing and using our paid services, you acknowledge the following terms and conditions for payments:</p>
-        <ul style="list-style-type:none;"><li><strong>1. Payment of Fees:</strong> Upon accessing or using our paid services, you agree 
-        to pay all fees, taxes, and charges that apply to the used services. These include any amounts charged for subscribing to premium 
-        services, buying products, or any service that necessitates a monetary transaction.</li></ul>
-		<ul style="list-style-type:none;"><li><strong>2. Payment Processor:</strong>All payments made for our services will be processed 
-		through a third-party Payment Processor (such as PayPal). This means you’ll enter your payment details (such as credit card 
-		information) directly into their secure system, and the payment will be handled by that provider.
-			<ul style="padding-right:0px;"><li style="padding-right:0px;"><strong>Payment Processor’s Terms:</strong> When you transact 
-			with their service, you automatically agree with their terms of payment processor also. These are rules that will outline how 
-			they conduct your transactions, how they take care of your payment data and any related refunds or chargebacks.
-			<br>In case you are paying by any card, it could ask for your address registered with PayPal to successfully complete the 
-			payment. Make sure your billing address, which you have entered here, is the same as on your bank or payment service record 
-			in order to steer clear of a payment failure. In the event of mismatching addresses, payment might get denied or postponed. 
-			</li></ul>
-			<ul style="padding-right:0px;"><li style="padding-right:0px;"><strong>Security:</strong> Your payment data will be safely 
-			processed by the payment processor, and we never store sensitive payment information (such as credit card numbers) on our 
-			servers.</li></ul></li></ul>
-		<ul style="list-style-type:none;"><li><strong>3. Box Selection Responsibility:</strong>After choosing a box from the container 
-		and making your payment, it is your responsibility to ensure that the chosen box is proper for your requirements. In case you 
-		accidentally choose the wrong box, kindly observe that no modifications will be done to the box in the container once payment 
-		has been made and that there will be no refund. You are requested to confirm your choice before making the payment. If you want 
-		to choose a different box, you have to do so before you make the payment, as there will be no modification afterward..</li></ul>
-		<ul style="list-style-type:none;"><li><strong>4. Page Access and Service Downtime:</strong>If a server problem arises or the 
-		payment page is inaccessible because of a technical problem, we will address the problem and make the page accessible again 
-		within 7 working days. In case the problem takes more than 7 days to be resolved, we will extend your date of expiration to make 
-		up for the downtime to ensure that you get the entire service period..</li></ul>
-		<ul style="list-style-type:none;"><li><strong>5. Refunds and Chargebacks:</strong>Refunds will only be made in accordance with 
-		the provisions laid down by the payment processor or in extraordinary situations as decided by our staff. We do not issue refunds 
-		for incorrect box orders or other problems resulting from user mistake. If you experience a problem with your transaction or think 
-		that a refund is necessary, please get in touch with our support team within 30 days of purchase, and we will take a look at your 
-		situation.</li></ul>
+  <!-- ── Sticky Header ─────────────────────────────────────── -->
+  <header class="page-header">
+    <a class="site-title" href="/">LogoHub</a>
+    <a class="back-btn" href="sendrequest.html">← Back</a>
+  </header>
 
-		<h1>Privacy Policy</h1>
-	        <p>At Company Link, we value your privacy. This Privacy Policy sets out what personal information we collect, how we use it, 
-	        and your data rights.</p>
-	        
-        <h2>1. Information We Collect</h2>
-	        <ul><li>We gather a range of information to offer and improve your experience with our services. This may include personal 
-	        details like your email address, name, and account information, which we use for managing your account, contacting you, and 
-	        processing payments. We also collect billing information to process your purchases and ensure that payments are processed in 
-	        the correct manner.</li></ul>
-	        <ul><li>Apart from personal data, we also collect usage data to learn more about how you use our services. This comprises 
-	        data of your interactions on the platform and cookies or similar tracking technologies that enable us to recall preferences, 
-	        analyze trends, and enhance functionality. You can adjust cookie settings using your browser if you do not wish to have them 
-	        used.</li></ul>
-	        <ul><li>We can also receive third-party information from other sources to provide a seamless user experience. This may be 
-	        information from a payment processor to confirm transactions. All such information is employed to provide a better service, 
-	        increase security, and personalize your experience.</li></ul>  
-	             
-		<h2>2. How We Use Your Information</h2>
-        <p>This section defines the reasons why the company collects and processes your personal data. These are the major points:</p>
-        <ul style="list-style-type:none;"><li><strong>1. Provide and maintain our services:</strong> The company needs to use your 
-        information to deliver the services you’ve signed up for.Improve functionality and user experience: The company collects and 
-        uses data to make its services better. This could involve fixing bugs, optimizing features, or designing new ones based on user 
-        needs.</li></ul>
-		<ul style="list-style-type:none;"><li><strong>2. Improve functionality and user experience:</strong> The firm gathers and employs 
-		data to improve its services. This might mean correcting bugs, optimizing functionality, or developing new features in line with 
-		users' requirements.</li></ul>
-		<ul style="list-style-type:none;"><li><strong>3. Notify you with service-related information:</strong> For instance, the firm 
-		might have to notify you regarding updates, changes to the service, billing issues, or outages for maintenance.</li></ul>
+  <!-- ── Page Title ────────────────────────────────────────── -->
+  <div class="page-title">
+    <h1>Terms &amp; Conditions</h1>
+    <p>Please read these terms carefully before using LogoHub. By using our service, you agree to everything written here.</p>
+  </div>
 
-		
-		<h2>3. Cookies</h2>
-        <p>Cookies are tiny files placed on your device when you browse a website. This part describes the company's use of cookies for 
-        the following:</p>
-        <ul style="list-style-type:none;"><li><strong>1. Improve your experience:</strong> Cookies may hold your preferences or login 
-        details, so your next visit is more personalized and streamlined.</li></ul>
-		<ul style="list-style-type:none;"><li><strong>2. Gather information on how services are used:</strong> Cookies can be used to 
-		monitor user behavior (e.g., what pages you visit, how long you remain) that can be used to analyze and enhance the performance 
-		of the website.</li></ul>
-		<ul style="list-style-type:none;"><li><strong>4. Control cookie settings:</strong>You can manage the use of cookies on your device 
-		by changing your browser settings. This allows you to turn off cookies or be asked when cookies are being set.</li></ul>
+  <!-- ════════════════════════════════════════════════════════
+       TERMS AND CONDITIONS
+       ════════════════════════════════════════════════════════ -->
+  <div class="container">
 
-		
-        <h2>4. Sharing Your Information</h2>
-        <p>This is regarding sharing your own data with someone else. This is how it goes:</p>
-        <ul style="list-style-type:none;"><li><strong>1. Don't sell personal information:</strong> The company is vowing users that it 
-        doesn't sell or disclose their personal data to other firms for financial benefit.</li></ul>
-		<ul style="list-style-type:none;"><li><strong>2. Sharing with third-party service providers:</strong> While the company doesn't 
-		sell your data, it may share it with third-party service providers to help deliver the services you’ve requested. For instance, 
-		payment processors or cloud service providers may need access to your data to facilitate transactions or store information 
-		securely.</li></ul>
-		
-		 <h2>5. Data Security</h2>
-        <p>Here, the company is explaining the measures they take to protect your data:</p>
-        <ul style="list-style-type:none;"><li><strong>1. Industry-standard encryption and security measures:</strong>The business 
-        employs commonly accepted methods (such as encryption) to secure your personal information from intruders or theft.</li></ul>
-		<ul style="list-style-type:none;"><li><strong>Restrictions on security:</strong> Nonetheless, the company recognizes that there 
-		is no such thing as a foolproof security system. Although they make efforts to safeguard information, sending information over 
-		the internet involves some level of risk.</li></ul>
-		
+    <div class="section-card card-tc">
+      <div class="section-label">Terms and Conditions</div>
 
-        <h1>Changes to Terms and Policies</h1>
-	        <p>We can modify these Terms and Conditions and our Privacy Policy periodically to update changes in our services, business 
-	        practices, legal requirements, or other applicable factors. When these modifications are made, they will be published on our 
-	        website for your reference. In some situations, particularly where the changes are profound or significantly impact your use 
-	        of our services, we will notify you in advance by email or other means. It is essential that you periodically review these 
-	        updates, as continued use of our services after posting the changes constitutes your agreement to the updated Terms and 
-	        Policies.</p>
-	        
+      <p>
+        Welcome to LogoHub! When you use our website or any of our services, you agree to follow these Terms and Conditions.
+        If you do not agree, please do not use our services.
+      </p>
 
-        <div class="footer" >
-            <p>By accessing this site, you acknowledge that you have read and agreed to the above terms and conditions.</p>
+      <!-- 1. Acceptance -->
+      <h2>1. Acceptance of Terms</h2>
+      <ul class="bullet-list">
+        <li>Using our website means you have read and agreed to these Terms and to our Privacy Policy.</li>
+        <li>
+          You must not use our service to access, share, or promote any content that is not suitable for all ages (18+ or adult content).
+          If your account is found doing this, it will be removed without any warning.
+          Please keep all content suitable for everyone — accounts that break this rule will be closed to keep our platform safe.
+        </li>
+      </ul>
+
+      <!-- 2. Account Creation -->
+      <h2>2. Account Creation</h2>
+      <ul class="bullet-list">
+        <li>
+          Some features may need you to create an account. You agree to give accurate and truthful information when signing up,
+          and to keep your account details up to date.
+        </li>
+      </ul>
+
+      <!-- 3. User Obligations -->
+      <h2>3. What You Must and Must Not Do</h2>
+      <p>As a user of our service, you agree to behave responsibly and follow these rules:</p>
+
+      <div class="item">
+        <div class="item-num">1</div>
+        <div class="item-body">
+          <strong>Use Our Services Legally</strong>
+          <p>You may only use LogoHub for lawful and ethical activities. You must not use our platform to break any local,
+          national, or international laws — such as sharing illegal content or causing harm to others.</p>
         </div>
+      </div>
+
+      <div class="item">
+        <div class="item-num">2</div>
+        <div class="item-body">
+          <strong>Do Not Disrupt the Website</strong>
+          <p>You must not try to damage or break our website or services. This includes:</p>
+          <ul class="bullet-list" style="margin-top:8px;">
+            <li>Trying to hack, overload, or crash our servers.</li>
+            <li>Using tools that cause errors or data loss.</li>
+            <li>Uploading viruses or harmful software.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="item-num">3</div>
+        <div class="item-body">
+          <strong>No Fraud or Harmful Behaviour</strong>
+          <p>You must not use our services to deceive or harm others. This includes:</p>
+          <ul class="bullet-list" style="margin-top:8px;">
+            <li>Pretending to be someone else or giving false information.</li>
+            <li>Scams, identity theft, or anything dishonest.</li>
+            <li>Sharing hateful, abusive, or misleading content.</li>
+            <li>Harassing or bullying anyone on or through our platform.</li>
+          </ul>
+        </div>
+      </div>
+
+      <p>
+        If you break any of these rules, we may suspend or close your account to protect our platform and other users.
+      </p>
+
+      <!-- 4. Payments -->
+      <h2>4. Payments</h2>
+      <p>If you use any of our paid services, the following payment rules apply:</p>
+
+      <div class="item">
+        <div class="item-num">1</div>
+        <div class="item-body">
+          <strong>Paying for Services</strong>
+          <p>You agree to pay all fees and charges for any paid service you use — including subscriptions, products, or any
+          feature that costs money.</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="item-num">2</div>
+        <div class="item-body">
+          <strong>Payment Processor</strong>
+          <p>
+            Payments are handled by a third-party provider (such as PayPal). Your payment details are entered directly into
+            their secure system — not ours. When you pay, you also agree to their payment terms.
+          </p>
+          <ul class="bullet-list" style="margin-top:8px;">
+            <li>Make sure your billing address matches your bank or payment provider's records to avoid payment failures.</li>
+            <li>We never store your card or sensitive payment details on our servers.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="item-num">3</div>
+        <div class="item-body">
+          <strong>Box Selection Is Your Responsibility</strong>
+          <p>
+            Once you choose a box and complete payment, that choice is final. We cannot change your box or give a refund if
+            you picked the wrong one. Please double-check your choice before paying.
+          </p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="item-num">4</div>
+        <div class="item-body">
+          <strong>Service Downtime</strong>
+          <p>
+            If our website goes down due to a technical problem, we will fix it within 7 working days. If it takes longer,
+            we will extend your service period to make up for the lost time.
+          </p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="item-num">5</div>
+        <div class="item-body">
+          <strong>Refunds</strong>
+          <p>
+            Refunds are only given in exceptional cases decided by our team, or as required by the payment processor.
+            We do not refund payments for incorrect box choices or user mistakes. If you believe a refund is needed,
+            contact our support team within 30 days of your purchase.
+          </p>
+        </div>
+      </div>
+
+    </div><!-- /terms card -->
+
+
+    <!-- ════════════════════════════════════════════════════
+         PRIVACY POLICY
+         ════════════════════════════════════════════════════ -->
+    <div class="section-card card-pp">
+      <div class="section-label">Privacy Policy</div>
+
+      <p>
+        At LogoHub, your privacy matters to us. This Privacy Policy explains what information we collect,
+        how we use it, and what rights you have over your data.
+      </p>
+
+      <!-- 1. What We Collect -->
+      <h2>1. What Information We Collect</h2>
+      <ul class="bullet-list">
+        <li>
+          <strong>Personal details</strong> — such as your name, email address, and account information. We use this to
+          manage your account, contact you, and process payments.
+        </li>
+        <li>
+          <strong>Usage data</strong> — information about how you use our services, including which pages you visit and
+          how long you stay. We use cookies and similar tools for this. You can turn off cookies in your browser settings.
+        </li>
+        <li>
+          <strong>Third-party data</strong> — for example, information from our payment processor to confirm a transaction.
+          This is used only to improve your experience and keep things secure.
+        </li>
+      </ul>
+
+      <!-- 2. How We Use It -->
+      <h2>2. How We Use Your Information</h2>
+
+      <div class="item">
+        <div class="item-num">1</div>
+        <div class="item-body">
+          <strong>To Provide Our Services</strong>
+          <p>We use your information to deliver the services you signed up for and to keep them running smoothly.</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="item-num">2</div>
+        <div class="item-body">
+          <strong>To Improve Your Experience</strong>
+          <p>We analyse how users interact with our platform so we can fix issues, improve features, and add new ones
+          based on what users need.</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="item-num">3</div>
+        <div class="item-body">
+          <strong>To Send You Important Updates</strong>
+          <p>We may contact you about updates to the service, billing issues, maintenance, or important changes to your account.</p>
+        </div>
+      </div>
+
+      <!-- 3. Cookies -->
+      <h2>3. Cookies</h2>
+      <p>Cookies are small files saved on your device when you visit a website. We use them to:</p>
+
+      <div class="item">
+        <div class="item-num">1</div>
+        <div class="item-body">
+          <strong>Remember Your Preferences</strong>
+          <p>Cookies can save your settings or login details so your next visit is faster and more personalised.</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="item-num">2</div>
+        <div class="item-body">
+          <strong>Understand How You Use the Site</strong>
+          <p>We use cookies to track which pages are visited most, which helps us improve the website.</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="item-num">3</div>
+        <div class="item-body">
+          <strong>Manage Cookie Settings</strong>
+          <p>You can control cookies at any time through your browser settings — you can turn them off or ask to be
+          notified before any cookie is set.</p>
+        </div>
+      </div>
+
+      <!-- 4. Sharing Your Information -->
+      <h2>4. Sharing Your Information</h2>
+
+      <div class="item">
+        <div class="item-num">1</div>
+        <div class="item-body">
+          <strong>We Do Not Sell Your Data</strong>
+          <p>We will never sell your personal information to other companies for money.</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="item-num">2</div>
+        <div class="item-body">
+          <strong>Sharing With Service Providers</strong>
+          <p>We may share your data with trusted third-party providers (like payment processors or cloud storage services)
+          only to help us deliver the services you use. These providers are required to handle your data securely.</p>
+        </div>
+      </div>
+
+      <!-- 5. Data Security -->
+      <h2>5. How We Protect Your Data</h2>
+
+      <div class="item">
+        <div class="item-num">1</div>
+        <div class="item-body">
+          <strong>Encryption and Security</strong>
+          <p>We use industry-standard security methods, including encryption, to protect your personal information
+          from unauthorised access or theft.</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="item-num">2</div>
+        <div class="item-body">
+          <strong>No System Is Perfect</strong>
+          <p>While we do our best to keep your data safe, no internet transmission is 100% secure.
+          We will always work to minimise any risk.</p>
+        </div>
+      </div>
+
+    </div><!-- /privacy card -->
+
+
+    <!-- ════════════════════════════════════════════════════
+         CHANGES
+         ════════════════════════════════════════════════════ -->
+    <div class="section-card card-ch">
+      <div class="section-label">Changes to Terms &amp; Policies</div>
+
+      <p>
+        We may update these Terms and Conditions or our Privacy Policy from time to time. Any changes will be published
+        on this page. For major changes that significantly affect how you use LogoHub, we will notify you in advance
+        by email or another clear method.
+      </p>
+      <p>
+        We encourage you to check this page occasionally. Continuing to use our services after changes are published
+        means you accept the updated Terms and Policies.
+      </p>
     </div>
+
+    <!-- Footer note -->
+    <div class="footer-note">
+      By using LogoHub, you confirm that you have read and agreed to these Terms and Conditions and Privacy Policy.
+    </div>
+
+  </div><!-- /container -->
+
 </body>
 </html>
