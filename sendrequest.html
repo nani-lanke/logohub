@@ -3,323 +3,597 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Email Request</title>
-  <link rel="icon" type="imag/x-icon" href="/icons/company.png">
+  <title>Add Your Icon — LogoHub</title>
+  <link rel="icon" type="image/x-icon" href="/icons/company.png">
   <style>
-    *{
-      box-sizing:border-box;
-      margin:0;                           padding:0;
-      font-family:"Segoe UI", Arial, sans-serif;
-    }
-    body{
-      min-height:100vh;                    padding:20px;
-      display:flex;                        justify-content:center;
-      background:linear-gradient(#e7f5fe, #dbf0fe, #cfebfd, #c3e7fd, #b7e2fc, #abddfc, #9fd8fb);
-    }
-    .container{
-      width:100%;                          max-width:1350px;
-      background:#fff;
-      border-radius:14px;                  padding:35px;
-      box-shadow:0 12px 30px rgba(0,0,0,0.12);
-      position:relative;
-      background:linear-gradient(135deg,#eef1f6,#dfe5ee);
-    }
-    .close-btn{
-      position:absolute;
-      top:12px;                           right:18px;
-      font-size:22px;                     font-weight:bold;
-      color:#333;                       cursor:pointer;
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 
+    /* ── Design tokens (match dark theme) ─────────────────── */
+    :root {
+      --bg         : #0b1326;
+      --surface    : #131b2e;
+      --surface-mid: #171f33;
+      --surface-hi : #222a3d;
+      --border     : rgba(192,193,255,0.12);
+      --text       : #dae2fd;
+      --text-dim   : #8890aa;
+      --accent     : #c0c1ff;
+      --accent-dark: #4d79ff;
+      --danger     : #ff6666;
+      --success    : #00cc66;
     }
-    h2{text-align:center;                 margin-bottom:20px;}
-    p{
-      color:#444;
-      margin-bottom:14px;                 line-height:1.8;
-      font-weight:500;                    text-align:justify;			
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Nunito', 'Segoe UI', system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 0 0 56px;
+      display: flex; flex-direction: column; align-items: center;
     }
-    .table-wrapper{
-      overflow-x:auto;                    margin:25px 0;
+
+    /* ── Sticky page header ───────────────────────────────── */
+    .page-header {
+      position: sticky; top: 0; z-index: 50; width: 100%;
+      background: rgba(11,19,38,0.85);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.40);
+      padding: 13px 24px;
+      display: flex; align-items: center; justify-content: space-between;
     }
-    table{
-      width:100%;                         min-width:500px;
-      border-collapse:collapse;
+    .site-title {
+      font-size: 20px; font-weight: 900;
+      color: var(--accent); text-decoration: none; letter-spacing: -0.5px;
     }
-    th,td{
-      border:1px solid #bbb;
-      padding:11px;
-      text-align:center;
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 18px; border-radius: 8px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      color: var(--accent); font-size: 14px; font-weight: 700;
+      text-decoration: none;
+      transition: background 0.18s, box-shadow 0.18s;
     }
-    th{color:#fff;                      background:#2f3b52;}
-    form{margin-top:25px;}
-    input,textarea,select{
-      width:100%;
-      padding:11px;                       margin-top:12px;
-      border-radius:6px;                  border:2px solid #222;
-      font-size:14px;
+    .back-btn:hover { background: rgba(192,193,255,0.12); }
+
+    /* ── Page title ───────────────────────────────────────── */
+    .page-title {
+      width: 100%; max-width: 880px;
+      padding: 40px 24px 0;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
     }
-    textarea{
-      resize:vertical;                    min-height:85px;
+    .page-title h1 { font-size: 28px; font-weight: 900; color: var(--accent); letter-spacing: -0.5px; }
+
+    /* ── Main card ────────────────────────────────────────── */
+    .card {
+      width: 100%; max-width: 880px;
+      margin: 24px 24px 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.40);
+      padding: 36px 40px 40px;
     }
-    button{
-      width:100%;
-      margin-top:18px;                    padding:11px;
-      border:none;                        border-radius:6px;
-      background:#2f3b52;
-      color:#fff;                       cursor:pointer;
+
+    /* ── Section title ────────────────────────────────────── */
+    .section-title {
+      font-size: 11px; font-weight: 800;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 10px;
     }
-    button:hover{background:#1f2a3d;}
-    .error-message{
-      text-align:center;                  margin-top:10px;
-      color:red;
-      font-weight:600;
+    .section-title::after {
+      content: ""; flex: 1; height: 1px;
+      background: var(--border);
     }
-     .checkboxClass{
-      width:60%; 					               height:25px;
-      margin:20px 0px 0px;
-      display:flex; 				          
+
+    /* ── Intro text ───────────────────────────────────────── */
+    .intro {
+      font-size: 15px; color: var(--text-dim);
+      line-height: 1.75; margin-bottom: 20px; font-weight: 600;
     }
-    .legend{
-      margin:22px 0;
-      display:flex;                     flex-wrap:wrap;
-      gap:14px;
+    .intro strong { color: var(--text); }
+
+    /* ── Pricing table ────────────────────────────────────── */
+    .price-table {
+      width: 100%; border-collapse: separate; border-spacing: 0;
+      border-radius: 12px; overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+      margin-bottom: 32px; font-size: 14px;
     }
-    .legend span{
-      gap:6px;
-      display:flex;                     align-items:center;
+    .price-table th {
+      background: var(--surface-hi); color: var(--accent);
+      padding: 13px 16px; font-weight: 800; text-align: center;
+      border-bottom: 1px solid var(--border);
     }
-    .color{
-      width:16px;                      height:16px;
-      border-radius:4px;
+    .price-table td {
+      padding: 12px 16px; text-align: center;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface-mid); color: var(--text); font-weight: 600;
     }
-    .screen-wrapper{margin-top:35px;}
-    .screens{
-      display:grid;                   gap:5px;
-      grid-template-columns:repeat(auto-fit,minmax(32px,1fr));
+    .price-table tr:last-child td { border-bottom: none; }
+    .price-table td:first-child { font-weight: 800; color: var(--accent); }
+
+    /* ── Form layout ──────────────────────────────────────── */
+    .form-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 18px 24px; margin-bottom: 8px;
     }
-    .box{
-      padding:6px 0;
-      font-size:10px;
-      text-align:center;
-      border-radius:6px;
-      cursor:pointer;
-      background:rgba(255,255,255,0.28);
-      backdrop-filter:blur(8px);
-      border:1px solid rgba(255,255,255,0.35);
-      box-shadow:0 3px 8px rgba(0,0,0,0.08);
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 13px; font-weight: 800; color: var(--text);
+      display: flex; align-items: center; gap: 6px;
     }
-     .booked{ 
-      background:rgba(255,77,77,0.65); color:#fff; 
-      border: 0.5px solid rgba(0,0,0,0.3);
+    label .lbl-icon {
+      width: 20px; height: 20px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--surface-hi); border-radius: 5px; font-size: 12px;
     }
-    .reserved{ 
-      background:rgba(77,166,255,0.65); color:#fff; 
-      border: 0.5px solid rgba(0,0,0,0.3);
+
+    input, select {
+      width: 100%; padding: 11px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px; font-weight: 600;
+      color: var(--text); background: var(--surface-mid);
+      transition: border-color 0.18s, box-shadow 0.18s;
+      outline: none; font-family: inherit;
     }
-    .special{
-      background: rgba(153, 51, 255, 0.65); color:#fff; 
-      border: 0.5px solid rgba(0,0,0,0.3);
+    input::placeholder { color: var(--text-dim); font-weight: 400; }
+    select option { background: var(--surface); color: var(--text); }
+    input:focus, select:focus {
+      border-color: var(--accent-dark);
+      box-shadow: 0 0 0 3px rgba(77,121,255,0.18);
+      background: var(--surface-hi);
     }
-    .free{
-      background: rgba(255, 140, 0, 0.65);color: #fff;
-      border: 0.5px solid rgba(0,0,0,0.3);
+
+    /* Input with left icon */
+    .input-icon-wrap { position: relative; }
+    .input-icon-wrap .input-icon {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      width: 18px; height: 18px; pointer-events: none; opacity: 0.5;
     }
-    .available {
-      background: rgba(255,255,255,0.30);
-      border: 0.5px solid rgba(0,0,0,0.3);
+    .input-icon-wrap input { padding-left: 40px; }
+
+    /* Links subheadings */
+    .links-heading { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+    .links-note    { font-size: 12px; color: var(--text-dim); margin-bottom: 14px; }
+
+    /* ── Checkbox ─────────────────────────────────────────── */
+    .checkbox-row {
+      display: flex; align-items: flex-start;
+      gap: 10px; margin: 20px 0 4px;
     }
-    .modal{
-      display:none;                           position:fixed;
-      inset:0;
-      background:rgba(0,0,0,0.6);
-      justify-content:center;                 align-items:center;
+    .checkbox-row input[type="checkbox"] {
+      width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px;
+      accent-color: var(--accent-dark);
     }
-    .modal-content{
-      background:#fff;
-      padding:25px;
-      border-radius:10px;
-      width:90%;
-      max-width:320px;
-      text-align:center;
+    .checkbox-row span { font-size: 13px; color: var(--text-dim); font-weight: 600; line-height: 1.5; }
+    .checkbox-row a { color: var(--accent); font-weight: 800; text-decoration: none; }
+    .checkbox-row a:hover { text-decoration: underline; }
+
+    /* ── Error ────────────────────────────────────────────── */
+    .error-msg {
+      font-size: 13px; font-weight: 800;
+      color: var(--danger); min-height: 20px;
+      margin: 8px 0; text-align: center;
     }
-    .modal-content button{
-      width:45%;
-      margin:5px;
+
+    /* ── Submit button ────────────────────────────────────── */
+    .submit-btn {
+      width: 100%; padding: 14px; margin-top: 4px;
+      border: none; border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 100%);
+      color: var(--bg); font-size: 16px; font-weight: 900;
+      letter-spacing: 0.03em; cursor: pointer; font-family: inherit;
+      transition: opacity 0.18s, transform 0.16s, box-shadow 0.18s;
+      box-shadow: 0 4px 20px rgba(77,121,255,0.30);
+    }
+    .submit-btn:hover { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 6px 28px rgba(77,121,255,0.40); }
+    .submit-btn:active { transform: translateY(0); }
+
+    /* ── Legend ───────────────────────────────────────────── */
+    .legend { display: flex; flex-wrap: wrap; gap: 10px 20px; margin-bottom: 16px; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: var(--text-dim); }
+    .legend-dot  { width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0; }
+
+    /* ── Box grid ─────────────────────────────────────────── */
+    .box-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(34px, 1fr));
+      gap: 4px; max-height: 320px; overflow-y: auto;
+      padding: 12px; background: var(--surface-mid);
+      border-radius: 12px; border: 1px solid var(--border);
+      scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+    }
+    .box-grid::-webkit-scrollbar { width: 5px; }
+    .box-grid::-webkit-scrollbar-thumb { background: rgba(192,193,255,0.20); border-radius: 4px; }
+
+    .grid-box {
+      padding: 5px 2px; font-size: 10px; text-align: center;
+      border-radius: 5px; cursor: pointer; font-weight: 700;
+      transition: transform 0.14s, box-shadow 0.14s;
+      border: 1px solid transparent; user-select: none;
+      color: var(--text);
+    }
+    .grid-box:hover { transform: scale(1.15); box-shadow: 0 2px 10px rgba(0,0,0,0.40); }
+
+    .grid-box.booked    { background: rgba(220,50,50,0.65);   color: #fff; }
+    .grid-box.special   { background: rgba(120,60,220,0.65);  color: #fff; }
+    .grid-box.reserved  { background: rgba(40,120,255,0.55);  color: #fff; }
+    .grid-box.free      { background: rgba(255,140,0,0.60);   color: #fff; }
+    .grid-box.available { background: var(--surface-hi); border-color: var(--border); }
+    .grid-box.selected  {
+      background: var(--accent-dark) !important; color: #fff !important;
+      box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent-dark);
+    }
+
+    /* ── Confirm modal ────────────────────────────────────── */
+    .confirm-modal {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,5,20,0.70);
+      backdrop-filter: blur(10px);
+      z-index: 9999; align-items: center; justify-content: center;
+    }
+    .confirm-modal.active { display: flex; }
+    .confirm-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px; padding: 32px 28px 24px;
+      width: 90%; max-width: 340px; text-align: center;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.50);
+    }
+    .confirm-card p {
+      font-size: 15px; font-weight: 600; color: var(--text);
+      line-height: 1.65; margin-bottom: 22px;
+    }
+    .confirm-btns { display: flex; gap: 10px; justify-content: center; }
+    .confirm-btns button {
+      padding: 10px 22px; border-radius: 8px; border: none;
+      font-size: 14px; font-weight: 800; cursor: pointer;
+      font-family: inherit; transition: opacity 0.16s;
+    }
+    .confirm-btns button:hover { opacity: 0.85; }
+    #btnCancel { background: var(--surface-hi); color: var(--text); border: 1px solid var(--border); }
+    #btnSend   { background: var(--accent-dark); color: #fff; }
+
+    /* ── Responsive ───────────────────────────────────────── */
+    @media (max-width: 680px) {
+      .card { padding: 24px 18px 28px; margin: 16px 12px 0; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-group.full { grid-column: 1; }
+      .page-title { padding: 28px 16px 0; }
+    }
+    @media (max-width: 400px) {
+      .page-title { flex-direction: column; }
+      .page-title h1 { font-size: 22px; }
     }
   </style>
 </head>
-
 <body>
-  <div class="container">
-    <div class="close-btn" ><a href="/" style="text-decoration:none;">X</a></div>
-    <h2>Send Email Request</h2>
-    <p>This page allows companies to reserve numbered display boxes. Each number represents a fixed placement position.
-      Boxes shown below indicate availability status and help select suitable placement based on visibility and pricing.
+
+  <!-- ── Sticky Header ─────────────────────────────────────── -->
+  <header class="page-header">
+    <a class="site-title" href="/">LogoHub</a>
+    <a class="back-btn" href="/">← Back to LogoHub</a>
+  </header>
+
+  <!-- ── Page Title ────────────────────────────────────────── -->
+  <div class="page-title">
+    <h1>Add Your Icon</h1>
+  </div>
+
+  <!-- ── Main Card ─────────────────────────────────────────── -->
+  <div class="card">
+
+    <!-- 1. About box reservations -->
+    <div class="section-title">About Box Reservations</div>
+    <p class="intro">
+      Each box on LogoHub is a <strong>permanent display slot</strong> where your company logo will appear.
+      Pick a box from the grid below, fill in your details, and our team will review your request and get back to you.
     </p>
-    <p>
-      Red boxes are already occupied. Blue boxes indicate premium highlighted positions. Yellow boxes require support approval.
-      Orange glass boxes are currently available for reservation.
+    <p class="intro">
+      <strong style="color:#ff6666;">Red</strong> = already booked &nbsp;·&nbsp;
+      <strong style="color:#a070ff;">Purple</strong> = special / premium &nbsp;·&nbsp;
+      <strong style="color:#4d90ff;">Blue</strong> = reserved (needs approval) &nbsp;·&nbsp;
+      <strong style="color:#ff9933;">Orange</strong> = available now
     </p>
-    <div class="table-wrapper">
-      <table>
+
+    <!-- 2. Pricing -->
+    <div class="section-title" style="margin-top:28px;">Pricing</div>
+    <table class="price-table">
+      <thead>
         <tr>
           <th>Box Type</th>
-          <th>Square Box</th>
-          <th>Horizontal Box</th>
-          <th>Vertical Box</th>
-          <th>Mini Box</th>
+          <th>Square</th>
+          <th>Horizontal</th>
+          <th>Vertical</th>
+          <th>Mini</th>
         </tr>
+      </thead>
+      <tbody>
         <tr>
-          <td>Price per year</td>
-          <td>&#8377;365</td>
-          <td>&#8377;299</td>
-          <td>&#8377;249</td>
-          <td>&#8377;199</td>
+          <td>Price / year</td>
+          <td>₹365</td>
+          <td>₹299</td>
+          <td>₹249</td>
+          <td>₹199</td>
         </tr>
-      </table>
-    </div>
-    <form id="emailForm">
-      <input type="text" name="name" placeholder="Company Name" required>
-      <input type="number" id="numberInput" name="number" placeholder="Box Number" required>
-      <textarea name="message" placeholder="Link(example : https://www.logohub.info)" required></textarea>
-      <select name="option" required>
-        <option value="">Color Indication</option>
-        <option style="color:#0000FF; font-weight:bold;">Technology and Software Services</option>
-        <option style="color:#ffd700; font-weight:bold;">Education and Institute Service</option>
-        <option style="color:#00ff00; font-weight:bold;">Hotels, Transport, Food and Tourism Service</option>
-        <option style="color:#ff0000; font-weight:bold;">Energy and Utility Services</option>
-        <option style="color:#00bfff; font-weight:bold;">Retail and E-Commerce</option>
-        <option style="color:#ff00ff; font-weight:bold;">Entertainment and Information Service</option>
-        <option style="color:#008080; font-weight:bold;">HealthCare and Medical Services</option>
-        <option style="color:#ff8000; font-weight:bold;">Finance and Banking Services</option>
-        <option style="color:#000000; font-weight:bold;">Manufacturing Industries (Devices, Products)</option>
-        <option style="color:#FFFFFF; background:#000000; font-weight:bold;">Other's</option>
-      </select>
-      <div class="checkboxClass" >
-				<div style="width:10%;">
-				  	<input type="checkbox" style="margin:0px 0px; width:100%;" required>
-				</div>
-				<div style="width:90%;">
-					<a href="termsandconditions.html" class="links" style="width:100%;">Terms and Conditions</a>
-			</div>
-			</div>	
-      <div class="error-message" id="errorMsg"></div>
-      <button type="submit">Submit Request</button>
+      </tbody>
+    </table>
+
+    <!-- 3. Request form -->
+    <div class="section-title">Request Form</div>
+    <form id="requestForm" novalidate>
+      <div class="form-grid">
+
+        <!-- Company name -->
+        <div class="form-group">
+          <label><span class="lbl-icon">🏢</span> Company Name <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="companyName" placeholder="e.g. Acme Corp" required>
+        </div>
+
+        <!-- Box number -->
+        <div class="form-group">
+          <label><span class="lbl-icon">🔢</span> Box Number (1–300) <span style="color:var(--danger)">*</span></label>
+          <input type="number" id="boxNumber" placeholder="Click a box below or type" min="1" max="300" required>
+        </div>
+
+        <!-- Service type -->
+        <div class="form-group full">
+          <label><span class="lbl-icon">🏷️</span> Service Type <span style="color:var(--danger)">*</span></label>
+          <select id="serviceType" required>
+            <option value="">— Select category —</option>
+            <option value="Technology and Software Services">Technology and Software Services</option>
+            <option value="Education and Institute Service">Education and Institute Service</option>
+            <option value="Hotels, Transport, Food and Tourism">Hotels, Transport, Food and Tourism</option>
+            <option value="Energy and Utility Services">Energy and Utility Services</option>
+            <option value="Retail and E-Commerce">Retail and E-Commerce</option>
+            <option value="Entertainment and Information Service">Entertainment and Information Service</option>
+            <option value="HealthCare and Medical Services">HealthCare and Medical Services</option>
+            <option value="Finance and Banking Services">Finance and Banking Services</option>
+            <option value="Manufacturing Industries">Manufacturing Industries (Devices, Products)</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <!-- Links heading -->
+        <div class="form-group full">
+          <p class="links-heading">Your Links</p>
+          <p class="links-note">Fill in at least one link. Leave any field blank that you don't want to add.</p>
+        </div>
+
+        <!-- Website -->
+        <div class="form-group">
+          <label><span class="lbl-icon">🌐</span> Website URL</label>
+          <div class="input-icon-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+            <input type="url" id="linkWebsite" placeholder="https://www.yoursite.com">
+          </div>
+        </div>
+
+        <!-- YouTube -->
+        <div class="form-group">
+          <label><span class="lbl-icon">▶️</span> YouTube Channel</label>
+          <div class="input-icon-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="#cc0000">
+              <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29.94 29.94 0 0 0 1 12a29.94 29.94 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29.94 29.94 0 0 0 23 12a29.94 29.94 0 0 0-.46-5.58z"/>
+              <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="white"/>
+            </svg>
+            <input type="url" id="linkYouTube" placeholder="https://youtube.com/@yourchannel">
+          </div>
+        </div>
+
+        <!-- Instagram -->
+        <div class="form-group">
+          <label><span class="lbl-icon">📸</span> Instagram Page</label>
+          <div class="input-icon-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="#cc0080" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+            <input type="url" id="linkInstagram" placeholder="https://instagram.com/yourpage">
+          </div>
+        </div>
+
+        <!-- WhatsApp -->
+        <div class="form-group">
+          <label><span class="lbl-icon">💬</span> WhatsApp Link</label>
+          <div class="input-icon-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="#25d366">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+              <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.855L.057 23.117a.75.75 0 0 0 .916.919l5.404-1.461A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.726 9.726 0 0 1-4.964-1.357l-.356-.21-3.688.997 1.006-3.598-.232-.371A9.725 9.725 0 0 1 2.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/>
+            </svg>
+            <input type="url" id="linkWhatsApp" placeholder="https://wa.me/91XXXXXXXXXX">
+          </div>
+        </div>
+
+        <!-- Location -->
+        <div class="form-group full">
+          <label><span class="lbl-icon">📍</span> Google Maps Location</label>
+          <div class="input-icon-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="#ff4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <input type="url" id="linkLocation" placeholder="https://maps.google.com/?q=Your+Business">
+          </div>
+        </div>
+
+      </div><!-- /form-grid -->
+
+      <!-- Terms -->
+      <div class="checkbox-row">
+        <input type="checkbox" id="termsCheck" required>
+        <span>I have read and agree to the <a href="termsandconditions.html" target="_blank">Terms and Conditions</a></span>
+      </div>
+
+      <div class="error-msg" id="errorMsg"></div>
+      <button type="submit" class="submit-btn">Submit Request</button>
+
     </form>
+
+    <!-- 4. Box picker grid -->
+    <div class="section-title" style="margin-top:40px;">Choose a Box</div>
     <div class="legend">
-      <span><div class="color booked"></div>Booked</span>
-      <span><div class="color special"></div>Special</span>
-      <span><div class="color reserved"></div>Reserved</span>
-      <span><div class="color free"></div>Free</span>
-      <span><div class="color available"></div>Available</span>
+      <span class="legend-item"><span class="legend-dot" style="background:rgba(220,50,50,0.65);"></span>Booked</span>
+      <span class="legend-item"><span class="legend-dot" style="background:rgba(120,60,220,0.65);"></span>Special</span>
+      <span class="legend-item"><span class="legend-dot" style="background:rgba(40,120,255,0.55);"></span>Reserved</span>
+      <span class="legend-item"><span class="legend-dot" style="background:rgba(255,140,0,0.60);"></span>Free</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--surface-hi);border:1px solid var(--border);"></span>Available</span>
     </div>
-    <div class="screen-wrapper" id="screensContainer"></div>
-  </div>
-  <div class="modal" id="modal">
-    <div class="modal-content">
-      <p>Someone already reserved this number. Send another request?</p>
-      <button id="cancelBtn">Cancel</button>
-      <button id="sendBtn">Send</button>
+    <div class="box-grid" id="boxGrid"></div>
+
+  </div><!-- /card -->
+
+  <!-- ── Confirm duplicate modal ────────────────────────────── -->
+  <div class="confirm-modal" id="confirmModal">
+    <div class="confirm-card">
+      <p>Someone has already reserved this box number.<br>Would you like to send another request anyway?</p>
+      <div class="confirm-btns">
+        <button id="btnCancel">Cancel</button>
+        <button id="btnSend">Send Anyway</button>
+      </div>
     </div>
   </div>
 
   <script>
-    const bookedList=[76,121,151,153,158];   // booked
-    const specialList =[1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11, 12, 13, 14, 15, 16, 17, 18, 19, 20,21, 22, 23, 24, 25, 26, 27, 28, 29, 30,31, 32, 33, 34, 35, 36, 37, 38, 39, 40,41, 42, 
-    43, 44, 45, 46, 47, 48, 49, 50,51, 52, 53, 54, 55, 56, 57, 58, 59, 60,61, 62, 63, 64, 65, 66, 67, 68, 69, 70,71, 72, 73, 74, 75,]; //special
-    const reservedList=[77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90,121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135,151, 152, 153, 154, 155, 
-    156, 157, 158, 159, 160, 161, 162, 163, 164, 165];  // reserved
-    const freeBoxes=[482,484,485,486,487,489,491,494,497,499,500,501,502,504,506,509,512,514,515,516,517,519,521,524,527,529,530,531,532,534,536,539,542,544,545,546,547,549,551,
-      554,557,559,560,561,562,564,566,569,572,574,575,576,577,579,581,584,587,589,590,591,592,594,596,599];  //free
+    // ── Box status lists (box numbers 1–300) ─────────────────
+    const bookedList   = [38, 61, 76, 77, 79];
+    const specialList  = Array.from({ length: 37 }, (_, i) => i + 1); // 1–37
+    const reservedList = [39,40,41,42,43,44,45,46,47,48,62,63,64,65,66,67,68,78,80,81,82,83,84,85];
+    const freeBoxes    = [241,243,244,245,247,249,251,254,257,259,260,261,262,264,266,269,272,274,275,276,277,279,281,284,287,289,290,291,292,294,296,299];
 
-    const form=document.getElementById("emailForm");
-    const numberInput=document.getElementById("numberInput");
-    const errorMsg=document.getElementById("errorMsg");
-    const modal=document.getElementById("modal");
-    const cancelBtn=document.getElementById("cancelBtn");
-    const sendBtn=document.getElementById("sendBtn");
+    // ── Build the box picker grid ─────────────────────────────
+    const grid     = document.getElementById('boxGrid');
+    const boxNumIn = document.getElementById('boxNumber');
+    const errorMsg = document.getElementById('errorMsg');
+    let   selected = null;
 
-    let allowAnother=false;
+    for (let i = 1; i <= 300; i++) {
+      const el = document.createElement('div');
+      el.className  = 'grid-box';
+      el.textContent = i;
+      el.dataset.n  = i;
 
-    const container=document.getElementById("screensContainer");
-    const grid=document.createElement("div");
-    grid.className="screens";
+      if      (bookedList.includes(i))   el.classList.add('booked');
+      else if (specialList.includes(i))  el.classList.add('special');
+      else if (reservedList.includes(i)) el.classList.add('reserved');
+      else if (freeBoxes.includes(i))    el.classList.add('free');
+      else                               el.classList.add('available');
 
-    for(let i=1;i<=600;i++){
+      el.addEventListener('click', () => {
+        if (selected) selected.classList.remove('selected');
+        selected = el;
+        el.classList.add('selected');
+        boxNumIn.value = i;
+        errorMsg.textContent = '';
+        boxNumIn.dispatchEvent(new Event('input'));
+      });
 
-      const box=document.createElement("div");
-      box.className="box";
-      box.textContent=i;
-
-     if(bookedList.includes(i)) box.classList.add("booked");
-      else if(specialList.includes(i)) box.classList.add("special");
-      else if(reservedList.includes(i)) box.classList.add("reserved");
-      else if(freeBoxes.includes(i)) box.classList.add("free");
-      else box.classList.add("available");
-
-      box.onclick=()=>{ numberInput.value=i; };
-
-      grid.appendChild(box);
+      grid.appendChild(el);
     }
-    container.appendChild(grid);
-    numberInput.addEventListener("blur",()=>{
-      const num=parseInt(numberInput.value);
-      errorMsg.textContent="";
 
-      if(bookedList.includes(num)){
-        errorMsg.textContent="This number is already booked.";
+    // ── Inline validation when box number changes ─────────────
+    boxNumIn.addEventListener('input', () => {
+      const n = parseInt(boxNumIn.value);
+      if (bookedList.includes(n)) {
+        errorMsg.textContent = `Box ${n} is already booked. Please choose another.`;
+      } else {
+        errorMsg.textContent = '';
       }
     });
-    function sendEmail(isAnother=false){
 
-    const name=form.name.value;
-    const number=form.number.value;
-    const message=form.message.value;
-    const option=form.option.value;
+    // ── Collect all form values ───────────────────────────────
+    function getData() {
+      return {
+        company  : document.getElementById('companyName').value.trim(),
+        box      : boxNumIn.value.trim(),
+        service  : document.getElementById('serviceType').value,
+        website  : document.getElementById('linkWebsite').value.trim(),
+        youtube  : document.getElementById('linkYouTube').value.trim(),
+        instagram: document.getElementById('linkInstagram').value.trim(),
+        whatsapp : document.getElementById('linkWhatsApp').value.trim(),
+        location : document.getElementById('linkLocation').value.trim(),
+      };
+    }
 
-    let subject=`Request box No : ${number}`;
-    if(isAnother) subject+=" Another request";
+    // ── Compose and send email ────────────────────────────────
+    function sendEmail(isDuplicate = false) {
+      const d = getData();
+      let subject = `LogoHub Box Request — Box No. ${d.box}`;
+      if (isDuplicate) subject += ' (duplicate request)';
 
-    const body=encodeURIComponent(
-    `Hi Team,
+      const body = encodeURIComponent(
+`Hi LogoHub Team,
 
-We plan to book a display box. The selected box number is ${number}.
+I would like to reserve a display box. Here are my details:
 
-My Details:
-    Company Name  : ${name}
-    Option        : ${option}
-    Message       : ${message}
+  Company Name : ${d.company}
+  Box Number   : ${d.box}
+  Service Type : ${d.service}
 
-Message: We would like to display our promotional content in this box for marketing purposes. 
-Please confirm availability and share the next steps for payment and approval.
-    
-Thank you.`
-    );
-    window.location.href=`mailto:logohub2025@gmail.com?subject=${encodeURIComponent(subject)}&body=${body}`;
-  }
-  cancelBtn.onclick=()=>{
-    modal.style.display="none";
-  };
-  sendBtn.onclick=()=>{
-    modal.style.display="none";
-    sendEmail(true);
-  };
-  form.addEventListener("submit",(e)=>{
-  e.preventDefault();
-  const num=parseInt(numberInput.value);
-  if(bookedList.includes(num)){
-    errorMsg.textContent="This number is already booked.";
-    return;
-  }
-  if(reservedList.includes(num)){
-    modal.style.display="flex";
-    return;
-  }
-  sendEmail(false);
-  });
+Links:
+  Website   : ${d.website   || '—'}
+  YouTube   : ${d.youtube   || '—'}
+  Instagram : ${d.instagram || '—'}
+  WhatsApp  : ${d.whatsapp  || '—'}
+  Location  : ${d.location  || '—'}
+
+Please confirm availability and share payment details.
+
+Thank you!`
+      );
+      window.location.href = `mailto:logohub2025@gmail.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+    }
+
+    // ── Form submit ───────────────────────────────────────────
+    const form         = document.getElementById('requestForm');
+    const confirmModal = document.getElementById('confirmModal');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const d   = getData();
+      const num = parseInt(d.box);
+
+      if (!d.company) { errorMsg.textContent = 'Please enter your company name.'; return; }
+      if (!d.box || isNaN(num) || num < 1 || num > 300) {
+        errorMsg.textContent = 'Please enter a valid box number (1–300).'; return;
+      }
+      if (!d.service) { errorMsg.textContent = 'Please select a service type.'; return; }
+      if (!document.getElementById('termsCheck').checked) {
+        errorMsg.textContent = 'Please agree to the Terms and Conditions.'; return;
+      }
+      if (!d.website && !d.youtube && !d.instagram && !d.whatsapp && !d.location) {
+        errorMsg.textContent = 'Please add at least one link (website, YouTube, etc.).'; return;
+      }
+      if (bookedList.includes(num)) {
+        errorMsg.textContent = `Box ${num} is already booked. Please choose another.`; return;
+      }
+      if (reservedList.includes(num)) {
+        confirmModal.classList.add('active'); return;
+      }
+      sendEmail(false);
+    });
+
+    document.getElementById('btnCancel').addEventListener('click', () => {
+      confirmModal.classList.remove('active');
+    });
+    document.getElementById('btnSend').addEventListener('click', () => {
+      confirmModal.classList.remove('active');
+      sendEmail(true);
+    });
   </script>
+
 </body>
 </html>
-
-
-
-
