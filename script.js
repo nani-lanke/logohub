@@ -61,7 +61,7 @@ const companies = [
     box        : 76,
     name       : 'LogoHub',
     shortName  : 'LH',
-    icon       : 'screenone/box38.png',
+    icon       : 'screenone/box76.png',
     category   : 'entertainmentAndInformationService',
     serviceType: 'Information & Directory Service',
     links: {
