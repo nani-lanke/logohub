@@ -284,7 +284,7 @@
       .page-title { flex-direction: column; }
       .page-title h1 { font-size: 22px; }
       .card { padding: 20px 12px 24px; margin: 12px 8px 0; }
-      .box-grid { grid-template-columns: repeat(auto-fill, 24px); padding: 5px; max-height: 300px; }
+      .box-grid { grid-template-columns: repeat(auto-fill, 24px); padding: 5px; max-height: 600px; }
       .grid-box { width: 24px; height: 20px; font-size: 8px; border-radius: 3px; }
     }
   </style>
@@ -354,8 +354,8 @@
 
         <!-- Box number -->
         <div class="form-group">
-          <label><span class="lbl-icon">🔢</span> Box Number (1–300) <span style="color:var(--danger)">*</span></label>
-          <input type="number" id="boxNumber" placeholder="Click a box below or type" min="1" max="300" required>
+          <label><span class="lbl-icon">🔢</span> Box Number (1–600) <span style="color:var(--danger)">*</span></label>
+          <input type="number" id="boxNumber" placeholder="Click a box below or type" min="1" max="600" required>
         </div>
 
         <!-- Service type -->
@@ -481,7 +481,7 @@
   </div>
 
   <script>
-    // ── Box status lists (box numbers 1–300) ─────────────────
+    // ── Box status lists (box numbers 1–600) ─────────────────
     const bookedList   = [76, 121, 151, 153, 158];
     const specialList  = Array.from({ length: 120 }, (_, i) => i + 1); // 1–120
     const reservedList = [
@@ -496,7 +496,7 @@
     const errorMsg = document.getElementById('errorMsg');
     let   selected = null;
 
-    for (let i = 1; i <= 300; i++) {
+    for (let i = 1; i <= 600; i++) {
       const el = document.createElement('div');
       el.className  = 'grid-box';
       el.textContent = i;
@@ -583,8 +583,8 @@ Thank you!`
       const num = parseInt(d.box);
 
       if (!d.company) { errorMsg.textContent = 'Please enter your company name.'; return; }
-      if (!d.box || isNaN(num) || num < 1 || num > 300) {
-        errorMsg.textContent = 'Please enter a valid box number (1–300).'; return;
+      if (!d.box || isNaN(num) || num < 1 || num > 600) {
+        errorMsg.textContent = 'Please enter a valid box number (1–600).'; return;
       }
       if (!d.service) { errorMsg.textContent = 'Please select a service type.'; return; }
       if (!document.getElementById('termsCheck').checked) {
