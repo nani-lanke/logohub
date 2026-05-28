@@ -318,7 +318,7 @@ header li { margin: 0; padding: 0; list-style: none; }
   .number { font-size:10px; font-weight:500; }
   .about-text p, .text p { width:1012px; }
   .about-images, .box { width:1012px; }
-  .box { height:600px; }
+  .box { height:400px; }
 }
 
 /* ── 801–1050px ──────────────────────────────────────────── */
