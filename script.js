@@ -245,8 +245,8 @@ function injectModal() {
           <span class="m-badge" id="mBadge"></span>
         </div>
         <div class="m-info">
-          <p  class="m-short"   id="mShort"></p>
           <h2 class="m-name"    id="mName"></h2>
+          <p  class="m-short"   id="mShort"></p>
           <p  class="m-service" id="mService"></p>
         </div>
         <div class="m-actions" id="mActions"></div>
