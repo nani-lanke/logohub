@@ -67,7 +67,7 @@ const companies = [
     links: {
       website  : 'https://www.logohub.info/',
       youtube  : '',
-      instagram: ''
+      instagram: '',
       whatsapp : '',
       location : '',
     },
