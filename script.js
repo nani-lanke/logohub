@@ -67,7 +67,7 @@ const companies = [
     links: {
       website  : 'https://www.logohub.info/',
       youtube  : '',
-      instagram: '',
+      instagram: ''
       whatsapp : '',
       location : '',
     },
@@ -76,7 +76,7 @@ const companies = [
     box        : 121,
     name       : 'Andhra Ruchulu',
     shortName  : 'AR',
-    icon       : 'screenone/box61.png',
+    icon       : 'screenone/box121.png',
     category   : 'hotelsTransportFoodandTourism',
     serviceType: 'Food & Cooking Channel',
     links: {
@@ -91,7 +91,7 @@ const companies = [
     box        : 151,
     name       : 'Kutti Kathaigal',
     shortName  : 'KK',
-    icon       : 'screenone/box76.png',
+    icon       : 'screenone/box151.png',
     category   : 'entertainmentAndInformationService',
     serviceType: 'Entertainment & Stories',
     links: {
@@ -106,7 +106,7 @@ const companies = [
     box        : 153,
     name       : 'Meow Meow Melody TV',
     shortName  : 'MMM',
-    icon       : 'screenone/box77.png',
+    icon       : 'screenone/box153.png',
     category   : 'entertainmentAndInformationService',
     serviceType: 'Kids Entertainment',
     links: {
@@ -121,7 +121,7 @@ const companies = [
     box        : 158,
     name       : 'Sinu Cartoons',
     shortName  : 'SC',
-    icon       : 'screenone/box79.png',
+    icon       : 'screenone/box158.png',
     category   : 'entertainmentAndInformationService',
     serviceType: 'Cartoon Entertainment',
     links: {
