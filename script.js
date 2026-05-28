@@ -61,7 +61,7 @@ const companies = [
     box        : 76,
     name       : 'LogoHub',
     shortName  : 'LH',
-    icon       : 'screenone/box76.png',
+    icon       : '/icons/screenone/box38.png',
     category   : 'entertainmentAndInformationService',
     serviceType: 'Information & Directory Service',
     links: {
@@ -76,7 +76,7 @@ const companies = [
     box        : 121,
     name       : 'Andhra Ruchulu',
     shortName  : 'AR',
-    icon       : 'screenone/box121.png',
+    icon       : '/screenone/box61.png',
     category   : 'hotelsTransportFoodandTourism',
     serviceType: 'Food & Cooking Channel',
     links: {
@@ -91,7 +91,7 @@ const companies = [
     box        : 151,
     name       : 'Kutti Kathaigal',
     shortName  : 'KK',
-    icon       : 'screenone/box151.png',
+    icon       : '/screenone/box76.png',
     category   : 'entertainmentAndInformationService',
     serviceType: 'Entertainment & Stories',
     links: {
@@ -106,7 +106,7 @@ const companies = [
     box        : 153,
     name       : 'Meow Meow Melody TV',
     shortName  : 'MMM',
-    icon       : 'screenone/box153.png',
+    icon       : '/screenone/box77.png',
     category   : 'entertainmentAndInformationService',
     serviceType: 'Kids Entertainment',
     links: {
@@ -121,7 +121,7 @@ const companies = [
     box        : 158,
     name       : 'Sinu Cartoons',
     shortName  : 'SC',
-    icon       : 'screenone/box158.png',
+    icon       : '/screenone/box79.png',
     category   : 'entertainmentAndInformationService',
     serviceType: 'Cartoon Entertainment',
     links: {
