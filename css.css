@@ -318,7 +318,7 @@ header li { margin: 0; padding: 0; list-style: none; }
   .number { font-size:10px; font-weight:500; }
   .about-text p, .text p { width:1012px; }
   .about-images, .box { width:1012px; }
-  .box { height:400px; }
+  .box { height:900px; }
 }
 
 /* ── 801–1050px ──────────────────────────────────────────── */
@@ -333,7 +333,7 @@ header li { margin: 0; padding: 0; list-style: none; }
   .number { font-size:10px; font-weight:500; }
   .about-text p, .text p { width:789px; }
   .about-images { width:100%; }
-  .box { width:789px; height:1300px; display:inline; }
+  .box { width:789px; height:900px; display:inline; }
   .box-img { display:grid; place-items:center; }
   .box img  { width:450px; height:450px; margin:25px auto 0; outline:none; }
   #image1,#image2 { margin:0; }
@@ -364,7 +364,7 @@ header li { margin: 0; padding: 0; list-style: none; }
   .select13,.select15 { width:45px; height:22px; margin:0; }
   .about-text p, .text p { width:694px; }
   .about-images { width:100%; }
-  .box { width:694px; height:940px; display:inline; }
+  .box { width:694px; height:700px; display:inline; }
   .box-img { display:grid; place-items:center; }
   .box img  { width:450px; height:450px; margin:25px auto 0; outline:none; }
   #image1,#image2 { margin:0; }
