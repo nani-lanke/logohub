@@ -458,7 +458,7 @@ header li { margin: 0; padding: 0; list-style: none; }
   .number { font-size:5px; font-weight:400; }
   .about-text p, .text p { width:310px; font-size:15px; }
   .about-images { width:310px; }
-  .box { width:310px; height:600px; display:inline; }
+  .box { width:310px; height:700px; display:inline; }
   .box-img { display:grid; place-items:center; }
   .box img  { width:290px; height:250px; margin:50px auto 0; outline:none; }
   .box h1 { margin:25px 10px 0; }
