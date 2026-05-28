@@ -60,9 +60,9 @@ const companies = [
   {
     box        : 76,
     name       : 'LogoHub',
-    shortName  : 'LH',
+    shortName  : 'LogoHub displays company logos; click any logo to visit its website.',
     icon       : 'screenone/box76.png',
-    category   : 'entertainmentAndInformationService',
+    category   : 'technologyAndSoftwareServices',
     serviceType: 'Information & Directory Service',
     links: {
       website  : 'https://www.logohub.info/',
@@ -75,14 +75,14 @@ const companies = [
   {
     box        : 121,
     name       : 'Andhra Ruchulu',
-    shortName  : 'AR',
+    shortName  : 'My simple  way of cooking different dishes and intresting vlogs',
     icon       : 'screenone/box121.png',
     category   : 'hotelsTransportFoodandTourism',
     serviceType: 'Food & Cooking Channel',
     links: {
       website  : '',
       youtube  : 'https://www.youtube.com/@Andhraruchulu537',
-      instagram: '',
+      instagram: 'https://www.instagram.com/yummy_recipies123?igsh=Zm12aHZwazRmZHd0',
       whatsapp : '',
       location : '',
     },
@@ -90,7 +90,7 @@ const companies = [
   {
     box        : 151,
     name       : 'Kutti Kathaigal',
-    shortName  : 'KK',
+    shortName  : 'A sweet Tamil story world for children aged 2 to 6 years.',
     icon       : 'screenone/box151.png',
     category   : 'entertainmentAndInformationService',
     serviceType: 'Entertainment & Stories',
@@ -105,7 +105,7 @@ const companies = [
   {
     box        : 153,
     name       : 'Meow Meow Melody TV',
-    shortName  : 'MMM',
+    shortName  : '✨ Welcome to MeowMeow Melody TV! ✨ A happy place for kids to watch, learn, and enjoy! 🌈',
     icon       : 'screenone/box153.png',
     category   : 'entertainmentAndInformationService',
     serviceType: 'Kids Entertainment',
@@ -120,7 +120,7 @@ const companies = [
   {
     box        : 158,
     name       : 'Sinu Cartoons',
-    shortName  : 'SC',
+    shortName  : 'This video is made for fun purposes. It will contain school story comedy videos and fun filled ghost stories.',
     icon       : 'screenone/box158.png',
     category   : 'entertainmentAndInformationService',
     serviceType: 'Cartoon Entertainment',
