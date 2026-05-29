@@ -240,8 +240,8 @@ function injectModal() {
     <div class="m-overlay" id="mOverlay" role="dialog" aria-modal="true" aria-labelledby="mName">
       <div class="m-card" id="mCard">
         <button class="m-close" id="mClose" aria-label="Close">&#x2715;</button>
-        <div class="m-logo-wrap">
-          <img class="m-logo" id="mLogo" src="" alt="Company logo">
+        <div class="-wrap">
+          <img class="" id="mLogo" src="" alt="Company logo">
           <span class="m-badge" id="mBadge"></span>
         </div>
         <div class="m-info">
@@ -268,6 +268,7 @@ function openModal(company) {
   document.getElementById('mName').textContent     = company.name;
   document.getElementById('mService').textContent  = company.serviceType;
   document.getElementById('mBadge').style.background = colorMap[company.category] || '#aaa';
+     document.getElementById('mService').style.color = colorMap[company.category] || '#aaa';
 
   const actions = document.getElementById('mActions');
   actions.innerHTML = '';
@@ -369,12 +370,12 @@ function injectModalStyles() {
     }
     #companyModal .m-close:hover { background: #c0c1ff; color: #131b2e; transform: rotate(90deg); }
 
-    #companyModal .m-logo-wrap {
+    #companyModal .-wrap {
       display: flex; justify-content: center; align-items: center;
       margin-bottom: 18px; position: relative;
     }
     #companyModal .m-logo {
-      width: 96px; height: 96px; object-fit: contain; border-radius: 18px;
+      width: 150px; height: 150px; object-fit: contain; border-radius: 18px;
       border: 1px solid rgba(255,255,255,0.12);
       box-shadow: 0 4px 20px rgba(0,0,0,0.40);
       background: #0b1326; padding: 6px;
