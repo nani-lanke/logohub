@@ -375,12 +375,12 @@ function injectModalStyles() {
       margin-bottom: 18px; position: relative;
     }
     #companyModal .m-logo {
-      width: 150px; height: 150px; object-fit: contain; border-radius: 18px;
+      width: 96px; height: 96px; object-fit: contain; border-radius: 18px;
       border: 1px solid rgba(255,255,255,0.12);
       box-shadow: 0 4px 20px rgba(0,0,0,0.40);
       background: #0b1326; padding: 6px;
     }
-    #companyModal .m-badge {
+    #companyModal . {
       position: absolute; bottom: -4px; right: calc(50% - 60px);
       width: 18px; height: 18px; border-radius: 50%;
       border: 3px solid #131b2e; box-shadow: 0 1px 6px rgba(0,0,0,0.40);
