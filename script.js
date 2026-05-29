@@ -267,8 +267,7 @@ function openModal(company) {
   document.getElementById('mShort').textContent    = company.shortName;
   document.getElementById('mName').textContent     = company.name;
   document.getElementById('mService').textContent  = company.serviceType;
-  document.getElementById('mBadge').style.background = colorMap[company.category] || '#aaa';
-     document.getElementById('mService').style.color = colorMap[company.category] || '#aaa';
+  document.getElementById('mBadge').style.background = colorMap[company.category] || '#aaa';   
 
   const actions = document.getElementById('mActions');
   actions.innerHTML = '';
@@ -375,15 +374,15 @@ function injectModalStyles() {
       margin-bottom: 18px; position: relative;
     }
     #companyModal .m-logo {
-      width: 150px; height: 150px; object-fit: contain; border-radius: 28px;
+      width: 96px; height: 96px; object-fit: contain; border-radius: 18px;
       border: 1px solid rgba(255,255,255,0.12);
-      box-shadow: 0 6px 31px rgba(0,0,0,0.40);
-      background: #0b1326; padding: 9px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.40);
+      background: #0b1326; padding: 6px;
     }
-    #companyModal . {
-      position: absolute; bottom: -6px; right: calc(50% - 75px);
-      width: 28px; height: 28px; border-radius: 50%;
-      border: 5px solid #131b2e; box-shadow: 0 2px 9px rgba(0,0,0,0.40);
+    #companyModal .m-badge {
+      position: absolute; bottom: -4px; right: calc(50% - 60px);
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 3px solid #131b2e; box-shadow: 0 1px 6px rgba(0,0,0,0.40);
     }
 
     #companyModal .m-info { text-align: center; margin-bottom: 24px; }
