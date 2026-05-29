@@ -240,8 +240,8 @@ function injectModal() {
     <div class="m-overlay" id="mOverlay" role="dialog" aria-modal="true" aria-labelledby="mName">
       <div class="m-card" id="mCard">
         <button class="m-close" id="mClose" aria-label="Close">&#x2715;</button>
-        <div class="-wrap">
-          <img class="" id="mLogo" src="" alt="Company logo">
+        <div class="m-logo-wrap">
+          <img class="m-logo" id="mLogo" src="" alt="Company logo">
           <span class="m-badge" id="mBadge"></span>
         </div>
         <div class="m-info">
@@ -267,7 +267,7 @@ function openModal(company) {
   document.getElementById('mShort').textContent    = company.shortName;
   document.getElementById('mName').textContent     = company.name;
   document.getElementById('mService').textContent  = company.serviceType;
-  document.getElementById('mBadge').style.background = colorMap[company.category] || '#aaa';   
+  document.getElementById('mBadge').style.background = colorMap[company.category] || '#aaa';
 
   const actions = document.getElementById('mActions');
   actions.innerHTML = '';
@@ -369,7 +369,7 @@ function injectModalStyles() {
     }
     #companyModal .m-close:hover { background: #c0c1ff; color: #131b2e; transform: rotate(90deg); }
 
-    #companyModal .-wrap {
+    #companyModal .m-logo-wrap {
       display: flex; justify-content: center; align-items: center;
       margin-bottom: 18px; position: relative;
     }
@@ -423,7 +423,6 @@ document.addEventListener('DOMContentLoaded', () => {
   generateGrid();
   loadImages();
 });
-
 
 
 
