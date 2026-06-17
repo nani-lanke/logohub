@@ -132,6 +132,21 @@ const companies = [
       location : '',
     },
   },
+   {
+    box        : 128,
+    name       : 'Anuraj_handmade_jewellery',
+    shortName  : 'I love being artistic and fond of making hand made jewellery. plz support my small business. thank you. be positive',
+    icon       : 'screenone/box18.png',
+    category   : 'retailAndE_Commerce',
+    serviceType: 'Shopping & E-Commerce',
+    links: {
+      website  : '',
+      youtube  : 'https://www.youtube.com/@wristwonders-d8g',
+      instagram: 'https://www.instagram.com/anuraj_handmade_jewellery?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==',
+      whatsapp : '',
+      location : '',
+    },
+  },
   // ── ADD MORE COMPANIES HERE ──────────────────────────────
   // {
   //   box        : 10,
