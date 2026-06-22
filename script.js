@@ -136,7 +136,7 @@ const companies = [
     box        : 128,
     name       : 'Anuraj_handmade_jewellery',
     shortName  : 'I love being artistic and fond of making hand made jewellery. plz support my small business. thank you. be positive',
-    icon       : 'screenone/box18.png',
+    icon       : 'screenone/box128.png',
     category   : 'retailAndE_Commerce',
     serviceType: 'Shopping & E-Commerce',
     links: {
