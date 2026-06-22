@@ -141,7 +141,7 @@ const companies = [
     serviceType: 'Shopping & E-Commerce',
     links: {
       website  : '',
-      youtube  : 'https://www.youtube.com/@wristwonders-d8g',
+      youtube  : 'https://www.youtube.com/@anurajhandmadejewellery',
       instagram: 'https://www.instagram.com/anuraj_handmade_jewellery?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==',
       whatsapp : '',
       location : '',
