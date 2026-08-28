@@ -65,7 +65,7 @@ const companies = [
     category   : 'technologyAndSoftwareServices',
     serviceType: 'Information & Directory Service',
     links: {
-      website  : 'https://www.logohub.info/',
+      website  : 'https://www.logohub.in/',
       youtube  : '',
       instagram: '',
       whatsapp : '',
