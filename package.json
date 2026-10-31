@@ -2,6 +2,6 @@
   "name": "logohub",
   "private": true,
   "dependencies": {
-    "nodemailer": "^6.9.16"
+    "nodemailer": "^10.3.1"
   }
 }
