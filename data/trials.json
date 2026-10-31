@@ -1,1 +1,21 @@
-[]
+[
+  {
+    "box": 181,
+    "name": "Lovely",
+    "shortName": "simple chick",
+    "icon": "screenone/box181.png",
+    "category": "technologyAndSoftwareServices",
+    "serviceType": "Technology and Software Services",
+    "links": {
+      "website": "https://www.inviteaura.in/",
+      "youtube": "",
+      "instagram": "",
+      "whatsapp": "",
+      "location": ""
+    },
+    "trialStart": "2026-10-31T16:34:58.805Z",
+    "trialDays": 7,
+    "paid": false,
+    "emailHash": "a784fa18d116a098cd0d77c566a9b80d91db6d0065828908b616dadcdbb38d09"
+  }
+]
