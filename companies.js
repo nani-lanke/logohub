@@ -19,7 +19,12 @@
 //    icon        – path to the logo image
 //    category    – key from colorMap (sets the border colour)
 //    serviceType – label shown under the name in the popup
+//    buyingDate  – when the box was taken, India time ('YYYY-MM-DDTHH:MM:SS+05:30')
+//    expiredDate – when the logo is removed (same format), or Infinity = never
 //    links       – leave any value "" to hide that button in popup
+//
+//  Form entries are appended automatically by api/submit.js —
+//  run sync.bat before editing so you don't overwrite them.
 // ════════════════════════════════════════════════════════════
 const companies = [
   {
@@ -29,6 +34,8 @@ const companies = [
     icon       : 'screenone/box76.png',
     category   : 'technologyAndSoftwareServices',
     serviceType: 'Information & Directory Service',
+    buyingDate : '2026-10-31T22:31:37+05:30',
+    expiredDate: Infinity,
     links: {
       website  : 'https://www.logohub.in/',
       youtube  : '',
@@ -44,6 +51,8 @@ const companies = [
     icon       : 'screenone/box121.png',
     category   : 'hotelsTransportFoodandTourism',
     serviceType: 'Food & Cooking Channel',
+    buyingDate : '2026-10-31T22:31:37+05:30',
+    expiredDate: Infinity,
     links: {
       website  : '',
       youtube  : 'https://www.youtube.com/@Andhraruchulu537',
@@ -59,6 +68,8 @@ const companies = [
     icon       : 'screenone/box151.png',
     category   : 'entertainmentAndInformationService',
     serviceType: 'Entertainment & Stories',
+    buyingDate : '2026-10-31T22:31:37+05:30',
+    expiredDate: Infinity,
     links: {
       website  : '',
       youtube  : 'https://www.youtube.com/@KuttiKathaigal2026',
@@ -74,6 +85,8 @@ const companies = [
     icon       : 'screenone/box153.png',
     category   : 'entertainmentAndInformationService',
     serviceType: 'Kids Entertainment',
+    buyingDate : '2026-10-31T22:31:37+05:30',
+    expiredDate: Infinity,
     links: {
       website  : '',
       youtube  : 'https://www.youtube.com/@MeowMeowMelodyTV/shorts',
@@ -89,6 +102,8 @@ const companies = [
     icon       : 'screenone/box158.png',
     category   : 'entertainmentAndInformationService',
     serviceType: 'Cartoon Entertainment',
+    buyingDate : '2026-10-31T22:31:37+05:30',
+    expiredDate: Infinity,
     links: {
       website  : '',
       youtube  : 'https://www.youtube.com/@sinucartoons',
@@ -104,6 +119,8 @@ const companies = [
     icon       : 'screenone/box128.png',
     category   : 'retailAndE_Commerce',
     serviceType: 'Shopping & E-Commerce',
+    buyingDate : '2026-10-31T22:31:37+05:30',
+    expiredDate: Infinity,
     links: {
       website  : '',
       youtube  : 'https://www.youtube.com/@anurajhandmadejewellery',
@@ -112,7 +129,41 @@ const companies = [
       location : '',
     },
   },
-
-
-  
+  {
+    box        : 181,
+    name       : 'Lovely',
+    shortName  : 'simple chick',
+    icon       : 'screenone/box181.png',
+    category   : 'technologyAndSoftwareServices',
+    serviceType: 'Technology and Software Services',
+    buyingDate : '2026-10-31T22:04:58+05:30',
+    expiredDate: '2026-11-07T22:04:58+05:30',
+    links: {
+      website  : 'https://www.inviteaura.in/',
+      youtube  : '',
+      instagram: '',
+      whatsapp : '',
+      location : '',
+    },
+    emailHash  : 'a784fa18d116a098cd0d77c566a9b80d91db6d0065828908b616dadcdbb38d09',
+  },
 ];
+
+// ════════════════════════════════════════════════════════════
+//  EXPIRY — api/submit.js adds form entries to the end of companies[]
+//
+//  Free boxes get expiredDate: Infinity (never). Available boxes get
+//  buyingDate + 7 days. Once expiredDate passes the logo is hidden.
+//  After the user pays, change expiredDate to a later date (or Infinity).
+//  Expired entries can be deleted whenever you like (the next user on
+//  that box replaces it).
+// ════════════════════════════════════════════════════════════
+{
+  const now = Date.now();
+  for (let i = companies.length - 1; i >= 0; i--) {
+    const c = companies[i];
+    if (c.expiredDate !== Infinity && now >= Date.parse(c.expiredDate)) companies.splice(i, 1);
+    // ?v= busts the browser cache when a box is reused by a new user
+    else if (c.buyingDate) c.icon += `?v=${Date.parse(c.buyingDate)}`;
+  }
+}

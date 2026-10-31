@@ -2,3 +2,5 @@ node_modules/
 .vercel/
 .env*
 .playwright-mcp/
+.vscode/
+sync.bat

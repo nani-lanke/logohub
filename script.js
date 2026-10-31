@@ -68,34 +68,8 @@ const categoryLabels = {
   other                             : 'Others',
 };
 
-// ════════════════════════════════════════════════════════════
-//  FREE TRIALS — data/trials.json is written by api/submit.js
-//
-//  A trial shows for trialDays (9 Free / 7 Available) from trialStart. After the user pays,
-//  set "paid": true in data/trials.json (or move it into companies[]
-//  in companies.js). Expired, unpaid trials are hidden automatically — delete
-//  them from data/trials.json whenever you like.
-// ════════════════════════════════════════════════════════════
-const TRIAL_DAYS = 9;
-const isTrialLive = t => t.paid || Date.now() < Date.parse(t.trialStart) + (t.trialDays || TRIAL_DAYS) * 864e5;
-
-async function loadTrials() {
-  try {
-    const res = await fetch('data/trials.json', { cache: 'no-store' });
-    if (!res.ok) return;
-    const taken = new Set(companies.map(c => c.box));
-    (await res.json())
-      .filter(t => isTrialLive(t) && !taken.has(t.box))
-      // ?v= busts the browser cache when a box is reused by a new trial
-      .forEach(t => companies.push({ ...t, icon: `${t.icon}?v=${Date.parse(t.trialStart)}` }));
-  } catch {
-    // No trials file yet — show the fixed companies only
-  }
-  companyByBox = Object.fromEntries(companies.map(c => [c.box, c]));
-}
-
 // ── Fast lookup: box number → company object ─────────────────
-let companyByBox = Object.fromEntries(companies.map(c => [c.box, c]));
+const companyByBox =Object.fromEntries(companies.map(c => [c.box, c]));
 
 // ── Resolve border colour for any box ───────────────────────
 function getBorderColor(boxId) {
@@ -484,10 +458,9 @@ function wireSearch() {
 // ════════════════════════════════════════════════════════════
 //  INIT
 // ════════════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
   injectModalStyles();
   injectModal();
-  await loadTrials();
   generateGrid();
   loadImages();
   renderStats();

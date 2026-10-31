@@ -9,6 +9,7 @@
   <!-- css.css supplies the shared header, buttons and footer -->
   <link rel="stylesheet" href="css.css">
   <script src="theme.js"></script>
+  <script src="maintenance.js"></script>
   <style>
     /* Box status colours (picker grid + legend) */
     :root {
@@ -378,7 +379,7 @@
   <!-- ── HERO ─────────────────────────────────────────────── -->
   <section class="hero req-hero">
     <div class="container hero-inner">
-      <p class="eyebrow"><span class="eyebrow-dot"></span>Free trial up to 9 days &middot; live in minutes</p>
+      <p class="eyebrow"><span class="eyebrow-dot"></span>Free boxes free forever &middot; live in minutes</p>
       <h1 class="hero-title">Claim your box<br>on the <em>wall</em>.</h1>
       <p class="hero-sub">
         Each box on LogoHub is a <strong>permanent display slot</strong> for your logo. Pick a box,
@@ -400,7 +401,7 @@
       <div class="section-head">
         <p class="kicker">Pricing</p>
         <h2 class="section-title">Simple yearly prices</h2>
-        <p class="section-sub">The price depends on the shape of the box you pick. Free boxes get a 9-day free trial and Available boxes get 7 days.</p>
+        <p class="section-sub">The price depends on the shape of the box you pick. Free boxes are free with no end date, and Available boxes get a 7-day free trial.</p>
       </div>
 
       <div class="plans">
@@ -444,7 +445,7 @@
       <!-- 1. Box picker grid (stretched to the form's height on wide screens) -->
       <div class="panel sticky">
         <h2 class="step-title"><span class="flow-num">1</span>Choose a box</h2>
-        <p class="step-sub">Free trials work on <strong class="st-free">Free</strong> and <strong class="st-available">Available</strong> boxes. Tap one to select it.</p>
+        <p class="step-sub">Free trials work on <strong class="st-free">Free</strong> and <strong class="st-available">Available</strong> boxes; <strong class="st-reserved">Reserved</strong> boxes are paid online for 1 year. Tap one to select it.</p>
         <div class="status-legend">
           <span class="legend-item"><span class="legend-dot" style="background:var(--st-booked);"></span>Booked</span>
           <span class="legend-item"><span class="legend-dot" style="background:var(--st-special);"></span>Special</span>
@@ -590,8 +591,8 @@
           </div>
 
           <div class="error-msg" id="errorMsg" role="alert"></div>
-          <button type="submit" class="btn btn-primary submit-btn" id="submitBtn">Start Free Trial</button>
-          <p class="trial-note">No payment now. Free boxes: 9-day trial &middot; Available boxes: 7-day trial. To keep your box after the trial, reply to our trial email.</p>
+          <button type="submit" class="btn btn-primary submit-btn" id="submitBtn">Get My Box</button>
+          <p class="trial-note">Free boxes: free forever &middot; Available boxes: 7-day trial, no payment now &middot; Reserved boxes: no trial, pay online for 1 year.</p>
         </form>
 
         <div class="success-msg" id="successMsg" hidden></div>
@@ -623,7 +624,7 @@
           </a>
           <p class="footer-tagline">Every company logo in one place &mdash; one click takes you to their website.</p>
           <div class="footer-social">
-            <a href="mailto:help.lovelyaz@gmail.com" aria-label="Email us" title="Email us">
+            <a href="mailto:support@logohub.in" aria-label="Email us" title="Email us">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
             </a>
             <a href="https://www.logohub.in/" target="_blank" rel="noopener noreferrer" aria-label="Website" title="Website">
@@ -657,7 +658,7 @@
           <ul>
             <li><a href="termsandconditions.html#privacy">Privacy Policy</a></li>
             <li><a href="termsandconditions.html#terms">Terms &amp; Conditions</a></li>
-            <li><a href="mailto:help.lovelyaz@gmail.com">Contact Us</a></li>
+            <li><a href="mailto:support@logohub.in">Contact Us</a></li>
           </ul>
         </nav>
       </div>
@@ -668,7 +669,7 @@
           <p class="footer-version">Version 1.1.0</p>
         </div>
         <div class="footer-mini-links">
-          <a href="mailto:help.lovelyaz@gmail.com">Contact</a>
+          <a href="mailto:support@logohub.in">Contact</a>
           <a href="termsandconditions.html#privacy">Privacy</a>
           <a href="termsandconditions.html#terms">Terms</a>
         </div>
@@ -693,12 +694,10 @@
     document.getElementById('year').textContent = new Date().getFullYear();
 
     // ── Box status lists (box numbers 1–600) ─────────────────
-    // Boxes in companies.js are booked; live trials get added below
+    // Boxes in companies.js are booked (expired trials are already removed)
     const bookedList   = companies.map(c => c.box);
     const specialList  = Array.from({ length: 120 }, (_, i) => i + 1); // 1–120
-    const reservedList = [121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
-      147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176,
-      177, 178, 179, 180];
+    const reservedList = Array.from({ length: 240 }, (_, i) => i + 121); // 121–360
     const freeBoxes    = [482,484,485,486,487,489,491,494,497,499,500,501,502,504,506,509,512,514,515,516,517,519,521,524,527,529,530,531,532,534,536,539,
       542,544,545,546,547,549,551,554,557,559,560,561,562,564,566,569,572,574,575,576,577,579,581,584,587,589,590,591,592,594,596,599];
 
@@ -709,20 +708,8 @@
     const summary  = document.getElementById('pickSummary');
     let   selected = null;
 
-    // ── Live free trials count as booked (see data/trials.json) ──
-    const TRIAL_DAYS = 9;   // Free boxes (same as api/submit.js)
-    const AVAIL_DAYS = 7;   // Available boxes
-    async function loadTrialBoxes() {
-      try {
-        const res = await fetch('data/trials.json', { cache: 'no-store' });
-        if (!res.ok) return;
-        (await res.json())
-          .filter(t => t.paid || Date.now() < Date.parse(t.trialStart) + (t.trialDays || TRIAL_DAYS) * 864e5)
-          .forEach(t => bookedList.push(t.box));
-      } catch {
-        // No trials file yet
-      }
-    }
+    // ── Free boxes never expire; Available boxes (same as api/submit.js) ──
+    const AVAIL_DAYS = 7;
 
     function buildGrid() {
       for (let i = 1; i <= 600; i++) {
@@ -746,7 +733,7 @@
         grid.appendChild(el);
       }
     }
-    loadTrialBoxes().then(buildGrid);
+    buildGrid();
 
     // ── Box shape + price — same 15-slot pattern as the home page grid ──
     function boxShape(n) {
@@ -778,7 +765,8 @@
                    :                            'Available';
       summary.className = 'pick-summary has-box';
       summary.innerHTML =
-        `<span><strong>Box ${n}</strong> &middot; ${shape.name} &middot; &#8377;${shape.price}/year after the trial</span>` +
+        `<span><strong>Box ${n}</strong> &middot; ${shape.name} &middot; &#8377;${shape.price}/year` +
+        `${status === 'Reserved' ? ', no trial' : status === 'Available' ? ' after the trial' : ''}</span>` +
         `<span class="pick-tag st-${status.toLowerCase()}">${status}</span>`;
     }
 
@@ -859,6 +847,9 @@
       const d   = getData();
       const num = parseInt(d.box);
 
+      if (window.MAINTENANCE && MAINTENANCE.status().phase === 'active') {
+        errorMsg.textContent = 'LogoHub is under maintenance. New logo sign-ups are paused — please try again later.'; return;
+      }
       if (!d.company) { errorMsg.textContent = 'Please enter your company name.'; return; }
       if (!d.description) { errorMsg.textContent = 'Please enter a short description.'; return; }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) { errorMsg.textContent = 'Please enter a valid email address.'; return; }
@@ -878,17 +869,32 @@
       }
       errorMsg.textContent = '';
 
-      // Special / Reserved → no trial, contact support
-      if (specialList.includes(num) || reservedList.includes(num)) {
-        const kind = specialList.includes(num) ? 'Special' : 'Reserved';
+      // Special → no trial, contact support
+      if (specialList.includes(num)) {
         openModal({
-          title : `Box ${num} is a ${kind} box`,
-          html  : `Special and Reserved boxes have <strong>no free trial</strong>. Please send a mail to our support team at ` +
-                  `<a href="mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(`LogoHub ${kind} box ${num}`)}">${SUPPORT_EMAIL}</a>.<br>` +
+          title : `Box ${num} is a Special box`,
+          html  : `Special boxes have <strong>no free trial</strong>. Please send a mail to our support team at ` +
+                  `<a href="${specialMailto(d, num)}">${SUPPORT_EMAIL}</a>.<br>` +
+                  `Your details are filled in for you &mdash; just attach your logo image before sending.<br>` +
                   `For a free trial, select a <strong>Free</strong> or <strong>Available</strong> box.`,
           ok    : 'Mail Support',
           cancel: 'Choose Another Box',
-          onOk  : () => { location.href = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(`LogoHub ${kind} box ${num}`)}`; },
+          onOk  : () => mailSpecial(d, num),
+        });
+        return;
+      }
+
+      // Reserved → no trial, pay online for 1 year
+      if (reservedList.includes(num)) {
+        const shape = boxShape(num);
+        openModal({
+          title : `Box ${num} is a Reserved box`,
+          html  : `Reserved boxes have <strong>no free trial</strong>. Pay <strong>&#8377;${shape.price}</strong> for ` +
+                  `<strong>1 year</strong> (${shape.name} box) and your logo goes live right after payment.<br>` +
+                  `We'll email your box number and payment details to you.`,
+          ok    : `Pay ₹${shape.price}`,
+          cancel: 'Choose Another Box',
+          onOk  : () => payReserved(d, num),
         });
         return;
       }
@@ -909,7 +915,7 @@
     });
 
     // ── Trial popup ───────────────────────────────────────────
-    const SUPPORT_EMAIL = 'help.lovelyaz@gmail.com';
+    const SUPPORT_EMAIL = 'support@logohub.in';
     const modal       = document.getElementById('trialModal');
     const modalTitle  = document.getElementById('trialModalTitle');
     const modalText   = document.getElementById('trialModalText');
@@ -936,32 +942,161 @@
     modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
 
-    async function submitTrial(d, num) {
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Submitting…';
-      try {
-        const res  = await fetch('/api/submit', {
-          method : 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body   : JSON.stringify({ ...d, box: num }),
-        });
-        const json = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(json.error || 'Something went wrong. Please try again.');
+    // ── Special box: mail support with the form details + logo ──
+    function specialMailBody(d, num, attachNote) {
+      const shape = boxShape(num);
+      const links = [
+        ['Website',   d.website],
+        ['YouTube',   d.youtube],
+        ['Instagram', d.instagram],
+        ['WhatsApp',  d.whatsapp],
+        ['Location',  d.location],
+      ].filter(([, v]) => v).map(([k, v]) => `${k}: ${v}`);
+      return [
+        'Hello LogoHub team,',
+        '',
+        `I would like to book Special box ${num}.`,
+        '',
+        `Box: ${num} (${shape.name}, ₹${shape.price}/year)`,
+        `Company: ${d.company}`,
+        `Description: ${d.description}`,
+        `Email: ${d.email}`,
+        `Service type: ${d.service}`,
+        ...links,
+        '',
+        attachNote,
+        '',
+        'Thank you.',
+      ].join('\n');
+    }
 
+    function specialMailto(d, num) {
+      const subject = `LogoHub Special box ${num} - ${d.company}`;
+      const body    = specialMailBody(d, num, `Logo: please see the attached image (${logoIn.files[0]?.name || 'logo'}).`);
+      return `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    }
+
+    // mailto: links can't carry attachments. On phones the share sheet can send the
+    // logo file with the details; elsewhere we download the logo so it's easy to attach.
+    async function mailSpecial(d, num) {
+      const file = logoIn.files[0];
+      if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            title: `LogoHub Special box ${num} - ${d.company}`,
+            text : `To: ${SUPPORT_EMAIL}\n\n` + specialMailBody(d, num, 'Logo: attached.'),
+            files: [file],
+          });
+          return;
+        } catch (err) {
+          if (err.name === 'AbortError') return;   // user closed the share sheet
+        }
+      }
+      if (file) {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(file);
+        a.download = file.name;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      }
+      location.href = specialMailto(d, num);
+    }
+
+    async function postForm(body) {
+      const res  = await fetch('/api/submit', {
+        method : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body   : JSON.stringify(body),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json.error || 'Something went wrong. Please try again.');
+      return json;
+    }
+
+    function setBusy(label) {
+      submitBtn.disabled    = !!label;
+      submitBtn.textContent = label || 'Get My Box';
+    }
+
+    // ── Reserved box: Razorpay order → Checkout popup → confirm ──
+    function loadRazorpay() {
+      if (window.Razorpay) return Promise.resolve();
+      return new Promise((resolve, reject) => {
+        const s   = document.createElement('script');
+        s.src     = 'https://checkout.razorpay.com/v1/checkout.js';
+        s.onload  = resolve;
+        s.onerror = () => reject(new Error('Could not open the payment window. Please check your connection and try again.'));
+        document.head.appendChild(s);
+      });
+    }
+
+    async function payReserved(d, num) {
+      setBusy('Opening payment…');
+      try {
+        const [order] = await Promise.all([postForm({ ...d, box: num, action: 'order' }), loadRazorpay()]);
+        const rzp = new Razorpay({
+          key        : order.keyId,
+          order_id   : order.orderId,
+          amount     : order.amount,
+          currency   : order.currency,
+          name       : 'LogoHub',
+          description: `Box ${num} · ${boxShape(num).name} · 1 year`,
+          image      : new URL('icons/logohub-icon.png', location.href).href,
+          prefill    : { name: d.company, email: d.email },
+          theme      : { color: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#d6b87a' },
+          handler    : resp => confirmPaid(d, num, resp),
+          modal      : { ondismiss: () => setBusy() },
+        });
+        rzp.on('payment.failed', resp => {
+          errorMsg.textContent = `Payment failed: ${resp.error.description || 'please try again.'}`;
+        });
+        rzp.open();
+      } catch (err) {
+        errorMsg.textContent = err.message;
+        setBusy();
+      }
+    }
+
+    async function confirmPaid(d, num, resp) {
+      setBusy('Booking your box…');
+      try {
+        const json = await postForm({ ...d, box: num, action: 'paid', ...resp });
         form.hidden = true;
         successMsg.hidden = false;
         successMsg.innerHTML =
-          `🎉 Your <strong>${json.trialDays || TRIAL_DAYS}-day free trial</strong> has started for <strong>Box ${num}</strong>!<br>` +
+          `🎉 Payment of <strong>&#8377;${json.amount}</strong> received &mdash; <strong>Box ${num}</strong> is yours until <strong>${json.validTill}</strong>!<br>` +
           `Your logo will appear on <a href="index.html">LogoHub</a> in 1–2 minutes.<br>` +
           (json.emailSent
-            ? `We've sent the details to <strong>${d.email.replace(/[<>&"]/g, '')}</strong>.`
-            : `We couldn't send the confirmation email, but your trial is active.`);
+            ? `We've sent your box number and receipt to <strong>${d.email.replace(/[<>&"]/g, '')}</strong>.`
+            : `We couldn't send the confirmation email, but your box is booked. Payment ID: ${resp.razorpay_payment_id}`);
         successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
       } catch (err) {
         errorMsg.textContent = err.message;
       } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Start Free Trial';
+        setBusy();
+      }
+    }
+
+    async function submitTrial(d, num) {
+      setBusy('Submitting…');
+      try {
+        const json = await postForm({ ...d, box: num });
+
+        form.hidden = true;
+        successMsg.hidden = false;
+        successMsg.innerHTML =
+          (json.forever
+            ? `🎉 <strong>Box ${num}</strong> is yours, free with <strong>no end date</strong>!<br>`
+            : `🎉 Your <strong>${json.days || AVAIL_DAYS}-day free trial</strong> has started for <strong>Box ${num}</strong>!<br>`) +
+          `Your logo will appear on <a href="index.html">LogoHub</a> in 1–2 minutes.<br>` +
+          (json.emailSent
+            ? `We've sent the details to <strong>${d.email.replace(/[<>&"]/g, '')}</strong>.`
+            : `We couldn't send the confirmation email, but your box is booked.`);
+        successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch (err) {
+        errorMsg.textContent = err.message;
+      } finally {
+        setBusy();
       }
     }
   </script>
