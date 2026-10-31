@@ -13,11 +13,11 @@
      GITHUB_TOKEN   – fine-grained token, Contents: Read & Write, this repo only
      GITHUB_REPO    – "owner/repo"
      GITHUB_BRANCH  – default "main"
-     SMTP_USER      – Spacemail address, e.g. support@logohub.info
+     SMTP_USER      – Spacemail address, e.g. support@logohub.in
      SMTP_PASS      – Spacemail password
      SMTP_HOST      – default "mail.spacemail.com"
      ADMIN_EMAIL    – where your copy goes; default SMTP_USER
-     SITE_URL       – default "https://www.logohub.info"
+     SITE_URL       – default "https://www.logohub.in"
    ════════════════════════════════════════════════════════════ */
 
 const crypto     = require('crypto');
@@ -176,7 +176,7 @@ async function sendTrialEmail(entry, email) {
     auth  : { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
   });
 
-  const site  = process.env.SITE_URL || 'https://www.logohub.info';
+  const site  = process.env.SITE_URL || 'https://www.logohub.in';
   const admin = process.env.ADMIN_EMAIL || process.env.SMTP_USER;
   const days  = entry.trialDays;
   const end   = new Date(Date.parse(entry.trialStart) + days * 864e5)
