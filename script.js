@@ -2,25 +2,40 @@
    LOGOHUB  —  script.js
 
    HOW IT WORKS:
-   1. companies[]    – one object per company; single source of truth
+   1. companies[]    – in companies.js (shared with sendrequest.html)
    2. generateGrid() – builds 40 sets × 15 slots = 600 boxes in the DOM
    3. loadImages()   – for each company, loads its icon; on success,
                        shows the logo and wires a click → openModal()
    4. openModal()    – fills the popup with company info + action icons
    5. Action icons   – only rendered when the matching link is non-empty
-
-   KEY BUG FIX: modal CSS selector was missing '#' on '#companyModal'
-   causing the overlay to never become visible on .active toggle.
    ════════════════════════════════════════════════════════════ */
 
 // ─── Hamburger menu toggle ────────────────────────────────────
 const menuBtn = document.querySelector('#header-icon');
 const navbar  = document.querySelector('.header-bar');
-if (menuBtn) {
-  menuBtn.addEventListener('click', () => navbar.classList.toggle('active'));
+function setMenu(open) {
+  if (!navbar) return;
+  navbar.classList.toggle('active', open);
+  if (menuBtn) menuBtn.setAttribute('aria-expanded', open);
 }
+if (menuBtn) {
+  menuBtn.addEventListener('click', () => setMenu(!navbar.classList.contains('active')));
+}
+// Close the mobile menu after picking a link
+if (navbar) {
+  navbar.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+}
+// ─── Back-to-top button + footer year ─────────────────────────
+const toTop = document.querySelector('#toTop');
+if (toTop) {
+  toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+}
+const yearEl = document.querySelector('#year');
+if (yearEl) yearEl.textContent = new Date().getFullYear();
+
 window.addEventListener('scroll', () => {
-  if (navbar) navbar.classList.remove('active');
+  setMenu(false);
+  if (toTop) toTop.classList.toggle('show', window.scrollY > 400);
 });
 
 // ════════════════════════════════════════════════════════════
@@ -39,140 +54,54 @@ const colorMap = {
   other                             : '#777777',
 };
 
+// Category key → label shown in the colour-guide chips
+const categoryLabels = {
+  technologyAndSoftwareServices     : 'Technology & Software',
+  educationAndInstituteService      : 'Education & Institutes',
+  hotelsTransportFoodandTourism     : 'Hotels, Food & Travel',
+  energyandUtilityServices          : 'Energy & Utilities',
+  retailAndE_Commerce               : 'Shopping & E-Commerce',
+  entertainmentAndInformationService: 'Entertainment & Media',
+  healthCareAndMedicalServices      : 'Health & Medical',
+  financeAndBankingServices         : 'Finance & Banking',
+  manufacturingIndustries           : 'Manufacturing & Products',
+  other                             : 'Others',
+};
+
 // ════════════════════════════════════════════════════════════
-//  COMPANY DATA — SINGLE SOURCE OF TRUTH
+//  FREE TRIALS — data/trials.json is written by api/submit.js
 //
-//  To add a company:
-//    1. Add one object to this array.
-//    2. Place the logo at /screenone/box{N}.png  (N = box number).
-//    The grid, border colour and popup are fully automatic.
-//
-//  Fields:
-//    box         – grid slot (1–600)
-//    name        – company name shown in popup
-//    shortName   – short code shown above the name
-//    icon        – path to the logo image
-//    category    – key from colorMap (sets the border colour)
-//    serviceType – label shown under the name in the popup
-//    links       – leave any value "" to hide that button in popup
+//  A trial shows for trialDays (9 Free / 7 Available) from trialStart. After the user pays,
+//  set "paid": true in data/trials.json (or move it into companies[]
+//  in companies.js). Expired, unpaid trials are hidden automatically — delete
+//  them from data/trials.json whenever you like.
 // ════════════════════════════════════════════════════════════
-const companies = [
-  {
-    box        : 76,
-    name       : 'LogoHub',
-    shortName  : 'LogoHub displays company logos; click any logo to visit its website.',
-    icon       : 'screenone/box76.png',
-    category   : 'technologyAndSoftwareServices',
-    serviceType: 'Information & Directory Service',
-    links: {
-      website  : 'https://www.logohub.in/',
-      youtube  : '',
-      instagram: '',
-      whatsapp : '',
-      location : '',
-    },
-  },
-  {
-    box        : 121,
-    name       : 'AnuRaj_ Vantillu',
-    shortName  : 'My simple  way of cooking different dishes and intresting vlogs',
-    icon       : 'screenone/box121.png',
-    category   : 'hotelsTransportFoodandTourism',
-    serviceType: 'Food & Cooking Channel',
-    links: {
-      website  : '',
-      youtube  : 'https://www.youtube.com/@AnuRaj_Vantillu',
-      instagram: 'instagram.com/anuraj_vantillu?igsh=Zm12aHZwazRmZHd0',
-      whatsapp : '',
-      location : '',
-    },
-  },
-{
-    box        : 128,
-    name       : 'Anuraj_handmade_jewellery',
-    shortName  : 'I love being artistic and fond of making hand made jewellery. plz support my small business. thank you. be positive',
-    icon       : 'screenone/box128.png',
-    category   : 'retailAndE_Commerce',
-    serviceType: 'Shopping & E-Commerce',
-    links: {
-      website  : '',
-      youtube  : 'https://www.youtube.com/@anurajhandmadejewellery',
-      instagram: 'https://www.instagram.com/anuraj_handmade_jewellery?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==',
-      whatsapp : '',
-      location : '',
-    },
-  },
-  {
-    box        : 151,
-    name       : 'Kutti Kathaigal',
-    shortName  : 'A sweet Tamil story world for children aged 2 to 6 years.',
-    icon       : 'screenone/box151.png',
-    category   : 'entertainmentAndInformationService',
-    serviceType: 'Entertainment & Stories',
-    links: {
-      website  : '',
-      youtube  : 'https://www.youtube.com/@KuttiKathaigal2026',
-      instagram: '',
-      whatsapp : '',
-      location : '',
-    },
-  },
-  {
-    box        : 153,
-    name       : 'Meow Meow Melody TV',
-    shortName  : '✨ Welcome to MeowMeow Melody TV! ✨ A happy place for kids to watch, learn, and enjoy! 🌈',
-    icon       : 'screenone/box153.png',
-    category   : 'entertainmentAndInformationService',
-    serviceType: 'Kids Entertainment',
-    links: {
-      website  : '',
-      youtube  : 'https://www.youtube.com/@MeowMeowMelodyTV/shorts',
-      instagram: '',
-      whatsapp : '',
-      location : '',
-    },
-  },
-  {
-    box        : 158,
-    name       : 'Sinu Cartoons',
-    shortName  : 'This video is made for fun purposes. It will contain school story comedy videos and fun filled ghost stories.',
-    icon       : 'screenone/box158.png',
-    category   : 'entertainmentAndInformationService',
-    serviceType: 'Cartoon Entertainment',
-    links: {
-      website  : '',
-      youtube  : 'https://www.youtube.com/@sinucartoons',
-      instagram: '',
-      whatsapp : '',
-      location : '',
-    },
-  },
-  // ── ADD MORE COMPANIES HERE ──────────────────────────────
-  // {
-  //   box        : 10,
-  //   name       : 'My Company',
-  //   shortName  : 'MC',
-  //   icon       : 'screenone/box10.png',
-  //   category   : 'technologyAndSoftwareServices',
-  //   serviceType: 'Software & IT Services',
-  //   links: {
-  //     website  : 'https://www.mycompany.com',
-  //     youtube  : '',
-  //     instagram: 'https://instagram.com/mycompany',
-  //     whatsapp : 'https://wa.me/919876543210',
-  //     location : 'https://maps.google.com/?q=My+Company',
-  //   },
-  // },
-];
+const TRIAL_DAYS = 9;
+const isTrialLive = t => t.paid || Date.now() < Date.parse(t.trialStart) + (t.trialDays || TRIAL_DAYS) * 864e5;
+
+async function loadTrials() {
+  try {
+    const res = await fetch('data/trials.json', { cache: 'no-store' });
+    if (!res.ok) return;
+    const taken = new Set(companies.map(c => c.box));
+    (await res.json())
+      .filter(t => isTrialLive(t) && !taken.has(t.box))
+      // ?v= busts the browser cache when a box is reused by a new trial
+      .forEach(t => companies.push({ ...t, icon: `${t.icon}?v=${Date.parse(t.trialStart)}` }));
+  } catch {
+    // No trials file yet — show the fixed companies only
+  }
+  companyByBox = Object.fromEntries(companies.map(c => [c.box, c]));
+}
 
 // ── Fast lookup: box number → company object ─────────────────
-const companyByBox = Object.fromEntries(companies.map(c => [c.box, c]));
+let companyByBox = Object.fromEntries(companies.map(c => [c.box, c]));
 
 // ── Resolve border colour for any box ───────────────────────
 function getBorderColor(boxId) {
   const company = companyByBox[boxId];
-  if (company) return colorMap[company.category] || 'rgba(255,255,255,0.08)';
-  return 'rgba(255,255,255,0.08)';
+  if (company) return colorMap[company.category] || 'var(--slot-border)';
+  return 'var(--slot-border)';
 }
 
 // ════════════════════════════════════════════════════════════
@@ -198,6 +127,7 @@ function generateGrid() {
       box.className = `select${slotIndex}`;
       box.id = `box${boxId}`;
       box.style.border = `2px solid ${getBorderColor(boxId)}`;
+      if (companyByBox[boxId]) box.dataset.cat = companyByBox[boxId].category;
 
       const label = document.createElement('span');
       label.className = 'number';
@@ -282,7 +212,9 @@ function openModal(company) {
   document.getElementById('mShort').textContent    = company.shortName;
   document.getElementById('mName').textContent     = company.name;
   document.getElementById('mService').textContent  = company.serviceType;
-  document.getElementById('mBadge').style.background = colorMap[company.category] || '#aaa';
+  const catColor = colorMap[company.category] || '#aaa';
+  document.getElementById('mLogo').style.borderColor  = catColor;
+  document.getElementById('mBadge').style.background = catColor;
 
   const actions = document.getElementById('mActions');
   actions.innerHTML = '';
@@ -346,8 +278,6 @@ function svgLocation() {
 
 // ════════════════════════════════════════════════════════════
 //  MODAL STYLES — injected into <head> once
-//  BUG FIX: every selector prefixed with '#companyModal'
-//  (original missing '#' made pointer-events:none permanent)
 // ════════════════════════════════════════════════════════════
 function injectModalStyles() {
   const style = document.createElement('style');
@@ -355,7 +285,7 @@ function injectModalStyles() {
     #companyModal .m-overlay {
       position: fixed; inset: 0;
       display: flex; align-items: center; justify-content: center;
-      background: rgba(0,5,20,0.75);
+      background: var(--overlay-bg);
       backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       z-index: 9999; opacity: 0; pointer-events: none;
       transition: opacity 0.22s ease;
@@ -365,10 +295,10 @@ function injectModalStyles() {
     #companyModal .m-card {
       position: relative; width: 90%; max-width: 400px;
       max-height: 90vh; overflow-y: auto;
-      background: #131b2e;
-      border: 1px solid rgba(192,193,255,0.15);
-      border-radius: 24px; padding: 36px 28px 28px;
-      box-shadow: 0 32px 80px rgba(0,0,0,0.60), 0 4px 16px rgba(0,0,0,0.30);
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 20px; padding: 36px 28px 28px;
+      box-shadow: var(--shadow-lg);
       transform: scale(0.86) translateY(28px); opacity: 0;
       transition: transform 0.32s cubic-bezier(0.34,1.56,0.64,1), opacity 0.22s ease;
     }
@@ -377,12 +307,12 @@ function injectModalStyles() {
     #companyModal .m-close {
       position: absolute; top: 14px; right: 14px;
       width: 32px; height: 32px; border-radius: 50%; border: none;
-      background: rgba(255,255,255,0.08); color: #c0c1ff;
+      background: var(--surface-hi); color: var(--accent);
       font-size: 15px; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       transition: background 0.16s, transform 0.16s;
     }
-    #companyModal .m-close:hover { background: #c0c1ff; color: #131b2e; transform: rotate(90deg); }
+    #companyModal .m-close:hover { background: var(--accent); color: var(--accent-contrast); transform: rotate(90deg); }
 
     #companyModal .m-logo-wrap {
       display: flex; justify-content: center; align-items: center;
@@ -390,66 +320,177 @@ function injectModalStyles() {
     }
     #companyModal .m-logo {
       width: 96px; height: 96px; object-fit: contain; border-radius: 18px;
-      border: 1px solid rgba(255,255,255,0.12);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.40);
-      background: #0b1326; padding: 6px;
+      border: 3px solid var(--border-strong);
+      box-shadow: var(--shadow-sm);
+      background: #ffffff; padding: 6px;
     }
     #companyModal .m-badge {
       position: absolute; bottom: -4px; right: calc(50% - 60px);
       width: 18px; height: 18px; border-radius: 50%;
-      border: 3px solid #131b2e; box-shadow: 0 1px 6px rgba(0,0,0,0.40);
+      border: 3px solid var(--surface); box-shadow: var(--shadow-sm);
     }
 
     #companyModal .m-info { text-align: center; margin-bottom: 24px; }
     #companyModal .m-short {
-      font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
-      text-transform: uppercase; color: rgba(192,193,255,0.55); margin: 0 0 4px;
+      font-size: 13px; font-weight: 400; line-height: 1.6;
+      color: var(--text-dim); margin: 0 0 10px;
     }
-    #companyModal .m-name { font-size: 22px; font-weight: 800; color: #dae2fd; margin: 0 0 6px; line-height: 1.2; }
-    #companyModal .m-service { font-size: 13px; font-weight: 500; color: #8890aa; margin: 0; }
+    #companyModal .m-name { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--text); margin: 0 0 8px; line-height: 1.2; }
+    #companyModal .m-service {
+      display: inline-block; margin: 0; padding: 3px 12px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); border: 1px solid var(--border-strong); border-radius: 999px;
+    }
 
     #companyModal .m-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
     #companyModal .m-action-btn {
       display: flex; flex-direction: column; align-items: center; gap: 5px;
       padding: 12px 14px 10px; min-width: 68px;
-      border-radius: 14px; background: rgba(255,255,255,0.06);
-      text-decoration: none; color: #c0c1ff;
-      border: 1px solid rgba(192,193,255,0.12);
+      border-radius: 14px; background: var(--surface-hi);
+      text-decoration: none; color: var(--accent);
+      border: 1px solid var(--border);
       transition: background 0.18s, transform 0.16s, box-shadow 0.18s;
     }
     #companyModal .m-action-btn:hover {
-      background: #c0c1ff; color: #0b1326;
-      transform: translateY(-3px); box-shadow: 0 8px 24px rgba(192,193,255,0.20);
+      background: var(--accent); color: var(--accent-contrast);
+      transform: translateY(-3px); box-shadow: var(--shadow-sm);
     }
     #companyModal .m-action-btn svg  { width: 24px; height: 24px; }
     #companyModal .m-action-btn span { font-size: 10px; font-weight: 700; letter-spacing: 0.04em; }
     #companyModal .m-card::-webkit-scrollbar { width: 4px; }
-    #companyModal .m-card::-webkit-scrollbar-thumb { background: rgba(192,193,255,0.20); border-radius: 4px; }
+    #companyModal .m-card::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
   `;
   document.head.appendChild(style);
 }
 
 // ════════════════════════════════════════════════════════════
+//  WALL TOOLS — hero stats, colour-guide chips, search
+//  Chips and search both highlight matching boxes and dim the rest.
+// ════════════════════════════════════════════════════════════
+const TOTAL_BOXES = 600;
+let activeCat = null;
+
+function renderStats() {
+  const listed = document.getElementById('statListed');
+  const open   = document.getElementById('statOpen');
+  if (listed) listed.textContent = companies.length;
+  if (open)   open.textContent   = TOTAL_BOXES - companies.length;
+}
+
+function buildLegend() {
+  const legend = document.getElementById('colours');
+  if (!legend) return;
+
+  const makeChip = (cat, label, color, count) => {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'chip' + (cat === null ? ' active' : '');
+    chip.dataset.cat = cat || '';
+    chip.setAttribute('aria-pressed', cat === null);
+    chip.innerHTML = (color ? `<span class="cat-dot" style="background:${color};"></span>` : '') +
+      `<span></span><span class="chip-count">${count}</span>`;
+    chip.children[color ? 1 : 0].textContent = label;
+    chip.addEventListener('click', () => {
+      activeCat = activeCat === cat ? null : cat;
+      legend.querySelectorAll('.chip').forEach(c => {
+        const on = (c.dataset.cat || null) === activeCat;
+        c.classList.toggle('active', on);
+        c.setAttribute('aria-pressed', on);
+      });
+      applyHighlight();
+    });
+    legend.appendChild(chip);
+  };
+
+  makeChip(null, 'All', null, companies.length);
+  Object.keys(colorMap).forEach(cat => {
+    const count = companies.filter(c => c.category === cat).length;
+    makeChip(cat, categoryLabels[cat], colorMap[cat], count);
+  });
+}
+
+function setStatus(text, linkText, href) {
+  const status = document.getElementById('wallStatus');
+  if (!status) return;
+  status.textContent = text;
+  if (linkText) {
+    const a = document.createElement('a');
+    a.className = 'text-link';
+    a.style.marginTop = '0';
+    a.style.marginLeft = '6px';
+    a.href = href;
+    a.textContent = linkText;
+    status.appendChild(a);
+  }
+}
+
+function applyHighlight() {
+  const screen = document.getElementById('screen1');
+  const input  = document.getElementById('wallSearch');
+  if (!screen) return;
+  const q = input ? input.value.trim().toLowerCase() : '';
+
+  screen.querySelectorAll('.match').forEach(el => el.classList.remove('match'));
+
+  if (!activeCat && !q) {
+    screen.classList.remove('filtering');
+    setStatus('');
+    return;
+  }
+
+  const isBoxNumber = /^\d+$/.test(q);
+  const matches = companies.filter(c =>
+    (!activeCat || c.category === activeCat) &&
+    (!q || (isBoxNumber ? String(c.box) === q
+                        : `${c.name} ${c.serviceType}`.toLowerCase().includes(q))));
+
+  // A number for an empty box still highlights it, so people can find a free spot
+  const num = Number(q);
+  const emptyBox = isBoxNumber && !activeCat && !matches.length && num >= 1 && num <= TOTAL_BOXES;
+  const targets = emptyBox ? [document.getElementById(`box${num}`)]
+                           : matches.map(c => document.getElementById(`box${c.box}`));
+
+  screen.classList.add('filtering');
+  targets.forEach(el => el && el.classList.add('match'));
+
+  if (emptyBox) {
+    setStatus(`Box ${num} is still open.`, 'Claim it →', 'sendrequest.html');
+  } else if (!matches.length) {
+    setStatus('No logos match yet.', 'Be the first →', 'sendrequest.html');
+  } else {
+    setStatus(`${matches.length} logo${matches.length === 1 ? '' : 's'} highlighted.`);
+  }
+
+  // Jump to a single search result and make it blink
+  if (q && targets.length === 1 && targets[0]) {
+    const el = targets[0];
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.remove('flash');
+    void el.offsetWidth;
+    el.classList.add('flash');
+  }
+}
+
+function wireSearch() {
+  const input = document.getElementById('wallSearch');
+  if (!input) return;
+  let timer;
+  input.addEventListener('input', () => {
+    clearTimeout(timer);
+    timer = setTimeout(applyHighlight, 250);
+  });
+}
+
+// ════════════════════════════════════════════════════════════
 //  INIT
 // ════════════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   injectModalStyles();
   injectModal();
+  await loadTrials();
   generateGrid();
   loadImages();
+  renderStats();
+  buildLegend();
+  wireSearch();
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

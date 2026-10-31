@@ -1,0 +1,120 @@
+/* ════════════════════════════════════════════════════════════
+   LOGOHUB — theme.css  (shared by every page)
+   Classic premium palette with light + dark modes.
+   Theme is set on <html data-theme="dark|light"> by theme.js.
+   Dark  : midnight + champagne gold
+   Light : ivory + antique bronze
+   Fonts : Playfair Display (headings) · Inter (body)
+   ════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap');
+
+/* ── Dark (default) ──────────────────────────────────────── */
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg          : #0d1017;
+  --surface     : #151922;
+  --surface-mid : #1a1f2a;
+  --surface-hi  : #232a37;
+  --border      : rgba(214, 184, 122, 0.14);
+  --border-strong: rgba(214, 184, 122, 0.34);
+  --text        : #ede6d6;
+  --text-dim    : #a49d8e;
+  --accent      : #d6b87a;
+  --accent-dark : #b8954f;
+  --accent-contrast: #14110a;
+
+  --header-bg   : rgba(13, 16, 23, 0.82);
+  --overlay-bg  : rgba(5, 6, 10, 0.72);
+  --hover-tint  : rgba(214, 184, 122, 0.10);
+  --shadow-sm   : 0 2px 20px rgba(0, 0, 0, 0.40);
+  --shadow-lg   : 0 24px 64px rgba(0, 0, 0, 0.55);
+
+  --danger      : #ff7a7a;
+  --success     : #3ecf8e;
+  --warn        : #f0a35a;
+
+  /* logo grid */
+  --grid-bg        : #07090d;
+  --slot-border    : rgba(214, 184, 122, 0.10);
+  --squre-color    : #1b2030;
+  --rectangle-color: #1d2130;
+  --vertical-color : #191e2c;
+  --mini-color     : #1c2131;
+
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body   : 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ── Light ───────────────────────────────────────────────── */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --bg          : #f6f1e7;
+  --surface     : #fffdf8;
+  --surface-mid : #faf6ee;
+  --surface-hi  : #efe7d6;
+  --border      : rgba(110, 84, 36, 0.16);
+  --border-strong: rgba(110, 84, 36, 0.34);
+  --text        : #221c12;
+  --text-dim    : #6e6656;
+  --accent      : #8c6a2c;
+  --accent-dark : #a8823f;
+  --accent-contrast: #fffdf8;
+
+  --header-bg   : rgba(250, 246, 238, 0.86);
+  --overlay-bg  : rgba(40, 32, 18, 0.40);
+  --hover-tint  : rgba(140, 106, 44, 0.08);
+  --shadow-sm   : 0 2px 18px rgba(80, 60, 20, 0.08);
+  --shadow-lg   : 0 24px 64px rgba(80, 60, 20, 0.18);
+
+  --danger      : #b8322f;
+  --success     : #1e8a55;
+  --warn        : #b4641a;
+
+  --grid-bg        : #d9cfbb;
+  --slot-border    : rgba(110, 84, 36, 0.14);
+  --squre-color    : #fbf7ef;
+  --rectangle-color: #f7f1e4;
+  --vertical-color : #f4eddd;
+  --mini-color     : #f9f4ea;
+}
+
+/* Smooth colour change when toggling */
+html.theme-anim, html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after {
+  transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease !important;
+}
+
+::selection { background: var(--accent); color: var(--accent-contrast); }
+
+/* ── Theme toggle button ─────────────────────────────────── */
+.theme-toggle {
+  width: 36px; height: 36px;
+  margin: 0 14px 0 4px; padding: 0;
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.3s;
+}
+.theme-toggle:hover { background: var(--hover-tint); transform: rotate(20deg); }
+.theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-toggle svg { width: 18px; height: 18px; }
+/* dark mode shows the sun (go light); light mode shows the moon (go dark) */
+.theme-toggle .icon-moon { display: none; }
+:root[data-theme="light"] .theme-toggle .icon-moon { display: block; }
+:root[data-theme="light"] .theme-toggle .icon-sun  { display: none; }
+
+/* Colour-guide dot used in lists */
+.cat-dot {
+  display: inline-block; flex-shrink: 0;
+  width: 10px; height: 10px; margin-right: 10px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 3px var(--border-strong);
+  vertical-align: middle;
+}

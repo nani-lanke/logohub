@@ -4,281 +4,492 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Logo Size Guide — LogoHub</title>
-  <link rel="icon" type="image/x-icon" href="icons/company.png">
+  <link rel="icon" type="image/png" href="icons/logohub-icon.png">
+  <link rel="stylesheet" href="theme.css">
+  <!-- css.css supplies the shared header, buttons and footer -->
+  <link rel="stylesheet" href="css.css">
+  <script src="theme.js"></script>
   <style>
-    /* ── Shared token imports ─────────────────────────────── */
-    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+    .guide-hero { padding-bottom: 48px; }
+    .guide-hero .hero-title { font-size: clamp(38px, 6vw, 72px); }
 
-    :root {
-      --bg         : #0b1326;
-      --surface    : #131b2e;
-      --surface-hi : #222a3d;
-      --border     : rgba(192,193,255,0.12);
-      --text       : #dae2fd;
-      --text-dim   : #8890aa;
-      --accent     : #c0c1ff;
-      --accent-dark: #4d79ff;
+    /* Jump links to each box type */
+    .jump {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+      margin-top: 32px;
     }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      font-family: 'Nunito', 'Segoe UI', system-ui, sans-serif;
-      min-height: 100vh;
-      padding: 0 0 48px;
+    .jump a {
+      display: inline-flex; align-items: center; gap: 10px;
+      height: 40px; padding: 0 16px;
+      font-size: 14px; font-weight: 500;
+      color: var(--text); text-decoration: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      transition: border-color 0.18s, color 0.18s;
     }
-
-    /* ── Sticky header ────────────────────────────────────── */
-    .page-header {
-      position: sticky; top: 0; z-index: 50;
-      background: rgba(11,19,38,0.85);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-      box-shadow: 0 2px 20px rgba(0,0,0,0.40);
-      padding: 13px 24px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .site-title {
-      font-size: 20px; font-weight: 900;
-      color: var(--accent); text-decoration: none;
-      letter-spacing: -0.5px;
-    }
-    .close-btn {
-      width: 34px; height: 34px; border-radius: 50%;
-      border: none; background: rgba(255,255,255,0.07);
-      color: var(--accent); font-size: 15px; font-weight: 800;
-      display: flex; align-items: center; justify-content: center;
-      text-decoration: none; cursor: pointer;
-      transition: background 0.18s, transform 0.18s;
-    }
-    .close-btn:hover { background: var(--accent); color: var(--bg); transform: rotate(90deg); }
-
-    /* ── Page title ───────────────────────────────────────── */
-    .page-title {
-      text-align: center; padding: 40px 20px 12px;
-    }
-    .page-title h1 {
-      font-size: clamp(22px, 4vw, 34px); font-weight: 900;
-      color: var(--accent); margin-bottom: 10px;
-    }
-    .page-title p {
-      font-size: 16px; font-weight: 600; color: var(--text-dim);
-      max-width: 540px; margin: 0 auto; line-height: 1.7;
+    .jump a:hover { border-color: var(--accent); color: var(--accent); }
+    .jump i {
+      display: block;
+      border: 1.5px solid var(--accent); border-radius: 2px;
+      background: var(--hover-tint);
     }
 
-    /* ── Content wrapper ──────────────────────────────────── */
-    .content {
-      max-width: 900px; margin: 28px auto 0;
-      padding: 0 20px;
-      display: flex; flex-direction: column; gap: 24px;
-    }
-
-    /* ── Section card ─────────────────────────────────────── */
-    .section-card {
+    /* ── Quick reference ──────────────────────────────────── */
+    .quick { padding: 0 0 56px; }
+    .ref-table {
+      width: 100%; max-width: 900px; margin: 0 auto;
+      border-collapse: separate; border-spacing: 0;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 28px 28px 24px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.30);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      font-size: 15px;
+    }
+    .ref-table th, .ref-table td { padding: 16px 22px; text-align: left; }
+    .ref-table th {
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-dim);
+      background: var(--surface-mid);
+      border-bottom: 1px solid var(--border);
+    }
+    .ref-table td { border-bottom: 1px solid var(--border); color: var(--text-dim); }
+    .ref-table tr:last-child td { border-bottom: none; }
+    .ref-table td:first-child { font-weight: 700; color: var(--text); }
+    .ref-table td:nth-child(2) { color: var(--accent); font-weight: 600; }
+
+    /* ── Guide sections ───────────────────────────────────── */
+    .guides { padding: 0 0 72px; }
+    .guide-list { display: flex; flex-direction: column; gap: 20px; }
+
+    .guide {
+      display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 40px;
+      padding: 36px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow-sm);
       transition: border-color 0.2s;
     }
-    .section-card:hover { border-color: rgba(192,193,255,0.28); }
+    .guide:hover { border-color: var(--border-strong); }
 
-    /* Accent top bar per card */
-    .card-square   { border-top: 3px solid #4d79ff; }
-    .card-rect     { border-top: 3px solid #ffd700; }
-    .card-vertical { border-top: 3px solid #00cc66; }
-    .card-mini     { border-top: 3px solid #ff44ff; }
-
-    /* Heading */
-    .section-card h2 {
-      font-size: 19px; font-weight: 900;
-      margin-bottom: 12px;
-      display: flex; align-items: center; gap: 10px;
+    .guide-shape { height: 64px; display: flex; align-items: flex-end; margin-bottom: 22px; }
+    .guide-shape i {
+      display: block;
+      border: 2px solid var(--accent); border-radius: 8px;
+      background: var(--hover-tint);
     }
-    .card-square   h2 { color: #7a9fff; }
-    .card-rect     h2 { color: #ffd700; }
-    .card-vertical h2 { color: #00cc66; }
-    .card-mini     h2 { color: #ff88ff; }
-
-    .badge {
-      font-size: 10px; font-weight: 800;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      padding: 3px 10px; border-radius: 999px; color: var(--bg);
+    .guide-side h2 {
+      margin: 0 0 18px;
+      font-family: var(--font-display);
+      font-size: 26px; font-weight: 700; line-height: 1.2;
     }
-    .card-square   .badge { background: #4d79ff; }
-    .card-rect     .badge { background: #ffd700; }
-    .card-vertical .badge { background: #00cc66; }
-    .card-mini     .badge { background: #ff44ff; }
+    .guide-rule { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; font-size: 14px; }
+    .guide-rule dt { color: var(--text-dim); }
+    .guide-rule dd { margin: 0; font-weight: 600; color: var(--text); }
 
-    /* Description */
-    .section-card p {
-      font-size: 15px; font-weight: 600;
-      color: var(--text-dim); line-height: 1.75;
-      margin-bottom: 22px;
+    .guide-body > p {
+      margin: 0 0 24px;
+      font-size: 16px; line-height: 1.8;
+      color: var(--text-dim);
     }
+    .guide-body strong { color: var(--text); }
 
-    /* ── Example images row ───────────────────────────────── */
-    .examples {
-      display: flex; gap: 16px; flex-wrap: wrap;
-    }
+    .examples { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
     .example-box {
-      flex: 1; min-width: 130px;
-      display: flex; flex-direction: column;
-      align-items: center; gap: 10px;
-      padding: 16px 10px;
-      background: var(--surface-hi);
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+      padding: 18px 10px 16px;
+      background: var(--surface-mid);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      transition: transform 0.18s, box-shadow 0.18s;
+      border-radius: 16px;
     }
-    .example-box:hover { transform: translateY(-4px); box-shadow: 0 8px 28px rgba(0,0,0,0.35); }
-
     .example-box img {
-      width: 110px; height: 110px;
-      object-fit: cover; display: block;
+      width: 104px; height: 104px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 3px solid var(--success);
     }
-    .example-box img.accepted     { border: 4px solid #00cc66; border-radius: 8px; }
-    .example-box img.not-accepted { border: 4px solid #ff4444; border-radius: 8px; }
+    .example-box img.not-accepted { border-color: var(--danger); opacity: 0.8; }
 
     .example-label {
-      text-align: center; font-size: 13px;
-      font-weight: 700; line-height: 1.45; color: var(--text);
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      font-size: 13px; line-height: 1.4; color: var(--text-dim); text-align: center;
     }
-    .label-ok  { color: #00cc66; }
-    .label-bad { color: #ff6666; }
+    .example-label b { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; }
+    .example-label svg { width: 16px; height: 16px; }
+    .label-ok b  { color: var(--success); }
+    .label-bad b { color: var(--danger); }
+
+    /* ── Checklist ────────────────────────────────────────── */
+    .checklist {
+      list-style: none; margin: 0; padding: 0;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    }
+    .checklist li {
+      padding: 26px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+    }
+    .checklist svg { width: 26px; height: 26px; color: var(--accent); }
+    .checklist h3 { margin: 14px 0 6px; font-size: 17px; font-weight: 700; }
+    .checklist p  { margin: 0; font-size: 14px; line-height: 1.65; color: var(--text-dim); }
+    .tips { padding: 0 0 72px; }
+    .tips .section-head { margin-bottom: 32px; }
 
     /* ── Responsive ───────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .guide { grid-template-columns: 1fr; gap: 24px; padding: 28px 24px; }
+      .checklist { grid-template-columns: 1fr; }
+    }
     @media (max-width: 600px) {
-      .content { padding: 0 12px; }
-      .section-card { padding: 20px 16px 18px; }
-      .example-box img { width: 88px; height: 88px; }
-      .examples { gap: 10px; }
+      .guide { padding: 24px 16px; border-radius: 20px; }
+      .examples { gap: 8px; }
+      .example-box { padding: 12px 4px; }
+      .example-box img { width: 72px; height: 72px; }
+      .example-label { font-size: 11px; }
+      .example-label b { font-size: 12px; gap: 4px; }
+      .ref-table { font-size: 13px; }
+      .ref-table th, .ref-table td { padding: 12px 12px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ── Sticky Header ─────────────────────────────────────── -->
-  <header class="page-header">
-    <a class="site-title" href="/">LogoHub</a>
-    <a class="close-btn" href="sendrequest.html" aria-label="Go back">✕</a>
+  <!-- ── HEADER ──────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html">
+        <img src="icons/logohub-icon.png" alt="">
+        <span>LogoHub</span>
+      </a>
+
+      <nav class="header-bar" aria-label="Main">
+        <a href="index.html#home">Logo Wall</a>
+        <a href="index.html#colours">Colour Guide</a>
+        <a href="index.html#about">How It Works</a>
+        <a href="sendrequest.html">Add Your Logo</a>
+        <a class="nav-cta" href="sendrequest.html">&larr; Back to the form</a>
+      </nav>
+
+      <div class="header-actions">
+        <a class="btn btn-ghost btn-sm header-cta" href="sendrequest.html">&larr; Back to the form</a>
+        <button class="theme-toggle" type="button" aria-label="Toggle colour theme">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2M12 20.5v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1.5 12h2M20.5 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="header-icon" id="header-icon" type="button" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
   </header>
 
-  <!-- ── Page Title ────────────────────────────────────────── -->
-  <div class="page-title">
-    <h1>Logo Size Guide</h1>
-    <p>Before uploading your logo, make sure it's the right shape and size. Check the guide below to see what works!</p>
-  </div>
-
-  <!-- ── Cards ─────────────────────────────────────────────── -->
-  <div class="content">
-
-    <!-- Square -->
-    <div class="section-card card-square">
-      <h2><span class="badge">Square</span> Square Logo — Same Width &amp; Height</h2>
-      <p>
-        A <strong>square box</strong> needs a <strong>square logo</strong>. That means the width
-        and height of your image must be exactly the same — for example, 200×200 pixels.
-        If your logo is wider or taller on one side, it won't fit correctly and you'll get
-        an error. Think of it like a square peg in a square hole — it only works when the
-        shape matches!
+  <!-- ── HERO ─────────────────────────────────────────────── -->
+  <section class="hero guide-hero">
+    <div class="container hero-inner">
+      <p class="eyebrow"><span class="eyebrow-dot"></span>Logo Size Guide</p>
+      <h1 class="hero-title">Make your logo<br><em>fit</em> the box.</h1>
+      <p class="hero-sub">
+        Before uploading your logo, make sure it's the right shape for the box you picked.
+        Find your box type below to see what works.
       </p>
-      <div class="examples">
-        <div class="example-box">
-          <img src="icons/squre1.png" alt="Correct square logo" class="accepted">
-          <div class="example-label label-ok">✅ Correct<br>Width = Height</div>
+      <nav class="jump" aria-label="Box types">
+        <a href="#square"><i style="width:14px;height:14px;"></i>Square</a>
+        <a href="#horizontal"><i style="width:18px;height:10px;"></i>Horizontal</a>
+        <a href="#vertical"><i style="width:10px;height:18px;"></i>Vertical</a>
+        <a href="#mini"><i style="width:9px;height:9px;"></i>Mini</a>
+      </nav>
+    </div>
+  </section>
+
+  <!-- ── QUICK REFERENCE ──────────────────────────────────── -->
+  <section class="quick">
+    <div class="container">
+      <table class="ref-table">
+        <thead>
+          <tr><th>Box type</th><th>Shape rule</th><th>Example size</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Square</td><td>Width = Height</td><td>200 × 200 px</td></tr>
+          <tr><td>Horizontal</td><td>Wider, up to 2× the height</td><td>240 × 160 px</td></tr>
+          <tr><td>Vertical</td><td>Taller, up to 2× the width</td><td>150 × 220 px</td></tr>
+          <tr><td>Mini</td><td>Width = Height</td><td>Like an app icon</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── GUIDES ───────────────────────────────────────────── -->
+  <section class="guides">
+    <div class="container guide-list">
+
+      <!-- Square -->
+      <article class="guide" id="square">
+        <div class="guide-side">
+          <div class="guide-shape"><i style="width:64px;height:64px;"></i></div>
+          <p class="kicker">Square box</p>
+          <h2>Same width and height</h2>
+          <dl class="guide-rule">
+            <dt>Rule</dt><dd>Width = Height</dd>
+            <dt>Example</dt><dd>200 × 200 px</dd>
+          </dl>
         </div>
-        <div class="example-box">
-          <img src="icons/squre2.png" alt="Too wide — incorrect" class="not-accepted">
-          <div class="example-label label-bad">❌ Too Wide<br>Width ≠ Height</div>
+        <div class="guide-body">
+          <p>
+            A <strong>square box</strong> needs a <strong>square logo</strong>. The width and height
+            of your image must be exactly the same. If your logo is wider or taller on one side,
+            it won't fit correctly and you'll get an error. Think of a square peg in a square
+            hole: it only works when the shape matches.
+          </p>
+          <div class="examples">
+            <div class="example-box">
+              <img src="icons/size-square.png" alt="Correct square logo">
+              <div class="example-label label-ok"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Correct</b>Width = Height</div>
+            </div>
+            <div class="example-box">
+              <img src="icons/size-wide.png" alt="Too wide — incorrect" class="not-accepted">
+              <div class="example-label label-bad"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>Too wide</b>Width ≠ Height</div>
+            </div>
+            <div class="example-box">
+              <img src="icons/size-tall.png" alt="Too tall — incorrect" class="not-accepted">
+              <div class="example-label label-bad"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>Too tall</b>Width ≠ Height</div>
+            </div>
+          </div>
         </div>
-        <div class="example-box">
-          <img src="icons/squre3.png" alt="Too tall — incorrect" class="not-accepted">
-          <div class="example-label label-bad">❌ Too Tall<br>Width ≠ Height</div>
+      </article>
+
+      <!-- Horizontal -->
+      <article class="guide" id="horizontal">
+        <div class="guide-side">
+          <div class="guide-shape"><i style="width:64px;height:32px;"></i></div>
+          <p class="kicker">Horizontal (rectangle) box</p>
+          <h2>Wider than tall</h2>
+          <dl class="guide-rule">
+            <dt>Rule</dt><dd>Width &gt; Height, max 2×</dd>
+            <dt>Example</dt><dd>240 × 160 px</dd>
+          </dl>
+        </div>
+        <div class="guide-body">
+          <p>
+            A <strong>horizontal box</strong> needs a <strong>wide logo</strong>. The width must be
+            bigger than the height, but not more than twice as wide. For example, 240×160 px is
+            perfect, but 400×80 px is too stretched. If your logo is square or taller than it is
+            wide, it won't work for this box type.
+          </p>
+          <div class="examples">
+            <div class="example-box">
+              <img src="icons/size-wide.png" alt="Correct horizontal logo">
+              <div class="example-label label-ok"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Correct</b>Width &gt; Height</div>
+            </div>
+            <div class="example-box">
+              <img src="icons/size-tall.png" alt="Too tall — incorrect" class="not-accepted">
+              <div class="example-label label-bad"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>Too tall</b>Height &gt; Width</div>
+            </div>
+            <div class="example-box">
+              <img src="icons/size-square.png" alt="Square — incorrect" class="not-accepted">
+              <div class="example-label label-bad"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>Too square</b>Width = Height</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Vertical -->
+      <article class="guide" id="vertical">
+        <div class="guide-side">
+          <div class="guide-shape"><i style="width:32px;height:64px;"></i></div>
+          <p class="kicker">Vertical box</p>
+          <h2>Taller than wide</h2>
+          <dl class="guide-rule">
+            <dt>Rule</dt><dd>Height &gt; Width, max 2×</dd>
+            <dt>Example</dt><dd>150 × 220 px</dd>
+          </dl>
+        </div>
+        <div class="guide-body">
+          <p>
+            A <strong>vertical box</strong> needs a <strong>tall logo</strong>. The height must be
+            bigger than the width, but not more than twice as tall. For example, 150×220 px works
+            great. Logos that are square or wider than tall will not fit this box type. Think of
+            a tall phone screen: your logo should look like that.
+          </p>
+          <div class="examples">
+            <div class="example-box">
+              <img src="icons/size-tall.png" alt="Correct vertical logo">
+              <div class="example-label label-ok"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Correct</b>Height &gt; Width</div>
+            </div>
+            <div class="example-box">
+              <img src="icons/size-square.png" alt="Square — incorrect" class="not-accepted">
+              <div class="example-label label-bad"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>Too square</b>Width = Height</div>
+            </div>
+            <div class="example-box">
+              <img src="icons/size-wide.png" alt="Too wide — incorrect" class="not-accepted">
+              <div class="example-label label-bad"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>Too wide</b>Width &gt; Height</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Mini -->
+      <article class="guide" id="mini">
+        <div class="guide-side">
+          <div class="guide-shape"><i style="width:32px;height:32px;"></i></div>
+          <p class="kicker">Mini box</p>
+          <h2>A tiny square</h2>
+          <dl class="guide-rule">
+            <dt>Rule</dt><dd>Width = Height</dd>
+            <dt>Example</dt><dd>Like an app icon</dd>
+          </dl>
+        </div>
+        <div class="guide-body">
+          <p>
+            A <strong>mini box</strong> is a very small square, so your logo must also be a
+            <strong>perfect square</strong>. Even though the box is tiny, the shape rule is the same
+            as the normal square box. Use a small, neat, square logo, like an app icon or favicon.
+          </p>
+          <div class="examples">
+            <div class="example-box">
+              <img src="icons/size-square.png" alt="Correct mini logo">
+              <div class="example-label label-ok"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Correct</b>Width = Height</div>
+            </div>
+            <div class="example-box">
+              <img src="icons/size-wide.png" alt="Too wide — incorrect" class="not-accepted">
+              <div class="example-label label-bad"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>Too wide</b>Width ≠ Height</div>
+            </div>
+            <div class="example-box">
+              <img src="icons/size-tall.png" alt="Too tall — incorrect" class="not-accepted">
+              <div class="example-label label-bad"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>Too tall</b>Height &gt; Width</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ── CHECKLIST ────────────────────────────────────────── -->
+  <section class="tips">
+    <div class="container">
+      <div class="section-head">
+        <p class="kicker">Before you upload</p>
+        <h2 class="section-title">Quick checklist</h2>
+      </div>
+      <ul class="checklist">
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+          <h3>PNG, JPG or WebP</h3>
+          <p>Other file types can't be uploaded.</p>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>
+          <h3>Smaller than 1 MB</h3>
+          <p>Shrink or compress big images before you upload them.</p>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/></svg>
+          <h3>Looks good on white</h3>
+          <p>Logos sit on a white background, so transparent PNGs will show white behind them.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── CTA ──────────────────────────────────────────────── -->
+  <section class="cta">
+    <div class="container">
+      <div class="cta-card">
+        <div>
+          <h2>Logo ready?</h2>
+          <p>Pick your box and start your 9-day free trial.</p>
+        </div>
+        <div class="cta-actions">
+          <a class="btn btn-primary" href="sendrequest.html">Add your logo</a>
+          <a class="btn btn-ghost" href="index.html#home">See the wall</a>
         </div>
       </div>
     </div>
+  </section>
 
-    <!-- Rectangle -->
-    <div class="section-card card-rect">
-      <h2><span class="badge">Rectangle</span> Rectangle Logo — Wider Than Tall</h2>
-      <p>
-        A <strong>rectangle box</strong> needs a <strong>wide logo</strong>. The width must be
-        bigger than the height — but not more than twice as wide (for example, 240×160 px is
-        perfect, but 400×80 px is too stretched). If your logo is square or taller than it
-        is wide, it won't work for this box type.
-      </p>
-      <div class="examples">
-        <div class="example-box">
-          <img src="icons/squre2.png" alt="Correct rectangle logo" class="accepted">
-          <div class="example-label label-ok">✅ Correct<br>Width &gt; Height</div>
+  <!-- ── FOOTER ───────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a class="footer-logo" href="index.html">
+            <img src="icons/logohub-icon.png" alt="">
+            <span>LogoHub</span>
+          </a>
+          <p class="footer-tagline">Every company logo in one place &mdash; one click takes you to their website.</p>
+          <div class="footer-social">
+            <a href="mailto:help.lovelyaz@gmail.com" aria-label="Email us" title="Email us">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+            </a>
+            <a href="https://www.logohub.info/" target="_blank" rel="noopener noreferrer" aria-label="Website" title="Website">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+            </a>
+          </div>
         </div>
-        <div class="example-box">
-          <img src="icons/squre3.png" alt="Too tall — incorrect" class="not-accepted">
-          <div class="example-label label-bad">❌ Too Tall<br>Height &gt; Width</div>
+
+        <nav class="footer-col" aria-label="Explore">
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="index.html#home">Logo Wall</a></li>
+            <li><a href="sendrequest.html">Add Icon</a></li>
+            <li><a href="sendrequest.html#boxGrid">Choose a Box</a></li>
+          </ul>
+        </nav>
+
+        <nav class="footer-col" aria-label="Learn">
+          <h4>Learn</h4>
+          <ul>
+            <li><a href="index.html#about">How It Works</a></li>
+            <li><a href="index.html#colours">What the Colours Mean</a></li>
+            <li><a href="logoUploadInstructions.html">Logo Size Guide</a></li>
+            <li><a href="sendrequest.html#pricing">Pricing</a></li>
+          </ul>
+        </nav>
+
+        <nav class="footer-col" aria-label="Company">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="termsandconditions.html#privacy">Privacy Policy</a></li>
+            <li><a href="termsandconditions.html#terms">Terms &amp; Conditions</a></li>
+            <li><a href="mailto:help.lovelyaz@gmail.com">Contact Us</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          <p class="footer-copy">&copy; <span id="year">2026</span> LogoHub. All rights reserved.</p>
+          <p class="footer-version">Version 1.1.0</p>
         </div>
-        <div class="example-box">
-          <img src="icons/squre1.png" alt="Square — incorrect" class="not-accepted">
-          <div class="example-label label-bad">❌ Too Square<br>Width = Height</div>
+        <div class="footer-mini-links">
+          <a href="mailto:help.lovelyaz@gmail.com">Contact</a>
+          <a href="termsandconditions.html#privacy">Privacy</a>
+          <a href="termsandconditions.html#terms">Terms</a>
         </div>
       </div>
-    </div>
 
-    <!-- Vertical -->
-    <div class="section-card card-vertical">
-      <h2><span class="badge">Vertical</span> Vertical Logo — Taller Than Wide</h2>
-      <p>
-        A <strong>vertical box</strong> needs a <strong>tall logo</strong>. The height must be
-        bigger than the width — but not more than twice as tall (for example, 150×220 px works
-        great). Logos that are square or wider than tall will not fit this box type.
-        Think of a tall phone screen — your logo should look like that!
-      </p>
-      <div class="examples">
-        <div class="example-box">
-          <img src="icons/squre3.png" alt="Correct vertical logo" class="accepted">
-          <div class="example-label label-ok">✅ Correct<br>Height &gt; Width</div>
-        </div>
-        <div class="example-box">
-          <img src="icons/squre1.png" alt="Square — incorrect" class="not-accepted">
-          <div class="example-label label-bad">❌ Too Square<br>Width = Height</div>
-        </div>
-        <div class="example-box">
-          <img src="icons/squre2.png" alt="Too wide — incorrect" class="not-accepted">
-          <div class="example-label label-bad">❌ Too Wide<br>Width &gt; Height</div>
-        </div>
-      </div>
     </div>
+  </footer>
 
-    <!-- Mini -->
-    <div class="section-card card-mini">
-      <h2><span class="badge">Mini</span> Mini Logo — Tiny Square</h2>
-      <p>
-        A <strong>mini box</strong> is a very small square, so your logo must also be a
-        <strong>perfect square</strong> (width = height). Even though the box is tiny, the
-        shape rule is the same as the normal square box. Use a small, neat, square logo —
-        like an app icon or favicon!
-      </p>
-      <div class="examples">
-        <div class="example-box">
-          <img src="icons/squre1.png" alt="Correct mini logo" class="accepted">
-          <div class="example-label label-ok">✅ Correct<br>Width = Height</div>
-        </div>
-        <div class="example-box">
-          <img src="icons/squre2.png" alt="Too wide — incorrect" class="not-accepted">
-          <div class="example-label label-bad">❌ Too Wide<br>Width ≠ Height</div>
-        </div>
-        <div class="example-box">
-          <img src="icons/squre3.png" alt="Too tall — incorrect" class="not-accepted">
-          <div class="example-label label-bad">❌ Too Tall<br>Height &gt; Width</div>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /content -->
+  <script>
+    // ── Header: mobile menu + footer year ─────────────────────
+    const menuBtn = document.getElementById('header-icon');
+    const navbar  = document.querySelector('.header-bar');
+    function setMenu(open) {
+      navbar.classList.toggle('active', open);
+      menuBtn.setAttribute('aria-expanded', open);
+    }
+    menuBtn.addEventListener('click', () => setMenu(!navbar.classList.contains('active')));
+    navbar.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+    window.addEventListener('scroll', () => setMenu(false));
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 
 </body>
 </html>
