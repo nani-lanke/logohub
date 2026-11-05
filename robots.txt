@@ -1,0 +1,7 @@
+# LogoHub — robots.txt
+
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://www.logohub.in/sitemap.xml

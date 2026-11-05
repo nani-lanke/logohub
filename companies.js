@@ -1,6 +1,7 @@
 /* ════════════════════════════════════════════════════════════
    LOGOHUB  —  companies.js
-   Shared by index.html (logo wall) and sendrequest.html (booked boxes).
+   Shared by index.html (logo wall), sendrequest.html (booked boxes)
+   and api/brand.js + api/sitemap.js (the /brand/<slug> pages).
    Load this BEFORE script.js.
    ════════════════════════════════════════════════════════════ */
 
@@ -150,6 +151,36 @@ const companies = [
 ];
 
 // ════════════════════════════════════════════════════════════
+//  CATEGORIES — category key → border colour + label
+//  (used by the wall, the colour guide and the brand pages)
+// ════════════════════════════════════════════════════════════
+const colorMap = {
+  technologyAndSoftwareServices     : '#4d79ff',
+  educationAndInstituteService      : '#ffd700',
+  hotelsTransportFoodandTourism     : '#00cc66',
+  energyandUtilityServices          : '#ff4444',
+  retailAndE_Commerce               : '#00cfff',
+  entertainmentAndInformationService: '#ff44ff',
+  healthCareAndMedicalServices      : '#00b3b3',
+  financeAndBankingServices         : '#ff9933',
+  manufacturingIndustries           : '#aaaaaa',
+  other                             : '#777777',
+};
+
+const categoryLabels = {
+  technologyAndSoftwareServices     : 'Technology & Software',
+  educationAndInstituteService      : 'Education & Institutes',
+  hotelsTransportFoodandTourism     : 'Hotels, Food & Travel',
+  energyandUtilityServices          : 'Energy & Utilities',
+  retailAndE_Commerce               : 'Shopping & E-Commerce',
+  entertainmentAndInformationService: 'Entertainment & Media',
+  healthCareAndMedicalServices      : 'Health & Medical',
+  financeAndBankingServices         : 'Finance & Banking',
+  manufacturingIndustries           : 'Manufacturing & Products',
+  other                             : 'Others',
+};
+
+// ════════════════════════════════════════════════════════════
 //  EXPIRY — api/submit.js adds form entries to the end of companies[]
 //
 //  Free boxes get expiredDate: Infinity (never). Available boxes get
@@ -165,5 +196,23 @@ const companies = [
     if (c.expiredDate !== Infinity && now >= Date.parse(c.expiredDate)) companies.splice(i, 1);
     // ?v= busts the browser cache when a box is reused by a new user
     else if (c.buyingDate) c.icon += `?v=${Date.parse(c.buyingDate)}`;
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+//  BRAND PAGE ADDRESS — every listed company gets /brand/<slug>
+//  'Andhra Ruchulu' → andhra-ruchulu. If two live companies share a
+//  name, the later one gets its box number added (lovely-181).
+//  Names with no Latin letters/digits fall back to box-<N>.
+// ════════════════════════════════════════════════════════════
+{
+  const slugify = s => String(s).normalize('NFKD').replace(/[̀-ͯ]/g, '')
+    .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60).replace(/-+$/, '');
+  const taken = new Set();
+  for (const c of companies) {
+    let slug = slugify(c.name) || `box-${c.box}`;
+    if (taken.has(slug)) slug = `${slug}-${c.box}`;
+    taken.add(slug);
+    c.slug = slug;
   }
 }

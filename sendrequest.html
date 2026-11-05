@@ -3,7 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Add Your Icon — LogoHub</title>
+  <title>Add Your Logo to LogoHub – Free &amp; Paid Logo Boxes from ₹49/year</title>
+  <meta name="description" content="Put your brand on LogoHub, the one-click logo wall for Indian businesses and creators. Pick a box, upload your logo and go live in minutes. Free boxes available.">
+  <meta name="theme-color" content="#0d1017">
+  <link rel="canonical" href="https://www.logohub.in/sendrequest.html">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="LogoHub">
+  <meta property="og:title" content="Add Your Logo to LogoHub – Free &amp; Paid Logo Boxes from ₹49/year">
+  <meta property="og:description" content="Put your brand on LogoHub, the one-click logo wall for Indian businesses and creators. Pick a box, upload your logo and go live in minutes. Free boxes available.">
+  <meta property="og:url" content="https://www.logohub.in/sendrequest.html">
+  <meta property="og:image" content="https://www.logohub.in/icons/og-image.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="LogoHub – Every brand, one click away">
+  <meta property="og:locale" content="en_IN">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Add Your Logo to LogoHub – Free &amp; Paid Logo Boxes from ₹49/year">
+  <meta name="twitter:description" content="Put your brand on LogoHub, the one-click logo wall for Indian businesses and creators. Pick a box, upload your logo and go live in minutes. Free boxes available.">
+  <meta name="twitter:image" content="https://www.logohub.in/icons/og-image.jpg">
   <link rel="icon" type="image/png" href="icons/logohub-icon.png">
   <link rel="stylesheet" href="theme.css">
   <!-- css.css supplies the shared header, buttons and footer -->
@@ -350,21 +369,21 @@
   <!-- ── HEADER ──────────────────────────────────────────── -->
   <header class="site-header">
     <div class="header-inner">
-      <a class="brand" href="index.html">
+      <a class="brand" href="/">
         <img src="icons/logohub-icon.png" alt="">
         <span>LogoHub</span>
       </a>
 
       <nav class="header-bar" aria-label="Main">
-        <a href="index.html#home">Logo Wall</a>
-        <a href="index.html#colours">Colour Guide</a>
-        <a href="index.html#about">How It Works</a>
+        <a href="/#home">Logo Wall</a>
+        <a href="/#colours">Colour Guide</a>
+        <a href="/#about">How It Works</a>
         <a href="sendrequest.html" aria-current="page">Add Your Logo</a>
-        <a class="nav-cta" href="index.html">&larr; Back to the wall</a>
+        <a class="nav-cta" href="/">&larr; Back to the wall</a>
       </nav>
 
       <div class="header-actions">
-        <a class="btn btn-ghost btn-sm header-cta" href="index.html">&larr; Back to the wall</a>
+        <a class="btn btn-ghost btn-sm header-cta" href="/">&larr; Back to the wall</a>
         <button class="theme-toggle" type="button" aria-label="Toggle colour theme">
           <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2M12 20.5v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1.5 12h2M20.5 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
           <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -618,7 +637,7 @@
 
       <div class="footer-top">
         <div class="footer-brand">
-          <a class="footer-logo" href="index.html">
+          <a class="footer-logo" href="/">
             <img src="icons/logohub-icon.png" alt="">
             <span>LogoHub</span>
           </a>
@@ -636,8 +655,9 @@
         <nav class="footer-col" aria-label="Explore">
           <h4>Explore</h4>
           <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="index.html#home">Logo Wall</a></li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/brands">All Brands</a></li>
+            <li><a href="/#home">Logo Wall</a></li>
             <li><a href="sendrequest.html">Add Icon</a></li>
             <li><a href="#boxGrid">Choose a Box</a></li>
           </ul>
@@ -646,8 +666,8 @@
         <nav class="footer-col" aria-label="Learn">
           <h4>Learn</h4>
           <ul>
-            <li><a href="index.html#about">How It Works</a></li>
-            <li><a href="index.html#colours">What the Colours Mean</a></li>
+            <li><a href="/#about">How It Works</a></li>
+            <li><a href="/#colours">What the Colours Mean</a></li>
             <li><a href="logoUploadInstructions.html">Logo Size Guide</a></li>
             <li><a href="#pricing">Pricing</a></li>
           </ul>
@@ -1065,7 +1085,7 @@
         successMsg.hidden = false;
         successMsg.innerHTML =
           `🎉 Payment of <strong>&#8377;${json.amount}</strong> received &mdash; <strong>Box ${num}</strong> is yours until <strong>${json.validTill}</strong>!<br>` +
-          `Your logo will appear on <a href="index.html">LogoHub</a> in 1–2 minutes.<br>` +
+          `Your logo will appear on <a href="/">LogoHub</a> in 1–2 minutes.<br>` +
           (json.emailSent
             ? `We've sent your box number and receipt to <strong>${d.email.replace(/[<>&"]/g, '')}</strong>.`
             : `We couldn't send the confirmation email, but your box is booked. Payment ID: ${resp.razorpay_payment_id}`);
@@ -1088,7 +1108,7 @@
           (json.forever
             ? `🎉 <strong>Box ${num}</strong> is yours, free with <strong>no end date</strong>!<br>`
             : `🎉 Your <strong>${json.days || AVAIL_DAYS}-day free trial</strong> has started for <strong>Box ${num}</strong>!<br>`) +
-          `Your logo will appear on <a href="index.html">LogoHub</a> in 1–2 minutes.<br>` +
+          `Your logo will appear on <a href="/">LogoHub</a> in 1–2 minutes.<br>` +
           (json.emailSent
             ? `We've sent the details to <strong>${d.email.replace(/[<>&"]/g, '')}</strong>.`
             : `We couldn't send the confirmation email, but your box is booked.`);
