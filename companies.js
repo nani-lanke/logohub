@@ -130,24 +130,6 @@ const companies = [
       location : '',
     },
   },
-  {
-    box        : 181,
-    name       : 'Lovely',
-    shortName  : 'simple chick',
-    icon       : 'screenone/box181.png',
-    category   : 'technologyAndSoftwareServices',
-    serviceType: 'Technology and Software Services',
-    buyingDate : '2026-10-31T22:04:58+05:30',
-    expiredDate: '2026-11-07T22:04:58+05:30',
-    links: {
-      website  : 'https://www.inviteaura.in/',
-      youtube  : '',
-      instagram: '',
-      whatsapp : '',
-      location : '',
-    },
-    emailHash  : 'a784fa18d116a098cd0d77c566a9b80d91db6d0065828908b616dadcdbb38d09',
-  },
 ];
 
 // ════════════════════════════════════════════════════════════
