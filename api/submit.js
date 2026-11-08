@@ -195,6 +195,7 @@ Thank you for your payment! Your Reserved box on LogoHub is booked for 1 year.
 Your logo will appear on ${site} within a few minutes.
 
 We will email you again when your 1-year plan ends.`,
+    cta: { label: 'See your logo on the wall', url: site },
   };
 
   if (entry.expiredDate === Infinity) return {
@@ -207,6 +208,7 @@ Your logo has been added to LogoHub, free of charge!
   Valid till : No end date
 
 Your logo will appear on ${site} within a few minutes.`,
+    cta: { label: 'See your logo on the wall', url: site },
   };
 
   const end = istDate(entry.expiredDate);
@@ -222,12 +224,13 @@ Your ${AVAIL_DAYS}-day free trial on LogoHub has started!
 Your logo will appear on ${site} within a few minutes.
 
 Your free trial is only for ${AVAIL_DAYS} days. To keep your logo after ${end}, reply to this email and we will send you the payment details. If payment is not received, your logo will be removed after the trial.`,
+    cta: { label: 'See your logo on the wall', url: site },
   };
 }
 
 async function mailBooked(entry, email, amount) {
-  const { subject, body } = bookedMail(entry, amount);
-  try { await sendUserMail(email, subject, body); return true; }
+  const { subject, body, cta } = bookedMail(entry, amount);
+  try { await sendUserMail(email, subject, body, { cta }); return true; }
   catch (err) { console.error('Email failed:', err); return false; }
 }
 
@@ -303,6 +306,12 @@ module.exports = async (req, res) => {
   try {
     if (b.fax) return res.status(200).json({ ok: true });   // honeypot: bots fill hidden fields
 
+    // Nothing can be saved without the GitHub config - say so instead of a blank 500.
+    // Not for 'paid': that path must still run so a payment already made gets refunded.
+    if (b.action !== 'paid' && !(process.env.GITHUB_TOKEN && process.env.GITHUB_REPO)) {
+      throw new UserError('Logo sign-ups are not set up yet. Please mail our support team.', 503);
+    }
+
     const { entry, image, email } = readForm(b);
     const reserved = entry.box <= RESERVED_MAX;
 
@@ -328,6 +337,13 @@ module.exports = async (req, res) => {
   } catch (err) {
     if (err instanceof UserError) return res.status(err.status).json({ error: err.message });
     console.error(err);
+
+    // GitHub rejected us: bad / expired GITHUB_TOKEN, or a wrong GITHUB_REPO / GITHUB_BRANCH.
+    // Waiting will not help, so do not ask the user to try again later.
+    if (err.ghStatus === 401 || err.ghStatus === 403 || err.ghStatus === 404) {
+      return res.status(503).json({ error: 'We could not save your logo - our storage is not reachable. Please mail our support team; this one is on us, not you.' });
+    }
+
     return res.status(500).json({ error: 'Something went wrong. Please try again in a few minutes.' });
   }
 };

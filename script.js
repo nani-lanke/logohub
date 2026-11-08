@@ -38,35 +38,7 @@ window.addEventListener('scroll', () => {
   if (toTop) toTop.classList.toggle('show', window.scrollY > 400);
 });
 
-// ════════════════════════════════════════════════════════════
-//  COLOR MAP  — category key → border hex colour
-// ════════════════════════════════════════════════════════════
-const colorMap = {
-  technologyAndSoftwareServices     : '#4d79ff',
-  educationAndInstituteService      : '#ffd700',
-  hotelsTransportFoodandTourism     : '#00cc66',
-  energyandUtilityServices          : '#ff4444',
-  retailAndE_Commerce               : '#00cfff',
-  entertainmentAndInformationService: '#ff44ff',
-  healthCareAndMedicalServices      : '#00b3b3',
-  financeAndBankingServices         : '#ff9933',
-  manufacturingIndustries           : '#aaaaaa',
-  other                             : '#777777',
-};
-
-// Category key → label shown in the colour-guide chips
-const categoryLabels = {
-  technologyAndSoftwareServices     : 'Technology & Software',
-  educationAndInstituteService      : 'Education & Institutes',
-  hotelsTransportFoodandTourism     : 'Hotels, Food & Travel',
-  energyandUtilityServices          : 'Energy & Utilities',
-  retailAndE_Commerce               : 'Shopping & E-Commerce',
-  entertainmentAndInformationService: 'Entertainment & Media',
-  healthCareAndMedicalServices      : 'Health & Medical',
-  financeAndBankingServices         : 'Finance & Banking',
-  manufacturingIndustries           : 'Manufacturing & Products',
-  other                             : 'Others',
-};
+// colorMap + categoryLabels live in companies.js (shared with the brand pages)
 
 // ── Fast lookup: box number → company object ─────────────────
 const companyByBox =Object.fromEntries(companies.map(c => [c.box, c]));
@@ -169,6 +141,7 @@ function injectModal() {
           <p  class="m-service" id="mService"></p>
         </div>
         <div class="m-actions" id="mActions"></div>
+        <a class="m-more" id="mMore" href="#">More about this brand &rarr;</a>
       </div>
     </div>`;
   document.body.appendChild(wrap);
@@ -207,12 +180,17 @@ function openModal(company) {
     const a = document.createElement('a');
     a.href      = url;
     a.target    = '_blank';
-    a.rel       = 'noopener noreferrer';
+    // Paid boxes are adverts (sponsored); the rest are user-submitted (ugc)
+    a.rel       = `${company.paymentId ? 'sponsored' : 'ugc'} noopener noreferrer`;
     a.className = 'm-action-btn';
     a.setAttribute('aria-label', label);
     a.innerHTML = svg + `<span>${label}</span>`;
     actions.appendChild(a);
   });
+
+  const more = document.getElementById('mMore');
+  more.href = `/brand/${company.slug}`;
+  more.textContent = `More about ${company.name} →`;
 
   document.getElementById('mOverlay').classList.add('active');
   document.body.style.overflow = 'hidden';
@@ -331,6 +309,11 @@ function injectModalStyles() {
     }
     #companyModal .m-action-btn svg  { width: 24px; height: 24px; }
     #companyModal .m-action-btn span { font-size: 10px; font-weight: 700; letter-spacing: 0.04em; }
+    #companyModal .m-more {
+      display: block; margin-top: 20px; text-align: center;
+      font-size: 13px; font-weight: 600; color: var(--accent); text-decoration: none;
+    }
+    #companyModal .m-more:hover { text-decoration: underline; }
     #companyModal .m-card::-webkit-scrollbar { width: 4px; }
     #companyModal .m-card::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
   `;
@@ -342,13 +325,19 @@ function injectModalStyles() {
 //  Chips and search both highlight matching boxes and dim the rest.
 // ════════════════════════════════════════════════════════════
 const TOTAL_BOXES = 600;
+const SHOW_LISTED_FROM = 25;   // "Logos listed" stays hidden until the wall has this many
 let activeCat = null;
 
+// Both stats start hidden in index.html, so nobody (Google included) sees a placeholder
 function renderStats() {
-  const listed = document.getElementById('statListed');
-  const open   = document.getElementById('statOpen');
-  if (listed) listed.textContent = companies.length;
-  if (open)   open.textContent   = TOTAL_BOXES - companies.length;
+  const show = (id, value) => {
+    const dd = document.getElementById(id);
+    if (!dd) return;
+    dd.textContent = value;
+    dd.parentElement.hidden = false;
+  };
+  show('statOpen', TOTAL_BOXES - companies.length);
+  if (companies.length >= SHOW_LISTED_FROM) show('statListed', companies.length);
 }
 
 function buildLegend() {
@@ -455,6 +444,15 @@ function wireSearch() {
   });
 }
 
+// Brand pages link to /#box121 — the grid is built by JS, so scroll there ourselves
+function focusHashBox() {
+  const m = location.hash.match(/^#box(\d+)$/);
+  const el = m && document.getElementById(`box${m[1]}`);
+  if (!el) return;
+  el.scrollIntoView({ block: 'center' });
+  el.classList.add('flash');
+}
+
 // ════════════════════════════════════════════════════════════
 //  INIT
 // ════════════════════════════════════════════════════════════
@@ -466,4 +464,5 @@ document.addEventListener('DOMContentLoaded', () => {
   renderStats();
   buildLegend();
   wireSearch();
+  focusHashBox();
 });

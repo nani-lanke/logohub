@@ -193,8 +193,8 @@ async function commitChange(change) {
 }
 
 // ════════════════════════════════════════════════════════════
-//  EMAIL — mail to the user + admin copy in the same thread
-//  (hitting Reply on the copy goes to the user)
+//  EMAIL — one mail to the user, blind-copied to the support mailbox
+//  (the copy's To: header shows which customer it went to)
 // ════════════════════════════════════════════════════════════
 const SIGN_OFF = `For any future assistance, please reply to this mail.
 
@@ -208,23 +208,169 @@ const mailer = () => nodemailer.createTransport({
   auth  : { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
 });
 
-async function sendUserMail(email, subject, body) {
+// ─── Blind record copy of every outgoing mail ──────────────────────────────
+// No sendMail() call here passes an explicit `envelope`, so nodemailer puts
+// this address in the SMTP envelope only and strips the Bcc: header out of
+// the message — the recipient never sees it.
+const ARCHIVE_BCC = 'support@logohub.in';
+
+// 'LogoHub <a@b.in>' -> 'a@b.in'
+const bareAddr = v => String(v || '').replace(/^[^<]*</, '').replace(/>.*$/, '').trim().toLowerCase();
+
+// Spread into a sendMail() call: { bcc } normally, {} when a visible
+// recipient is already the archive address (never list it twice).
+const archiveBcc = (...to) => to.flat().filter(Boolean).some(a => bareAddr(a) === ARCHIVE_BCC)
+  ? {}
+  : { bcc: ARCHIVE_BCC };
+
+// ─── Branded HTML mail ────────────────────────────────────────────────────
+// Every mail is written as plain text (that text stays the text/plain part, so
+// clients that strip HTML still read well). mailHtml() turns the same text into
+// the LogoHub-looking mail: midnight header, ivory card, champagne-gold panel.
+//   "  Label : value" (indented lines) → rows of the gold details panel
+//   every other line                   → a paragraph
+//   opts.cta = { label, url }          → the button under the body
+const MC = {
+  page: '#f6f1e7', card: '#fffdf8', panel: '#faf6ee', ink: '#0d1017',
+  text: '#221c12', dim: '#6e6656', gold: '#d6b87a', bronze: '#8c6a2c',
+  line: '#e8dec9',
+};
+const FONT  = "Arial,Helvetica,'Segoe UI',sans-serif";
+const SERIF = "Georgia,'Times New Roman',Times,serif";
+
+const DETAIL_RE = /^[ \t]{2,}([^:]{1,40}?)[ \t]*:[ \t]*(.+)$/;
+
+// Plain-text body → [{ type:'p', text } | { type:'details', rows:[[k,v]] }]
+function mailBlocks(body) {
+  const out = [];
+  let joinable = false;                      // previous line was part of a paragraph
+  for (const raw of String(body).replace(/\r/g, '').split('\n')) {
+    const detail = raw.match(DETAIL_RE);
+    if (detail) {
+      const last = out[out.length - 1];
+      if (last && last.type === 'details') last.rows.push([detail[1], detail[2]]);
+      else out.push({ type: 'details', rows: [[detail[1], detail[2]]] });
+      joinable = false;
+      continue;
+    }
+    const line = raw.trim();
+    if (!line) { joinable = false; continue; }
+    const last = out[out.length - 1];
+    if (joinable && last && last.type === 'p') last.text += ' ' + line;
+    else out.push({ type: 'p', text: line });
+    joinable = true;
+  }
+  return out;
+}
+
+// Escape, then turn bare URLs into links ("https://" is hidden from the label)
+const mailLine = s => escapeHtml(s).replace(
+  /https?:\/\/[^\s<]*[^\s<.,;:)]/g,
+  url => `<a href="${url}" style="color:${MC.bronze};font-weight:600;text-decoration:underline;">${url.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a>`);
+
+function detailsHtml(rows) {
+  const tr = rows.map(([k, v]) => `
+              <tr>
+                <td style="padding:6px 14px 6px 0;font:600 11px/1.5 ${FONT};letter-spacing:.09em;text-transform:uppercase;color:${MC.dim};">${mailLine(k)}</td>
+                <td align="right" style="padding:6px 0;font:bold 15px/1.5 ${FONT};color:${MC.text};">${mailLine(v)}</td>
+              </tr>`).join('');
+  return `
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:20px 0;background:${MC.panel};border:1px solid ${MC.line};border-left:3px solid ${MC.gold};border-radius:10px;">
+          <tr><td style="padding:14px 18px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${tr}
+            </table>
+          </td></tr>
+        </table>`;
+}
+
+function ctaHtml(cta) {
+  if (!cta || !cta.url || !cta.label) return '';
+  return `
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 4px;">
+          <tr><td align="center" bgcolor="${MC.bronze}" style="border-radius:999px;">
+            <a href="${escapeHtml(cta.url)}" style="display:inline-block;padding:13px 30px;font:bold 15px/1 ${FONT};color:${MC.card};text-decoration:none;border-radius:999px;">${escapeHtml(cta.label)}</a>
+          </td></tr>
+        </table>`;
+}
+
+function mailHtml(subject, body, opts = {}) {
+  const site   = SITE();
+  const blocks = mailBlocks(body);
+  const lead   = blocks.find(b => b.type === 'p' && !/^Hi\b/i.test(b.text));
+  const pre    = lead ? lead.text.slice(0, 120) : '';
+
+  const main = blocks.map((b, i) => {
+    if (b.type === 'details') return detailsHtml(b.rows);
+    if (i === 0 && /^Hi\b/i.test(b.text)) return `
+        <p style="margin:0 0 14px;font:400 18px/1.5 ${SERIF};color:${MC.text};">${mailLine(b.text)}</p>`;
+    return `
+        <p style="margin:0 0 14px;font:400 15px/1.7 ${FONT};color:${MC.text};">${mailLine(b.text)}</p>`;
+  }).join('');
+
+  return `<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light only">
+<title>${escapeHtml(subject)}</title>
+</head>
+<body style="margin:0;padding:0;width:100%;background:${MC.page};-webkit-text-size-adjust:100%;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:${MC.page};font-size:1px;line-height:1px;">${escapeHtml(pre)}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${MC.page};">
+  <tr><td align="center" style="padding:28px 12px 34px;">
+
+    <table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:560px;background:${MC.card};border:1px solid ${MC.line};border-radius:14px;">
+
+      <tr><td style="background:${MC.ink};padding:24px 30px;border-radius:13px 13px 0 0;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+          <td style="padding-right:12px;"><img src="${site}/icons/logohub-icon.png" width="34" height="34" alt="" style="display:block;width:34px;height:34px;border:0;border-radius:8px;"></td>
+          <td style="font:bold 20px/1 ${SERIF};letter-spacing:.16em;color:${MC.gold};text-transform:uppercase;">LogoHub</td>
+        </tr></table>
+      </td></tr>
+      <tr><td style="height:3px;background:${MC.gold};font-size:0;line-height:0;">&nbsp;</td></tr>
+
+      <tr><td style="padding:30px 30px 4px;">
+        <h1 style="margin:0 0 18px;font:700 22px/1.3 ${SERIF};color:${MC.ink};">${escapeHtml(subject)}</h1>${main}${ctaHtml(opts.cta)}
+      </td></tr>
+
+      <tr><td style="padding:20px 30px 28px;">
+        <div style="height:1px;background:${MC.line};font-size:0;line-height:0;">&nbsp;</div>
+        <p style="margin:18px 0 12px;font:400 14px/1.7 ${FONT};color:${MC.dim};">For any future assistance, please reply to this mail.</p>
+        <p style="margin:0;font:400 15px/1.6 ${FONT};color:${MC.text};">Thank you,<br><strong style="color:${MC.bronze};">LogoHub Team</strong></p>
+      </td></tr>
+    </table>
+
+    <table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:560px;">
+      <tr><td align="center" style="padding:16px 14px 0;font:400 12px/1.7 ${FONT};color:${MC.dim};">
+        <a href="${site}" style="color:${MC.bronze};text-decoration:none;font-weight:600;">logohub.in</a>
+        &nbsp;&middot;&nbsp;
+        <a href="mailto:support@logohub.in" style="color:${MC.bronze};text-decoration:none;font-weight:600;">support@logohub.in</a>
+        <br>You are receiving this mail because a logo was submitted to LogoHub with this address.
+      </td></tr>
+    </table>
+
+  </td></tr>
+</table>
+</body></html>`;
+}
+
+async function sendUserMail(email, subject, body, opts = {}) {
   const transport = mailer();
   const from = `LogoHub <${process.env.SMTP_USER}>`;
   const text = `${body}\n\n${SIGN_OFF}`;
-  const html = `<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#222">${
-    escapeHtml(text).replace(/\n/g, '<br>')}</div>`;
+  const html = mailHtml(subject, body, opts);
 
-  const sent = await transport.sendMail({ from, to: email, replyTo: process.env.SMTP_USER, subject, text, html });
-  await transport.sendMail({
-    from, to: process.env.ADMIN_EMAIL || process.env.SMTP_USER, replyTo: email, subject, text, html,
-    inReplyTo: sent.messageId, references: [sent.messageId],
-  });
+  // One mail only. The blind record copy above is the admin's record of it —
+  // its To: header shows which customer it went to. There is no second
+  // "admin copy" mail any more, so nothing relies on it for contacting users.
+  await transport.sendMail({ from, to: email, replyTo: process.env.SMTP_USER, subject, text, html, ...archiveBcc(email) });
 }
 
 // Admin-only alert (e.g. a payment that needs a manual look)
 async function sendAdminMail(subject, text) {
-  await mailer().sendMail({ from: `LogoHub <${process.env.SMTP_USER}>`, to: process.env.ADMIN_EMAIL || process.env.SMTP_USER, subject, text });
+  const to = process.env.ADMIN_EMAIL || process.env.SMTP_USER;
+  await mailer().sendMail({ from: `LogoHub <${process.env.SMTP_USER}>`, to, subject, text, ...archiveBcc(to) });
 }
 
 module.exports = {
@@ -232,5 +378,5 @@ module.exports = {
   emailHash, encryptEmail, decryptEmail,
   gh, rzp, validPaymentSignature,
   liveCompanies, allCompanies, companyBlock, blockRe, logoPaths, readRepo, commitChange,
-  sendUserMail, sendAdminMail,
+  sendUserMail, sendAdminMail, mailHtml,
 };

@@ -24,6 +24,7 @@ function expiredMail(c) {
 Your 1-year plan for Box ${c.box} on LogoHub ended on ${end}, so your logo has been removed from the wall.
 
 To put your logo back for another year, book a Reserved box again at ${SITE()}/sendrequest.html and pay online. Box ${c.box} stays open for anyone to book, so book soon if you want the same number.`,
+    cta: { label: 'Book a box again', url: `${SITE()}/sendrequest.html` },
   };
   return {
     subject: `Your LogoHub free trial has ended — Box ${c.box}`,
@@ -32,6 +33,7 @@ To put your logo back for another year, book a Reserved box again at ${SITE()}/s
 Your free trial for Box ${c.box} on LogoHub ended on ${end}, so your logo has been removed from the wall.
 
 To put your logo back, book a Reserved box at ${SITE()}/sendrequest.html and pay online for 1 year, or reply to this mail and we will help you.`,
+    cta: { label: 'Book a box again', url: `${SITE()}/sendrequest.html` },
   };
 }
 
@@ -61,8 +63,8 @@ module.exports = async (req, res) => {
       let email = '';
       try { email = decryptEmail(c.emailEnc); } catch (err) { console.error(`Box ${c.box}: cannot decrypt email`, err); }
       if (!email) continue;
-      const { subject, body } = expiredMail(c);
-      try { await sendUserMail(email, subject, body); mailed.push(c.box); }
+      const { subject, body, cta } = expiredMail(c);
+      try { await sendUserMail(email, subject, body, { cta }); mailed.push(c.box); }
       catch (err) { console.error(`Box ${c.box}: expiry mail failed`, err); }
     }
 

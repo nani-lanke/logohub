@@ -204,7 +204,8 @@ img { max-width: 100%; display: block; }
 .stats {
   max-width: 880px;
   margin: 64px auto 0;
-  display: grid; grid-template-columns: repeat(4, 1fr);
+  /* auto-fit: the row stays even when script.js leaves a stat hidden */
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 20px;
@@ -214,6 +215,7 @@ img { max-width: 100%; display: block; }
   padding: 22px 16px;
   display: flex; flex-direction: column-reverse; gap: 6px;
 }
+.stat[hidden] { display: none; }
 .stat + .stat { border-left: 1px solid var(--border); }
 .stat dt {
   font-size: 12px; font-weight: 600;
@@ -289,6 +291,7 @@ img { max-width: 100%; display: block; }
   text-align: center;
 }
 
+.wall-foot { text-align: center; padding-top: 8px; }
 .wall-status {
   min-height: 20px;
   margin: 16px 0 0;
