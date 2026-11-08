@@ -131,14 +131,14 @@ const companies = [
     },
   },
   {
-    box        : 181,
+    box        : 494,
     name       : 'Lovely',
     shortName  : 'simple chick',
-    icon       : 'screenone/box181.png',
+    icon       : 'screenone/box494.jpg',
     category   : 'technologyAndSoftwareServices',
     serviceType: 'Technology and Software Services',
-    buyingDate : '2026-10-31T22:04:58+05:30',
-    expiredDate: '2026-11-07T22:04:58+05:30',
+    buyingDate : '2026-11-08T12:29:46+05:30',
+    expiredDate: Infinity,
     links: {
       website  : 'https://www.inviteaura.in/',
       youtube  : '',
