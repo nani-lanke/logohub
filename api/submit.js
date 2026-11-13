@@ -223,7 +223,7 @@ Your ${AVAIL_DAYS}-day free trial on LogoHub has started!
 
 Your logo will appear on ${site} within a few minutes.
 
-Your free trial is only for ${AVAIL_DAYS} days. To keep your logo after ${end}, reply to this email and we will send you the payment details. If payment is not received, your logo will be removed after the trial.`,
+Your free trial is valid for ${AVAIL_DAYS} days and ends on ${end}. To continue displaying your logo beyond this date, please reply to this email and our team will assist you with the payment process.`,
     cta: { label: 'See your logo on the wall', url: site },
   };
 }
