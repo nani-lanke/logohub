@@ -891,15 +891,23 @@
 
       // Special → no trial, contact support
       if (specialList.includes(num)) {
+        const shape = boxShape(num);
         openModal({
           title : `Box ${num} is a Special box`,
-          html  : `Special boxes have <strong>no free trial</strong>. Please send a mail to our support team at ` +
-                  `<a href="${specialMailto(d, num)}">${SUPPORT_EMAIL}</a>.<br>` +
-                  `Your details are filled in for you &mdash; just attach your logo image before sending.<br>` +
-                  `For a free trial, select a <strong>Free</strong> or <strong>Available</strong> box.`,
+          html  : `Special boxes have <strong>no free trial</strong> &mdash; they are paid for <strong>1 year</strong> ` +
+                  `(&#8377;${shape.price}, ${shape.name} box).<br>` +
+                  `Tap <strong>Mail Support</strong> and a new mail to <strong>${SUPPORT_EMAIL}</strong> opens with the ` +
+                  `address, subject and your details already filled in &mdash; just attach your logo image before sending.<br>` +
+                  `No mail app? <a href="${gmailCompose(d, num).replace(/&/g, '&amp;')}" target="_blank" rel="noopener">Open it in Gmail</a>` +
+                  (canShareLogo() ? ` &middot; <a href="#" data-act="share">Share with the logo attached</a>` : '') +
+                  `<br>For a free trial, select a <strong>Free</strong> or <strong>Available</strong> box.`,
           ok    : 'Mail Support',
           cancel: 'Choose Another Box',
           onOk  : () => mailSpecial(d, num),
+        });
+        const shareLink = modalText.querySelector('[data-act="share"]');
+        if (shareLink) shareLink.addEventListener('click', ev => {
+          ev.preventDefault(); closeModal(); shareSpecial(d, num);
         });
         return;
       }
@@ -975,8 +983,10 @@
       return [
         'Hello LogoHub team,',
         '',
-        `I would like to book Special box ${num}.`,
+        `I would like to book Special box ${num} for 1 year.`,
+        'Please send me the payment details so I can complete the booking.',
         '',
+        'My details:',
         `Box: ${num} (${shape.name}, ₹${shape.price}/year)`,
         `Company: ${d.company}`,
         `Description: ${d.description}`,
@@ -986,40 +996,59 @@
         '',
         attachNote,
         '',
-        'Thank you.',
+        'Thank you,',
+        d.company,
       ].join('\n');
     }
 
-    function specialMailto(d, num) {
-      const subject = `LogoHub Special box ${num} - ${d.company}`;
-      const body    = specialMailBody(d, num, `Logo: please see the attached image (${logoIn.files[0]?.name || 'logo'}).`);
-      return `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    function specialSubject(d, num) {
+      return `Special box ${num} booking request - ${d.company}`;
     }
 
-    // mailto: links can't carry attachments. On phones the share sheet can send the
-    // logo file with the details; elsewhere we download the logo so it's easy to attach.
-    async function mailSpecial(d, num) {
+    // A mailto: link is the only route that can pre-fill the To and Subject fields,
+    // so it is the main action. It cannot carry an attachment, so the sender attaches
+    // the logo image they just picked.
+    function specialMailto(d, num) {
+      const body = specialMailBody(d, num, `Logo: attached (${logoIn.files[0]?.name || 'logo image'}).`);
+      return `mailto:${SUPPORT_EMAIL}`
+           + `?subject=${encodeURIComponent(specialSubject(d, num))}`
+           + `&body=${encodeURIComponent(body)}`;
+    }
+
+    // Gmail in the browser — same To, Subject and body, for people with no mail app.
+    function gmailCompose(d, num) {
+      const body = specialMailBody(d, num, `Logo: attached (${logoIn.files[0]?.name || 'logo image'}).`);
+      return 'https://mail.google.com/mail/?view=cm&fs=1'
+           + `&to=${encodeURIComponent(SUPPORT_EMAIL)}`
+           + `&su=${encodeURIComponent(specialSubject(d, num))}`
+           + `&body=${encodeURIComponent(body)}`;
+    }
+
+    function canShareLogo() {
       const file = logoIn.files[0];
-      if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
-        try {
-          await navigator.share({
-            title: `LogoHub Special box ${num} - ${d.company}`,
-            text : `To: ${SUPPORT_EMAIL}\n\n` + specialMailBody(d, num, 'Logo: attached.'),
-            files: [file],
-          });
-          return;
-        } catch (err) {
-          if (err.name === 'AbortError') return;   // user closed the share sheet
-        }
-      }
-      if (file) {
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(file);
-        a.download = file.name;
-        a.click();
-        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-      }
+      return !!(file && navigator.canShare && navigator.canShare({ files: [file] })
+                && window.matchMedia('(pointer: coarse)').matches);
+    }
+
+    // Opens the device's mail app with To, Subject and the details already filled in.
+    function mailSpecial(d, num) {
       location.href = specialMailto(d, num);
+    }
+
+    // Phones only: the share sheet is the one route that can carry the logo file,
+    // but it cannot set a recipient, so the address goes in the text.
+    async function shareSpecial(d, num) {
+      const file = logoIn.files[0];
+      if (!canShareLogo()) { mailSpecial(d, num); return; }
+      try {
+        await navigator.share({
+          title: specialSubject(d, num),
+          text : specialMailBody(d, num, 'Logo: attached.') + `\n\nSend this to: ${SUPPORT_EMAIL}`,
+          files: [file],
+        });
+      } catch (err) {
+        if (err.name !== 'AbortError') mailSpecial(d, num);   // AbortError = sheet closed
+      }
     }
 
     async function postForm(body) {
