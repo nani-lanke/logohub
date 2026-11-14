@@ -128,6 +128,7 @@ function loadImages() {
       container.style.backgroundSize     = 'cover';
       container.style.backgroundPosition = 'center';
       container.style.cursor             = 'pointer';
+      container.classList.add('has-logo');           // css.css: only these grow on hover
       if (label) label.style.display = 'none';
 
       // Wire click to open popup modal
