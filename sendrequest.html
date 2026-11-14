@@ -85,6 +85,7 @@
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
     }
     .plan {
+      display: flex; flex-direction: column;   /* price line sits at the same height on every card */
       padding: 28px 24px;
       background: var(--surface);
       border: 1px solid var(--border);
@@ -104,7 +105,7 @@
       border-radius: 6px;
     }
     .plan h3 { margin: 0; font-size: 18px; font-weight: 700; }
-    .plan-desc { margin: 6px 0 18px; font-size: 14px; line-height: 1.6; color: var(--text-dim); }
+    .plan-desc { flex: 1; margin: 6px 0 18px; font-size: 14px; line-height: 1.6; color: var(--text-dim); }
     .plan-price {
       font-family: var(--font-display);
       font-size: 38px; font-weight: 700;

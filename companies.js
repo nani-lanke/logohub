@@ -10,7 +10,7 @@
 //
 //  To add a company:
 //    1. Add one object to this array.
-//    2. Place the logo at /screenone/box{N}.png  (N = box number).
+//    2. Place the logo at /screenone/box{N}.png (or .jpg / .webp), N = box number.
 //    The grid, border colour and popup are fully automatic.
 //
 //  Fields:
@@ -24,8 +24,8 @@
 //    expiredDate – when the logo is removed (same format), or Infinity = never
 //    links       – leave any value "" to hide that button in popup
 //
-//  Form entries are appended automatically by api/submit.js —
-//  run sync.bat before editing so you don't overwrite them.
+//  Form entries are appended automatically by api/submit.js, so pull the
+//  latest from GitHub (sync.bat) before editing, or you will overwrite them.
 // ════════════════════════════════════════════════════════════
 const companies = [
   {
@@ -129,24 +129,6 @@ const companies = [
       whatsapp : '',
       location : '',
     },
-  },
-  {
-    box        : 145,
-    name       : 'Lovely',
-    shortName  : 'simple chick',
-    icon       : 'screenone/box145.png',
-    category   : 'technologyAndSoftwareServices',
-    serviceType: 'Technology and Software Services',
-    buyingDate : '2026-10-31T22:04:58+05:30',
-    expiredDate: '2026-11-07T22:04:58+05:30',
-    links: {
-      website  : 'https://www.inviteaura.in/',
-      youtube  : '',
-      instagram: '',
-      whatsapp : '',
-      location : '',
-    },
-    emailHash  : 'a784fa18d116a098cd0d77c566a9b80d91db6d0065828908b616dadcdbb38d09',
   },
   {
     box        : 482,

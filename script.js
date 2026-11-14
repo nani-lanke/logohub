@@ -43,7 +43,7 @@ window.addEventListener('scroll', () => {
 // colorMap + categoryLabels live in companies.js (shared with the brand pages)
 
 // ── Fast lookup: box number → company object ─────────────────
-const companyByBox =Object.fromEntries(companies.map(c => [c.box, c]));
+const companyByBox = Object.fromEntries(companies.map(c => [c.box, c]));
 
 // ── Resolve border colour for any box ───────────────────────
 function getBorderColor(boxId) {

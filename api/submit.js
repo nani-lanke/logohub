@@ -266,6 +266,19 @@ async function createOrder(entry) {
   return { orderId: order.id, keyId: process.env.RAZORPAY_KEY_ID, amount: order.amount, currency: order.currency, price };
 }
 
+// The order behind a payment. An id Razorpay does not know (the API keys were
+// changed, a stale record in the browser) is a plain "not found" the browser
+// can act on, not a server fault to be retried for hours.
+async function fetchOrder(orderId) {
+  try { return await rzp(`/orders/${orderId}`); }
+  catch (err) {
+    if (err.rzpStatus === 400 || err.rzpStatus === 404) {
+      throw new UserError('We could not find that payment. Please mail our support team.');
+    }
+    throw err;
+  }
+}
+
 // The order is the record of what was paid for — the form must match it
 function matchOrder(order, entry) {
   const notes = (order && order.notes) || {};   // Razorpay sends [] when there are no notes
@@ -328,7 +341,7 @@ async function confirmPayment(b, entry, image, email) {
   if (!validPaymentSignature(orderId, paymentId, b.razorpay_signature)) {
     throw new UserError('We could not verify your payment. If money was taken, please mail our support team.');
   }
-  const order = await rzp(`/orders/${orderId}`);
+  const order = await fetchOrder(orderId);
   matchOrder(order, entry);
   return bookPaid(entry, image, email, order, paymentId);
 }
@@ -344,7 +357,7 @@ async function recoverPayment(b, entry, image, email) {
     throw new UserError('We could not find that payment. Please mail our support team.');
   }
 
-  const order = await rzp(`/orders/${orderId}`);
+  const order = await fetchOrder(orderId);
   matchOrder(order, entry);               // the order must belong to this form
 
   // Razorpay's payment list, not anything the browser remembered

@@ -125,7 +125,11 @@ async function rzp(path, body) {
     body   : body && JSON.stringify(body),
     headers: { Authorization: `Basic ${auth}`, 'Content-Type': 'application/json' },
   });
-  if (!r.ok) throw new Error(`Razorpay ${r.status} on ${path}: ${await r.text()}`);
+  if (!r.ok) {
+    const err = new Error(`Razorpay ${r.status} on ${path}: ${await r.text()}`);
+    err.rzpStatus = r.status;
+    throw err;
+  }
   return r.json();
 }
 
