@@ -2,6 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
 
   "functions": {
+    "api/submit.js": { "maxDuration": 60 },
+    "api/expire.js": { "maxDuration": 60 },
     "api/brand.js": { "includeFiles": "companies.js" },
     "api/sitemap.js": { "includeFiles": "companies.js" }
   },
