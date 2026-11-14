@@ -10,6 +10,13 @@
         Razorpay Checkout popup → user pays
         action "paid"  → verifies the payment, then books the box
         (if booking fails after payment, the payment is refunded)
+        action "recover" → the browser never got the Checkout callback (a UPI
+        app pushed the page out of memory, the tab closed, the reply timed
+        out): asks Razorpay whether the order was paid and books it. Safe to
+        send more than once — one payment books one box, and the orderId in
+        companies.js is the receipt that proves it.
+        Anything paid that still has no box is mailed to the admin by the
+        daily cron in api/expire.js.
    4. One GitHub commit: screenone/box{N}.{ext} + the new entry in companies.js
       → Vercel sees the commit and redeploys (~1 min) → logo is live
    5. Email the user their box number via Spacemail SMTP, and send
@@ -33,8 +40,8 @@
 const MAINTENANCE = require('../maintenance.js');
 const {
   UserError, istString, istDate, SITE, boxShape,
-  emailHash, encryptEmail, gh, rzp, validPaymentSignature,
-  liveCompanies, companyBlock, blockRe, logoPaths, readRepo, commitChange,
+  emailHash, encryptEmail, gh, rzp, validPaymentSignature, orderPayments,
+  liveCompanies, allCompanies, companyBlock, blockRe, logoPaths, readRepo, commitChange,
   sendUserMail, sendAdminMail,
 } = require('./_lib.js');
 
@@ -142,15 +149,21 @@ function checkFree(src, paths, entry) {
 // ════════════════════════════════════════════════════════════
 //  COMMIT — logo + companies.js in a single commit
 // ════════════════════════════════════════════════════════════
+// Returns null when it committed, or the entry this same payment already
+// booked. One payment books one box: the orderId sits in companies.js as the
+// receipt, so a confirm that arrives twice (reply lost to a timeout, the page
+// reopened, a recovery after a UPI app stole the tab) reports that booking
+// instead of committing a second one.
 async function commitBox(entry, image, message) {
   const imgBlob  = await gh('/git/blobs', { method: 'POST', body: { content: image.buf.toString('base64'), encoding: 'base64' } });
   const logoPath = `screenone/box${entry.box}.${image.ext}`;
   entry.icon = logoPath;
 
-  await commitChange(({ src, paths }) => {
-    // One payment books one box, even if the confirm request is sent twice
+  let already = null;
+  const committed = await commitChange(({ src, paths }) => {
     if (entry.orderId && src.includes(entry.orderId)) {
-      throw Object.assign(new UserError('This payment has already been used to book a box.', 409), { noRefund: true });
+      already = allCompanies(src).find(c => c.orderId === entry.orderId) || { box: entry.box };
+      return null;                       // nothing to commit — it is already booked
     }
     checkFree(src, paths, entry);
 
@@ -173,6 +186,7 @@ async function commitBox(entry, image, message) {
       ],
     };
   });
+  return committed ? null : already;
 }
 
 // ════════════════════════════════════════════════════════════
@@ -251,64 +265,131 @@ async function createOrder(entry) {
   return { orderId: order.id, keyId: process.env.RAZORPAY_KEY_ID, amount: order.amount, currency: order.currency, price };
 }
 
-async function confirmPayment(b, entry, image, email) {
-  const orderId = b.razorpay_order_id, paymentId = b.razorpay_payment_id;
-  if (!validPaymentSignature(orderId, paymentId, b.razorpay_signature)) {
-    throw new UserError('We could not verify your payment. If money was taken, please mail our support team.');
+// The order is the record of what was paid for — the form must match it
+function matchOrder(order, entry) {
+  const notes = (order && order.notes) || {};   // Razorpay sends [] when there are no notes
+  if (notes.box !== String(entry.box) || notes.emailHash !== entry.emailHash) {
+    throw new UserError('This payment does not match this box. Please mail our support team.');
   }
-  // The order says what was paid for — the form must match it
-  const order = await rzp(`/orders/${orderId}`);
-  if (order.notes.box !== String(entry.box) || order.notes.emailHash !== entry.emailHash) {
-    throw new UserError('Payment does not match this box. Please mail our support team.');
+  // Underpayment only. If the price of a box is cut while someone is paying,
+  // an order made at the old price still buys the box — it is not refused for
+  // being too much.
+  if (!(order.amount >= boxShape(entry.box).price * 100)) {
+    throw new UserError('The amount paid does not match this box. Please mail our support team.');
   }
+}
 
+// ── Book a box that is already paid for ──────────────────────
+// Safe to call more than once for the same payment.
+async function bookPaid(entry, image, email, order, paymentId) {
   const now = Date.now();
   Object.assign(entry, {
     buyingDate : istString(now),
     expiredDate: istString(now + PAID_DAYS * 864e5),
     emailEnc   : encryptEmail(email),
-    paymentId, orderId,
+    paymentId, orderId: order.id,
   });
   const amount = order.amount / 100;
 
+  let already;
   try {
-    await commitBox(entry, image, `Paid logo: box ${entry.box} — ${entry.name} (${paymentId})`);
+    already = await commitBox(entry, image, `Paid logo: box ${entry.box} — ${entry.name} (${paymentId})`);
   } catch (err) {
-    if (err.noRefund) throw err;
     // Paid but not booked (box taken a moment ago, GitHub down …) → give the money back
     let refunded = false;
     try { await rzp(`/payments/${paymentId}/refund`, {}); refunded = true; }
     catch (e) { console.error('Refund failed:', e); }
     sendAdminMail(`LogoHub: paid box ${entry.box} NOT booked — ${refunded ? 'refunded' : 'REFUND NEEDED'}`,
-      `Box ${entry.box}, ${entry.name}, ${email}\nPayment ${paymentId}, order ${orderId}, Rs. ${amount}\nRefund: ${refunded ? 'done' : 'FAILED — refund manually in the Razorpay dashboard'}\n\n${err.stack || err}`)
+      `Box ${entry.box}, ${entry.name}, ${email}\nPayment ${paymentId}, order ${order.id}, Rs. ${amount}\nRefund: ${refunded ? 'done' : 'FAILED — refund manually in the Razorpay dashboard'}\n\n${err.stack || err}`)
       .catch(e => console.error('Admin mail failed:', e));
     const why = err instanceof UserError ? err.message : 'We could not book your box.';
     throw new UserError(refunded
       ? `${why} Your payment of ₹${amount} has been refunded (it can take 5–7 days to reach your account).`
       : `${why} Your payment ID is ${paymentId} — our team will refund you within 2 days.`, err.status || 500);
   }
-  return { amount, emailSent: await mailBooked(entry, email, amount) };
+
+  // An earlier run of this payment already booked it: report that box, not a new one
+  if (already) {
+    if (already.box)         entry.box         = already.box;
+    if (already.name)        entry.name        = already.name;
+    if (already.expiredDate) entry.expiredDate = already.expiredDate;
+    if (already.paymentId)   entry.paymentId   = already.paymentId;
+  }
+
+  // The receipt is sent again on a repeat confirm. A second copy of the mail is
+  // a small annoyance; a booking with no receipt at all is a support ticket.
+  return { amount, already: !!already, paymentId: entry.paymentId, emailSent: await mailBooked(entry, email, amount) };
+}
+
+// ── action "paid": Checkout's callback reached the browser ───
+async function confirmPayment(b, entry, image, email) {
+  const orderId = b.razorpay_order_id, paymentId = b.razorpay_payment_id;
+  if (!validPaymentSignature(orderId, paymentId, b.razorpay_signature)) {
+    throw new UserError('We could not verify your payment. If money was taken, please mail our support team.');
+  }
+  const order = await rzp(`/orders/${orderId}`);
+  matchOrder(order, entry);
+  return bookPaid(entry, image, email, order, paymentId);
+}
+
+// ── action "recover": the callback never arrived ─────────────
+// The browser is not a reliable witness to a payment: a UPI app can push the
+// page out of memory, a tab can be closed, the reply to "paid" can be lost to
+// a timeout. Here Razorpay is asked directly whether this order was paid, so
+// money is never taken without the box being booked.
+async function recoverPayment(b, entry, image, email) {
+  const orderId = String(b.orderId || b.razorpay_order_id || '');
+  if (!/^order_[A-Za-z0-9_]{6,40}$/.test(orderId)) {
+    throw new UserError('We could not find that payment. Please mail our support team.');
+  }
+
+  const order = await rzp(`/orders/${orderId}`);
+  matchOrder(order, entry);               // the order must belong to this form
+
+  // Razorpay's payment list, not anything the browser remembered
+  const items   = await orderPayments(orderId);
+  const payment = items.find(p => p.status === 'captured')
+               || items.find(p => p.status === 'authorized');
+
+  if (!payment) {
+    const pending = items.some(p => p.status === 'created' || p.status === 'pending');
+    return { paid: false, pending };
+  }
+
+  // Authorized but not captured is auto-refunded by Razorpay after a few days,
+  // so take the money properly before handing over the box.
+  if (payment.status === 'authorized') {
+    try { await rzp(`/payments/${payment.id}/capture`, { amount: payment.amount, currency: payment.currency }); }
+    catch (err) { console.error('Capture failed:', err); }
+  }
+
+  return { paid: true, ...(await bookPaid(entry, image, email, order, payment.id)) };
 }
 
 // ════════════════════════════════════════════════════════════
-//  HANDLER   body.action: "order" | "paid" | (none = free / trial)
+//  HANDLER   body.action: "order" | "paid" | "recover" | (none = free / trial)
 // ════════════════════════════════════════════════════════════
 module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   const b = req.body || {};
 
+  // A payment already made is always booked, maintenance or not
+  const afterPayment = b.action === 'paid' || b.action === 'recover';
+
   // Server maintenance (maintenance.js) — no commits while it runs
-  // (a payment already made is still booked)
-  if (b.action !== 'paid' && MAINTENANCE.status().phase === 'active') {
+  if (!afterPayment && MAINTENANCE.status().phase === 'active') {
     return res.status(503).json({ error: 'LogoHub is under maintenance. New logo sign-ups are paused — please try again later.' });
   }
 
   try {
-    if (b.fax) return res.status(200).json({ ok: true });   // honeypot: bots fill hidden fields
+    // Honeypot: bots fill hidden fields. Never on the money paths — a browser
+    // or password manager that autofills the hidden field must not be able to
+    // turn a real payment into a silent "ok" that books nothing.
+    if (b.fax && !afterPayment) return res.status(200).json({ ok: true });
 
     // Nothing can be saved without the GitHub config - say so instead of a blank 500.
-    // Not for 'paid': that path must still run so a payment already made gets refunded.
-    if (b.action !== 'paid' && !(process.env.GITHUB_TOKEN && process.env.GITHUB_REPO)) {
+    // Not after a payment: that path must still run so the money gets refunded.
+    if (!afterPayment && !(process.env.GITHUB_TOKEN && process.env.GITHUB_REPO)) {
       throw new UserError('Logo sign-ups are not set up yet. Please mail our support team.', 503);
     }
 
@@ -318,9 +399,17 @@ module.exports = async (req, res) => {
     if (reserved) {
       if (!process.env.RAZORPAY_KEY_ID) throw new UserError('Online payment is not set up yet. Please mail our support team.', 503);
       if (b.action === 'order') return res.status(200).json({ ok: true, ...(await createOrder(entry)) });
+
       if (b.action === 'paid') {
-        const { amount, emailSent } = await confirmPayment(b, entry, image, email);
-        return res.status(200).json({ ok: true, box: entry.box, paid: true, amount, validTill: istDate(entry.expiredDate), emailSent });
+        const r = await confirmPayment(b, entry, image, email);
+        return res.status(200).json({ ok: true, box: entry.box, paid: true, already: r.already, amount: r.amount, paymentId: r.paymentId, validTill: istDate(entry.expiredDate), emailSent: r.emailSent });
+      }
+
+      // Checkout's callback never arrived — ask Razorpay what really happened
+      if (b.action === 'recover') {
+        const r = await recoverPayment(b, entry, image, email);
+        if (!r.paid) return res.status(200).json({ ok: true, paid: false, pending: !!r.pending });
+        return res.status(200).json({ ok: true, box: entry.box, paid: true, already: r.already, amount: r.amount, paymentId: r.paymentId, validTill: istDate(entry.expiredDate), emailSent: r.emailSent });
       }
       throw new UserError('Reserved boxes have no free trial. Please pay to book this box.');
     }
