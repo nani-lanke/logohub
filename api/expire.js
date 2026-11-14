@@ -12,7 +12,8 @@
    ════════════════════════════════════════════════════════════ */
 
 const {
-  istDate, SITE, decryptEmail, allCompanies, blockRe, logoPaths, commitChange, sendUserMail,
+  istDate, SITE, decryptEmail, allCompanies, blockRe, logoPaths, commitChange,
+  sendUserMail, sendAdminMail, readRepo, recentOrders, boxShape,
 } = require('./_lib.js');
 
 function expiredMail(c) {
@@ -37,6 +38,48 @@ To put your logo back, book a Reserved box at ${SITE()}/sendrequest.html and pay
   };
 }
 
+// ════════════════════════════════════════════════════════════
+//  AUDIT — money taken, box not booked
+//
+//  sendrequest.html finishes a payment the moment the browser comes back,
+//  and api/submit.js refunds a payment it cannot book. What neither can
+//  cover is the person who paid and never returned to the page at all.
+//  Razorpay knows about every such order, so once a day its recent orders
+//  are compared with companies.js and anything missing is mailed to the
+//  admin, who can book the box by hand or refund it. Read-only.
+// ════════════════════════════════════════════════════════════
+const AUDIT_SKIP_MS = 20 * 60000;      // ignore orders younger than this — a booking may still be in flight
+
+async function auditPaidOrders() {
+  if (!(process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET)) return [];
+
+  const [{ src }, orders] = await Promise.all([readRepo(), recentOrders(3)]);
+  const now     = Date.now();
+  const missing = orders.filter(o =>
+    o.status === 'paid' &&                            // the money is actually in
+    o.notes && o.notes.box &&                         // one of ours
+    now - o.created_at * 1000 > AUDIT_SKIP_MS &&      // not still being booked
+    !src.includes(o.id));                             // no box carries this order
+
+  if (!missing.length) return [];
+
+  await sendAdminMail(
+    `LogoHub: ${missing.length} paid order(s) with no box`,
+    `These Razorpay orders were paid for but no box in companies.js carries them.
+The payer never came back to the page, so nothing could finish the booking.
+Book the box by hand, or refund the payment in the Razorpay dashboard.
+
+${missing.map(o => `  Box ${o.notes.box} (${boxShape(Number(o.notes.box)).name})
+  Order      : ${o.id}
+  Amount     : Rs. ${o.amount / 100}
+  Paid at    : ${istDate(new Date(o.created_at * 1000).toISOString())}
+  Receipt    : ${o.receipt || '-'}
+`).join('\n')}
+Razorpay dashboard → Transactions → Orders, and search the order id.`);
+
+  return missing.map(o => ({ order: o.id, box: Number(o.notes.box), amount: o.amount / 100 }));
+}
+
 module.exports = async (req, res) => {
   if (!process.env.CRON_SECRET || req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).json({ error: 'Unauthorized' });
@@ -50,10 +93,23 @@ module.exports = async (req, res) => {
       if (!expired.length) return null;
 
       const files = [];
+      const stuck = [];
       for (const c of expired) {
-        src = src.replace(src.match(blockRe(c.box))[0], '');
+        // An entry laid out differently from the rest cannot be cut out safely.
+        // Skip it and report it — never throw, or no box expires at all today.
+        const block = src.match(blockRe(c.box));
+        if (!block) { stuck.push(c.box); continue; }
+        src = src.replace(block[0], '');
         for (const p of logoPaths(paths, c.box)) files.push({ path: p, mode: '100644', type: 'blob', sha: null });
       }
+      expired = expired.filter(c => !stuck.includes(c.box));
+      if (stuck.length) {
+        sendAdminMail('LogoHub: expired box(es) could not be removed',
+          `companies.js entries for box ${stuck.join(', ')} are past their expiredDate but do not match the\n` +
+          `expected layout, so they were left alone. Remove them by hand, or reformat them like the others.`)
+          .catch(err => console.error('Admin mail failed:', err));
+      }
+      if (!expired.length) return null;
       return { message: `Expired: box ${expired.map(c => c.box).join(', ')}`, src, files };
     });
 
@@ -68,7 +124,12 @@ module.exports = async (req, res) => {
       catch (err) { console.error(`Box ${c.box}: expiry mail failed`, err); }
     }
 
-    return res.status(200).json({ ok: true, removed: expired.map(c => c.box), mailed });
+    // Money taken but no box: tell the admin. Never blocks the expiry run.
+    let unbooked = [];
+    try { unbooked = await auditPaidOrders(); }
+    catch (err) { console.error('Paid-order audit failed:', err); }
+
+    return res.status(200).json({ ok: true, removed: expired.map(c => c.box), mailed, unbooked });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: err.message });
