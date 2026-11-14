@@ -228,16 +228,25 @@ const categoryLabels = {
 //  whatever the screen size (phones just wrap the sets differently).
 //  Keep in sync with boxNumber() in script.js and boxShape() in api/_lib.js.
 // ════════════════════════════════════════════════════════════
+// ⚠ TEMPORARY — live payment test. Every box shows this many rupees while it
+// is set. Put it back to null after testing (also TEST_PRICE in api/_lib.js).
+const TEST_PRICE = 1;
+
 function boxShape(n) {
+  const shape = realBoxShape(n);
+  return TEST_PRICE ? { ...shape, price: TEST_PRICE } : shape;
+}
+
+function realBoxShape(n) {
   const o = (n - 1) % 120 + 1;                       // position inside its row of sets
   if (o <= 48) {                                     // top 2 rows: Square, Mini, Mini, …
     return (o - 1) % 3 === 0 ? { name: 'Square', price: 119 } : { name: 'Mini', price: 49 };
   }
   const k = (o - 49) % 9 + 1;                        // lower 3 rows, 9 boxes per set
-  if (k === 4 || k === 8) return { name: 'Square',     price: 1 };
-  if (k === 7)            return { name: 'Vertical',   price: 1  };
-  if (k === 3 || k === 9) return { name: 'Horizontal', price: 1  };
-  return                         { name: 'Mini',       price: 1  };
+  if (k === 4 || k === 8) return { name: 'Square',     price: 119 };
+  if (k === 7)            return { name: 'Vertical',   price: 79  };
+  if (k === 3 || k === 9) return { name: 'Horizontal', price: 79  };
+  return                         { name: 'Mini',       price: 49  };
 }
 
 // ════════════════════════════════════════════════════════════
