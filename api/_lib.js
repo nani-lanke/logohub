@@ -35,6 +35,17 @@ const escapeHtml = s => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;',
 
 const SITE = () => process.env.SITE_URL || 'https://www.logohub.in';
 
+// The serverless function has a hard time limit: once it is hit the reply is
+// thrown away, so the browser sees nothing even when the work was done. Any
+// step that talks to someone else gets a deadline well inside that limit.
+function withTimeout(promise, ms, label) {
+  let timer;
+  return Promise.race([
+    Promise.resolve(promise).finally(() => clearTimeout(timer)),
+    new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(`${label} timed out after ${ms} ms`)), ms); }),
+  ]);
+}
+
 // ─── Box shape + price — keep in sync with boxShape() in sendrequest.html ──
 function boxShape(n) {
   const slot = (n - 1) % 15 + 1;
@@ -102,6 +113,23 @@ async function rzp(path, body) {
   return r.json();
 }
 
+// Orders created in the last `days` days, so a payment that was made but
+// never booked can be found later (see the audit in api/expire.js)
+async function recentOrders(days = 3) {
+  const from = Math.floor(Date.now() / 1000) - days * 86400;
+  const r = await rzp(`/orders?from=${from}&count=100`);
+  return Array.isArray(r.items) ? r.items : [];
+}
+
+// Every payment attempt made on an order, newest first. This is how a payment
+// is found again when Checkout's callback never reached the browser — the user
+// switched to a UPI app and the page was discarded, the tab was closed, the
+// network dropped. Razorpay, not the browser, is the record of what was paid.
+async function orderPayments(orderId) {
+  const r = await rzp(`/orders/${orderId}/payments`);
+  return Array.isArray(r.items) ? r.items : [];
+}
+
 // Checkout's handler signature = HMAC-SHA256("order_id|payment_id", key secret)
 function validPaymentSignature(orderId, paymentId, signature) {
   const want = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET).update(`${orderId}|${paymentId}`).digest('hex');
@@ -145,8 +173,10 @@ function companyBlock(e) {
 `;
 }
 
-// The entry for box N: from "  {  box : N," to its closing "  },"
-const blockRe = box => new RegExp(`\\n  \\{\\n    box\\s*:\\s*${box},[\\s\\S]*?\\n  \\},`);
+// The entry for box N: from "  {  box : N," to its closing "  },".
+// \r? everywhere: companies.js holds a mix of CRLF (hand-edited on Windows)
+// and LF (written by companyBlock), and an entry must be found either way.
+const blockRe = box => new RegExp(`\\r?\\n  \\{\\r?\\n    box\\s*:\\s*${box},[\\s\\S]*?\\r?\\n  \\},`);
 
 // All logo files for box N, e.g. screenone/box181.png
 const logoPaths = (paths, box) => [...paths.keys()].filter(p => new RegExp(`^screenone/box${box}\\.[a-z]+$`).test(p));
@@ -206,6 +236,11 @@ const mailer = () => nodemailer.createTransport({
   port  : 465,
   secure: true,
   auth  : { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+  // A mail server that stops answering must not eat the whole time budget —
+  // a booked box with no receipt is recoverable, a timed-out reply is not.
+  connectionTimeout: 8000,
+  greetingTimeout  : 8000,
+  socketTimeout    : 12000,
 });
 
 // ─── Blind record copy of every outgoing mail ──────────────────────────────
@@ -364,19 +399,32 @@ async function sendUserMail(email, subject, body, opts = {}) {
   // One mail only. The blind record copy above is the admin's record of it —
   // its To: header shows which customer it went to. There is no second
   // "admin copy" mail any more, so nothing relies on it for contacting users.
-  await transport.sendMail({ from, to: email, replyTo: process.env.SMTP_USER, subject, text, html, ...archiveBcc(email) });
+  try {
+    await withTimeout(
+      transport.sendMail({ from, to: email, replyTo: process.env.SMTP_USER, subject, text, html, ...archiveBcc(email) }),
+      15000, 'User mail');
+  } finally {
+    transport.close();   // an open socket keeps the serverless function alive
+  }
 }
 
 // Admin-only alert (e.g. a payment that needs a manual look)
 async function sendAdminMail(subject, text) {
-  const to = process.env.ADMIN_EMAIL || process.env.SMTP_USER;
-  await mailer().sendMail({ from: `LogoHub <${process.env.SMTP_USER}>`, to, subject, text, ...archiveBcc(to) });
+  const to        = process.env.ADMIN_EMAIL || process.env.SMTP_USER;
+  const transport = mailer();
+  try {
+    await withTimeout(
+      transport.sendMail({ from: `LogoHub <${process.env.SMTP_USER}>`, to, subject, text, ...archiveBcc(to) }),
+      15000, 'Admin mail');
+  } finally {
+    transport.close();
+  }
 }
 
 module.exports = {
-  UserError, istString, istDate, escapeHtml, SITE, boxShape,
+  UserError, istString, istDate, escapeHtml, SITE, boxShape, withTimeout,
   emailHash, encryptEmail, decryptEmail,
-  gh, rzp, validPaymentSignature,
+  gh, rzp, validPaymentSignature, orderPayments, recentOrders,
   liveCompanies, allCompanies, companyBlock, blockRe, logoPaths, readRepo, commitChange,
   sendUserMail, sendAdminMail, mailHtml,
 };
