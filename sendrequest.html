@@ -1051,15 +1051,40 @@
       }
     }
 
-    async function postForm(body) {
-      const res  = await fetch('/api/submit', {
-        method : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body   : JSON.stringify(body),
-      });
-      const json = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(json.error || 'Something went wrong. Please try again.');
-      return json;
+    // One request to /api/submit.
+    // "paid" and "recover" are safe to repeat — the server books one box per
+    // payment — so a lost reply is retried instead of being shown to someone
+    // who has already paid. "order" is never retried: that would make a
+    // second order.
+    async function postForm(body, { tries = 1, timeout = 65000 } = {}) {
+      let lastErr;
+      for (let i = 1; i <= tries; i++) {
+        const ctrl  = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), timeout);
+        try {
+          const res  = await fetch('/api/submit', {
+            method : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body   : JSON.stringify(body),
+            signal : ctrl.signal,
+          });
+          const json = await res.json().catch(() => ({}));
+          if (res.ok) return json;
+          // Under 500 the server has answered about this exact request —
+          // sending it again cannot change the answer.
+          if (res.status < 500) throw Object.assign(new Error(json.error || 'Something went wrong. Please try again.'), { final: true });
+          lastErr = new Error(json.error || 'The server could not be reached. Please try again in a minute.');
+        } catch (err) {
+          if (err.final) throw err;
+          lastErr = err.name === 'AbortError'
+            ? new Error('The server is taking too long to answer.')
+            : new Error('The server could not be reached. Please check your connection.');
+        } finally {
+          clearTimeout(timer);
+        }
+        if (i < tries) await new Promise(r => setTimeout(r, 1500 * i));
+      }
+      throw lastErr || new Error('Something went wrong. Please try again.');
     }
 
     function setBusy(label) {
@@ -1067,7 +1092,58 @@
       submitBtn.textContent = label || 'Get My Box';
     }
 
-    // ── Reserved box: Razorpay order → Checkout popup → confirm ──
+    // An error nobody scrolls to is the same as no error at all
+    function showError(msg) {
+      errorMsg.textContent = msg || '';
+      if (msg) errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    const esc = s => String(s == null ? '' : s).replace(/[<>&"]/g, '');
+
+    // ════════════════════════════════════════════════════════════
+    //  RESERVED BOXES — pay online, then book
+    //
+    //  The browser is not a reliable witness to a payment. On a phone the UPI
+    //  app can push this page out of memory, the popup can be closed while the
+    //  bank is still finishing, the reply to the confirm request can be lost.
+    //  So the order id is written down before Checkout opens, and every way
+    //  back into this page — the callback, closing the popup, or just loading
+    //  the page again — asks the server what really happened to that order.
+    //  Money is never taken without the box being booked.
+    // ════════════════════════════════════════════════════════════
+    const PENDING_KEY = 'logohub.pendingOrder';
+    const PENDING_MAX = 12 * 36e5;            // forget an order after 12 hours
+
+    function savePending(orderId, d, num) {
+      // Private mode or a full store: the callback is then the only route back,
+      // which is how it worked before — never a reason to block the payment.
+      try { localStorage.setItem(PENDING_KEY, JSON.stringify({ orderId, box: num, at: Date.now(), form: d })); }
+      catch (err) { console.warn('Could not remember this order:', err); }
+    }
+    function readPending() {
+      let p = null;
+      try { p = JSON.parse(localStorage.getItem(PENDING_KEY) || 'null'); } catch (err) { return null; }
+      if (!p || !p.orderId || !p.box || !p.form || !p.form.logo) return null;
+      if (Date.now() - (p.at || 0) > PENDING_MAX) { clearPending(); return null; }
+      return p;
+    }
+    function clearPending() {
+      try { localStorage.removeItem(PENDING_KEY); } catch (err) { /* nothing to do */ }
+    }
+
+    function showBooked(d, num, json, paymentId) {
+      clearPending();
+      form.hidden = true;
+      successMsg.hidden = false;
+      successMsg.innerHTML =
+        `🎉 Payment of <strong>&#8377;${esc(json.amount)}</strong> received &mdash; <strong>Box ${esc(json.box || num)}</strong> is yours until <strong>${esc(json.validTill)}</strong>!<br>` +
+        `Your logo will appear on <a href="/">LogoHub</a> in 1–2 minutes.<br>` +
+        (json.emailSent
+          ? `We've sent your box number and receipt to <strong>${esc(d.email)}</strong>.`
+          : `We couldn't send the confirmation email, but your box is booked. Payment ID: ${esc(paymentId || json.paymentId)}`);
+      successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
     function loadRazorpay() {
       if (window.Razorpay) return Promise.resolve();
       return new Promise((resolve, reject) => {
@@ -1081,8 +1157,18 @@
 
     async function payReserved(d, num) {
       setBusy('Opening payment…');
+      showError('');
       try {
         const [order] = await Promise.all([postForm({ ...d, box: num, action: 'order' }), loadRazorpay()]);
+        if (!order.orderId || !order.keyId) {
+          throw new Error(`We could not start the payment. Please try again, or mail ${SUPPORT_EMAIL}.`);
+        }
+
+        // Written down before Checkout opens — from here on the payment can be
+        // found again even if this page never hears back from it.
+        savePending(order.orderId, d, num);
+
+        let callbackFired = false;
         const rzp = new Razorpay({
           key        : order.keyId,
           order_id   : order.orderId,
@@ -1093,34 +1179,79 @@
           image      : new URL('icons/logohub-icon.png', location.href).href,
           prefill    : { name: d.company, email: d.email },
           theme      : { color: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#d6b87a' },
-          handler    : resp => confirmPaid(d, num, resp),
-          modal      : { ondismiss: () => setBusy() },
+          handler    : resp => { callbackFired = true; confirmPaid(d, num, resp); },
+          modal      : {
+            escape       : false,   // Esc must not close a payment in progress
+            confirm_close: true,    // ask before closing, in case the bank is still working
+            ondismiss    : () => {
+              setBusy();
+              // Closed with no callback. The money may still have left the
+              // account (UPI collect, a bank page finishing late), so ask the
+              // server rather than assume nothing happened.
+              if (!callbackFired) checkPending('Checking your payment…');
+            },
+          },
         });
         rzp.on('payment.failed', resp => {
-          errorMsg.textContent = `Payment failed: ${resp.error.description || 'please try again.'}`;
+          const e = (resp && resp.error) || {};
+          showError(`Payment failed: ${e.description || 'please try again.'} ` +
+                    'If any money was taken it comes back on its own within 5–7 days.');
         });
         rzp.open();
       } catch (err) {
-        errorMsg.textContent = err.message;
+        showError(err.message);
         setBusy();
       }
     }
 
+    // Checkout told us the payment went through
     async function confirmPaid(d, num, resp) {
       setBusy('Booking your box…');
+      showError('');
+      const paymentId = (resp && resp.razorpay_payment_id) || '';
       try {
-        const json = await postForm({ ...d, box: num, action: 'paid', ...resp });
-        form.hidden = true;
-        successMsg.hidden = false;
-        successMsg.innerHTML =
-          `🎉 Payment of <strong>&#8377;${json.amount}</strong> received &mdash; <strong>Box ${num}</strong> is yours until <strong>${json.validTill}</strong>!<br>` +
-          `Your logo will appear on <a href="/">LogoHub</a> in 1–2 minutes.<br>` +
-          (json.emailSent
-            ? `We've sent your box number and receipt to <strong>${d.email.replace(/[<>&"]/g, '')}</strong>.`
-            : `We couldn't send the confirmation email, but your box is booked. Payment ID: ${resp.razorpay_payment_id}`);
-        successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const json = await postForm({ ...d, box: num, action: 'paid', ...resp }, { tries: 3 });
+        showBooked(d, num, json, paymentId);
       } catch (err) {
-        errorMsg.textContent = err.message;
+        // The money has been taken, so never invite a second payment.
+        const id = paymentId ? ` Your payment ID is ${paymentId}.` : '';
+        if (err.final) {
+          // The server has answered about this payment and acted on it
+          // (refunded it, or found it did not match) — there is nothing left
+          // for a reload to finish.
+          clearPending();
+          showError(`${err.message}${id} Please do not pay again${paymentId ? ` — mail ${SUPPORT_EMAIL} with that payment ID` : ''}.`);
+        } else {
+          // Only the reply was lost. The saved order stays, so the next load
+          // of this page finishes the booking.
+          showError(`${err.message}${id} Your money is safe and this box is still yours — ` +
+                    `please do not pay again. Reload this page and we will finish the booking, ` +
+                    `or mail ${SUPPORT_EMAIL}${paymentId ? ' with that payment ID' : ''}.`);
+        }
+      } finally {
+        setBusy();
+      }
+    }
+
+    // Ask the server what became of the saved order. Runs when the payment
+    // popup closes without a callback, and once on every load of this page.
+    async function checkPending(label) {
+      const p = readPending();
+      if (!p) return false;
+      setBusy(label || 'Checking your payment…');
+      try {
+        const json = await postForm({ ...p.form, box: p.box, action: 'recover', orderId: p.orderId }, { tries: 2 });
+        if (json.paid) { showBooked(p.form, p.box, json); return true; }
+        if (json.pending) {
+          showError('Your payment is still being confirmed by your bank. Please wait a minute and reload this page — do not pay again.');
+          return false;
+        }
+        clearPending();                       // nothing was paid on that order
+        return false;
+      } catch (err) {
+        // Keep the record: the next load of the page tries again
+        if (err.final) clearPending();
+        return false;
       } finally {
         setBusy();
       }
@@ -1128,6 +1259,7 @@
 
     async function submitTrial(d, num) {
       setBusy('Submitting…');
+      showError('');
       try {
         const json = await postForm({ ...d, box: num });
 
@@ -1143,11 +1275,16 @@
             : `We couldn't send the confirmation email, but your box is booked.`);
         successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
       } catch (err) {
-        errorMsg.textContent = err.message;
+        showError(err.message);
       } finally {
         setBusy();
       }
     }
+
+    // ── A payment this page never heard about → finish it now ──
+    // Covers the phone that dropped the page while the UPI app was open, the
+    // closed tab, and the confirm request whose reply was lost.
+    if (readPending()) checkPending('Checking your last payment…');
   </script>
 
 </body>
