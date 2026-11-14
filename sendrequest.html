@@ -780,7 +780,8 @@
                    :                            'Available';
       summary.className = 'pick-summary has-box';
       summary.innerHTML =
-        `<span><strong>Box ${n}</strong> &middot; ${shape.name} &middot; &#8377;${shape.price}/year` +
+        `<span><strong>Box ${n}</strong> &middot; ` +
+        (status === 'Special' ? 'Price on request' : `${shape.name} &middot; &#8377;${shape.price}/year`) +
         `${status === 'Reserved' ? ', no trial' : status === 'Available' ? ' after the trial' : ''}</span>` +
         `<span class="pick-tag st-${status.toLowerCase()}">${status}</span>`;
     }
@@ -886,11 +887,10 @@
 
       // Special → no trial, contact support
       if (specialList.includes(num)) {
-        const shape = boxShape(num);
         openModal({
           title : `Box ${num} is a Special box`,
-          html  : `Special boxes have <strong>no free trial</strong> &mdash; they are paid for <strong>1 year</strong> ` +
-                  `(&#8377;${shape.price}, ${shape.name} box).<br>` +
+          html  : `Special boxes have <strong>no free trial</strong> &mdash; they are paid for <strong>1 year</strong>. ` +
+                  `Special box prices vary &mdash; our team will send you the price.<br>` +
                   `Tap <strong>Mail Support</strong> and a new mail to <strong>${SUPPORT_EMAIL}</strong> opens with the ` +
                   `address, subject and your details already filled in &mdash; just attach your logo image before sending.<br>` +
                   `No mail app? <a href="${gmailCompose(d, num).replace(/&/g, '&amp;')}" target="_blank" rel="noopener">Open it in Gmail</a>` +
@@ -967,7 +967,6 @@
 
     // ── Special box: mail support with the form details + logo ──
     function specialMailBody(d, num, attachNote) {
-      const shape = boxShape(num);
       const links = [
         ['Website',   d.website],
         ['YouTube',   d.youtube],
@@ -982,7 +981,7 @@
         'Please send me the payment details so I can complete the booking.',
         '',
         'My details:',
-        `Box: ${num} (${shape.name}, ₹${shape.price}/year)`,
+        `Box: ${num} (Special)`,
         `Company: ${d.company}`,
         `Description: ${d.description}`,
         `Email: ${d.email}`,
