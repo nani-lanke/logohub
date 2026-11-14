@@ -197,10 +197,10 @@ function boxShape(n) {
     return (o - 1) % 3 === 0 ? { name: 'Square', price: 119 } : { name: 'Mini', price: 49 };
   }
   const k = (o - 49) % 9 + 1;                        // lower 3 rows, 9 boxes per set
-  if (k === 4 || k === 8) return { name: 'Square',     price: 119 };
-  if (k === 7)            return { name: 'Vertical',   price: 79  };
-  if (k === 3 || k === 9) return { name: 'Horizontal', price: 79  };
-  return                         { name: 'Mini',       price: 49  };
+  if (k === 4 || k === 8) return { name: 'Square',     price: 1 };
+  if (k === 7)            return { name: 'Vertical',   price: 1  };
+  if (k === 3 || k === 9) return { name: 'Horizontal', price: 1  };
+  return                         { name: 'Mini',       price: 1  };
 }
 
 // ════════════════════════════════════════════════════════════
