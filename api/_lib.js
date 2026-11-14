@@ -46,13 +46,20 @@ function withTimeout(promise, ms, label) {
   ]);
 }
 
-// ─── Box shape + price — keep in sync with boxShape() in sendrequest.html ──
+// ─── Box shape + price — keep in sync with boxShape() in companies.js ──
+// Numbers run across the 8 sets of a laptop row: the top 2 rows of every
+// set first (1–48: Square, Mini, Mini, …), then the lower 3 rows (49–120,
+// 9 per set). Every row of sets holds 120 boxes.
 function boxShape(n) {
-  const slot = (n - 1) % 15 + 1;
-  if ([1, 3, 8, 10].includes(slot)) return { name: 'Square',     price: 119 };
-  if (slot === 12)                  return { name: 'Vertical',   price: 79  };
-  if (slot === 13 || slot === 15)   return { name: 'Horizontal', price: 79  };
-  return                                   { name: 'Mini',       price: 49  };
+  const o = (n - 1) % 120 + 1;                       // position inside its row of sets
+  if (o <= 48) {
+    return (o - 1) % 3 === 0 ? { name: 'Square', price: 119 } : { name: 'Mini', price: 49 };
+  }
+  const k = (o - 49) % 9 + 1;                        // lower 3 rows, 9 boxes per set
+  if (k === 4 || k === 8) return { name: 'Square',     price: 119 };
+  if (k === 7)            return { name: 'Vertical',   price: 79  };
+  if (k === 3 || k === 9) return { name: 'Horizontal', price: 79  };
+  return                         { name: 'Mini',       price: 49  };
 }
 
 // ════════════════════════════════════════════════════════════

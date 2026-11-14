@@ -3,7 +3,9 @@
 
    HOW IT WORKS:
    1. companies[]    – in companies.js (shared with sendrequest.html)
-   2. generateGrid() – builds 40 sets × 15 slots = 600 boxes in the DOM
+   2. generateGrid() – builds 40 sets × 15 slots = 600 boxes in the DOM;
+                       boxNumber() gives each slot its number (see
+                       "BOX NUMBERS" in companies.js for the rule)
    3. loadImages()   – for each company, loads its icon; on success,
                        shows the logo and wires a click → openModal()
    4. openModal()    – fills the popup with company info + action icons
@@ -50,6 +52,24 @@ function getBorderColor(boxId) {
   return 'var(--slot-border)';
 }
 
+// ── Box number for a slot ────────────────────────────────────
+//  Numbers read down each column, then right, across all 8 sets of a
+//  laptop row: slots in rows 1–2 of the sets first (6 per set → 1–48),
+//  then slots in rows 3–5 (9 per set → 49–120). Fixed to the 8-wide
+//  laptop layout so a number means the same box on every device.
+//  Keep in sync with boxShape() in companies.js and api/_lib.js.
+const SETS_PER_ROW  = 8;
+const TOP_ORDER     = { 1: 1, 2: 2, 5: 3, 3: 4, 4: 5, 6: 6 };                        // slot → position, rows 1–2
+const BOTTOM_ORDER  = { 7: 1, 11: 2, 13: 3, 8: 4, 14: 5, 9: 6, 12: 7, 10: 8, 15: 9 }; // slot → position, rows 3–5
+
+function boxNumber(setIndex, slotIndex) {
+  const row = Math.floor((setIndex - 1) / SETS_PER_ROW);
+  const col = (setIndex - 1) % SETS_PER_ROW;
+  return row * 120 + (slotIndex in TOP_ORDER
+    ? col * 6 + TOP_ORDER[slotIndex]
+    : 48 + col * 9 + BOTTOM_ORDER[slotIndex]);
+}
+
 // ════════════════════════════════════════════════════════════
 //  GRID GENERATOR  — 40 sets × 15 slots = 600 boxes
 // ════════════════════════════════════════════════════════════
@@ -67,7 +87,7 @@ function generateGrid() {
     set.id = `set${setIndex}`;
 
     for (let slotIndex = 1; slotIndex <= 15; slotIndex++) {
-      const boxId = (setIndex - 1) * 15 + slotIndex;
+      const boxId = boxNumber(setIndex, slotIndex);
 
       const box = document.createElement('div');
       box.className = `select${slotIndex}`;

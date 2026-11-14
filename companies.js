@@ -29,10 +29,10 @@
 // ════════════════════════════════════════════════════════════
 const companies = [
   {
-    box        : 76,
+    box        : 31,
     name       : 'LogoHub',
     shortName  : 'LogoHub displays company logos; click any logo to visit its website.',
-    icon       : 'screenone/box76.png',
+    icon       : 'screenone/box31.png',
     category   : 'technologyAndSoftwareServices',
     serviceType: 'Information & Directory Service',
     buyingDate : '2026-10-31T22:31:37+05:30',
@@ -63,10 +63,10 @@ const companies = [
     },
   },
   {
-    box        : 151,
+    box        : 133,
     name       : 'Kutti Kathaigal',
     shortName  : 'A sweet Tamil story world for children aged 2 to 6 years.',
-    icon       : 'screenone/box151.png',
+    icon       : 'screenone/box133.png',
     category   : 'entertainmentAndInformationService',
     serviceType: 'Entertainment & Stories',
     buyingDate : '2026-10-31T22:31:37+05:30',
@@ -80,10 +80,10 @@ const companies = [
     },
   },
   {
-    box        : 153,
+    box        : 136,
     name       : 'Meow Meow Melody TV',
     shortName  : '✨ Welcome to MeowMeow Melody TV! ✨ A happy place for kids to watch, learn, and enjoy! 🌈',
-    icon       : 'screenone/box153.png',
+    icon       : 'screenone/box136.png',
     category   : 'entertainmentAndInformationService',
     serviceType: 'Kids Entertainment',
     buyingDate : '2026-10-31T22:31:37+05:30',
@@ -97,10 +97,10 @@ const companies = [
     },
   },
   {
-    box        : 158,
+    box        : 190,
     name       : 'Sinu Cartoons',
     shortName  : 'This video is made for fun purposes. It will contain school story comedy videos and fun filled ghost stories.',
-    icon       : 'screenone/box158.png',
+    icon       : 'screenone/box190.png',
     category   : 'entertainmentAndInformationService',
     serviceType: 'Cartoon Entertainment',
     buyingDate : '2026-10-31T22:31:37+05:30',
@@ -114,10 +114,10 @@ const companies = [
     },
   },
   {
-    box        : 128,
+    box        : 172,
     name       : 'Anuraj_handmade_jewellery',
     shortName  : 'I love being artistic and fond of making hand made jewellery. plz support my small business. thank you. be positive',
-    icon       : 'screenone/box128.png',
+    icon       : 'screenone/box172.png',
     category   : 'retailAndE_Commerce',
     serviceType: 'Shopping & E-Commerce',
     buyingDate : '2026-10-31T22:31:37+05:30',
@@ -130,12 +130,24 @@ const companies = [
       location : '',
     },
   },
-
-   //new details
-
-   
-  
-  
+  {
+    box        : 145,
+    name       : 'Lovely',
+    shortName  : 'simple chick',
+    icon       : 'screenone/box145.png',
+    category   : 'technologyAndSoftwareServices',
+    serviceType: 'Technology and Software Services',
+    buyingDate : '2026-10-31T22:04:58+05:30',
+    expiredDate: '2026-11-07T22:04:58+05:30',
+    links: {
+      website  : 'https://www.inviteaura.in/',
+      youtube  : '',
+      instagram: '',
+      whatsapp : '',
+      location : '',
+    },
+    emailHash  : 'a784fa18d116a098cd0d77c566a9b80d91db6d0065828908b616dadcdbb38d09',
+  },
 ];
 
 // ════════════════════════════════════════════════════════════
@@ -167,6 +179,29 @@ const categoryLabels = {
   manufacturingIndustries           : 'Manufacturing & Products',
   other                             : 'Others',
 };
+
+// ════════════════════════════════════════════════════════════
+//  BOX NUMBERS — how the 600 numbers sit on the wall
+//
+//  The wall is 40 sets of 15 slots, 8 sets per row on a laptop.
+//  Numbers read down each column, then to the right, and run across
+//  all 8 sets of a row: the top 2 rows of every set first (6 per set,
+//  1–48), then the lower 3 rows (9 per set, 49–120). So every row of
+//  sets holds 120 boxes, and the same number is always the same box,
+//  whatever the screen size (phones just wrap the sets differently).
+//  Keep in sync with boxNumber() in script.js and boxShape() in api/_lib.js.
+// ════════════════════════════════════════════════════════════
+function boxShape(n) {
+  const o = (n - 1) % 120 + 1;                       // position inside its row of sets
+  if (o <= 48) {                                     // top 2 rows: Square, Mini, Mini, …
+    return (o - 1) % 3 === 0 ? { name: 'Square', price: 119 } : { name: 'Mini', price: 49 };
+  }
+  const k = (o - 49) % 9 + 1;                        // lower 3 rows, 9 boxes per set
+  if (k === 4 || k === 8) return { name: 'Square',     price: 119 };
+  if (k === 7)            return { name: 'Vertical',   price: 79  };
+  if (k === 3 || k === 9) return { name: 'Horizontal', price: 79  };
+  return                         { name: 'Mini',       price: 49  };
+}
 
 // ════════════════════════════════════════════════════════════
 //  EXPIRY — api/submit.js adds form entries to the end of companies[]

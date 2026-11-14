@@ -51,8 +51,9 @@ const MAX_LOGO     = 1024 * 1024;      // 1 MB
 // Keep in sync with specialList / reservedList / freeBoxes in sendrequest.html
 const SPECIAL_MAX  = 120;              // boxes 1–120 are special (mail support)
 const RESERVED_MAX = 360;              // boxes 121–360 are reserved (pay online)
-const FREE_BOXES   = new Set([482,484,485,486,487,489,491,494,497,499,500,501,502,504,506,509,512,514,515,516,517,519,521,524,527,529,530,531,532,534,536,539,
-  542,544,545,546,547,549,551,554,557,559,560,561,562,564,566,569,572,574,575,576,577,579,581,584,587,589,590,591,592,594,596,599]);
+// Every Mini box in the last row of the wall (481–600)
+const FREE_BOXES   = new Set([482,483,485,486,488,489,491,492,494,495,497,498,500,501,503,504,506,507,509,510,512,513,515,516,518,519,521,522,524,525,527,528,
+  529,530,533,534,538,539,542,543,547,548,551,552,556,557,560,561,565,566,569,570,574,575,578,579,583,584,587,588,592,593,596,597]);
 
 // Service label (form <select>) → colorMap key (script.js)
 const SERVICES = {
