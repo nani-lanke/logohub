@@ -134,7 +134,7 @@ const companies = [
     box        : 34,
     name       : 'Lovely',
     shortName  : 'Design, personalise and share stunning digital invitations for every special occasion — weddings, birthdays, baby showers, house warmings, festivals and corporate events.',
-    icon       : 'screenone/box145.webp',
+    icon       : 'screenone/box34.webp',
     category   : 'other',
     serviceType: 'Other',
     buyingDate : '2026-11-15T13:46:30+05:30',
