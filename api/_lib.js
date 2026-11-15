@@ -53,7 +53,7 @@ function withTimeout(promise, ms, label) {
 // ⚠ TEMPORARY — live payment test. Every box costs this many rupees while it
 // is set. Put it back to null after testing (also TEST_PRICE in companies.js).
 
-const TEST_PRICE = 1;
+const TEST_PRICE = null;
 // → const TEST_PRICE = null (actual live sits at 49, 79, 119);  
 // → const TEST_PRICE = 1 means every box shows ₹1 for testing. Put it back to null after testing.;
 
