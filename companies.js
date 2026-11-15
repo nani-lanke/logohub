@@ -158,6 +158,25 @@ const companies = [
     paymentId  : 'pay_U0NjQuuZpkrqPE',
     orderId    : 'order_U0Nj7NyTZUFLlb',
   },
+  {
+    box        : 361,
+    name       : 'Lovely',
+    shortName  : 'Design, personalise and share stunning digital invitations for every special occasion — weddings, birthdays, baby showers, house warmings, festivals and corporate events.',
+    icon       : 'screenone/box361.webp',
+    category   : 'other',
+    serviceType: 'Other',
+    buyingDate : '2026-11-15T13:51:19+05:30',
+    expiredDate: '2026-11-22T13:51:19+05:30',
+    links: {
+      website  : 'https://www.inviteaura.in/',
+      youtube  : '',
+      instagram: '',
+      whatsapp : '',
+      location : '',
+    },
+    emailHash  : 'd6a2253096203e983c4b74767c1cd572a4b5e2dad73d4ac0521b86dd0be85b94',
+    emailEnc   : 'VDvdFNliIh7dFOB8mnxXnGkMYbP_1Us7FbS0t4n0fV0kCPQ2d2BSMq2ColIAQCCSLA',
+  },
 ];
 
 // ════════════════════════════════════════════════════════════
